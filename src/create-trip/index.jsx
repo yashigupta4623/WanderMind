@@ -1,34 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { Input } from "@/components/ui/input";
 import { SelectBudgetOptions, SelectTravelsList } from "@/constants/options";
 import { Button } from "@/components/ui/button";
+import { toast } from 'sonner';
+import { chatSession } from '@/service/AIModal';
 
 const apiKey = import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
 
 function CreateTrip() {
   const [place, setPlace] = useState(null);
-  const [formData, setFormData] = useState([]);
+  const [formData, setFormData] = useState({});
 
   const handleInputChange = (field, value) => {
-
-    setFormData({
-      ...formData,
-      [field]: value
-    });
+    setFormData(prevState => ({ ...prevState, [field]: value }));
   };
 
-  useEffect(() => {
-    console.log(formData);
-  }, [formData]);
-
-  const OnGenerateTrip = () => {
-    if(formData?.noofDays>5){
-      alert('Number of days should be less than 5');
+  const OnGenerateTrip =async() => {
+    if (!formData?.location || !formData?.noofDays || !formData?.budget || !formData?.traveler) {
+      toast("Please fill all the details");
       return;
     }
-    console.log('Generate Trip', formData);
-  }
+
+    const FINAL_PROMPT = `Generate Travel Plan for Location: ${formData?.location?.label}, for ${formData?.noofDays} Days for ${formData?.traveler} with a ${formData?.budget} budget, including activities: {activities}. Provide Hotels options list with HotelName, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions. Suggest itinerary with placeName, Place Details, Place Image Url, Geo Coordinates, ticket Pricing, Time travel for each location for ${formData?.noofDays} days with each day plan including best time to visit in JSON format.`;
+
+    console.log(FINAL_PROMPT);
+
+    const result = await chatSession.sendMessage(FINAL_PROMPT);
+    console.log(result?.response?.text());
+  };
+
   return (
     <div className='sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10'>
       <h2 className='font-bold text-3xl'>Tell us your travel preferences 🏕️</h2>
@@ -63,8 +64,7 @@ function CreateTrip() {
           {SelectBudgetOptions.map((item, index) => (
             <div key={index} onClick={() => handleInputChange('budget', item.title)}
             className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer
-            ${formData?.budget === item.title && 'shadow-lg border-black'}
-            `}>
+            ${formData?.budget === item.title && 'shadow-lg border-black'}`}>
               <h2 className='text-4xl'>{item.icon}</h2>
               <h2 className='font-bold text-lg'>{item.title}</h2>
               <h2 className='text-sm text-gray-500'>{item.desc}</h2>
@@ -79,8 +79,7 @@ function CreateTrip() {
           {SelectTravelsList.map((item, index) => (
             <div key={index} onClick={() => handleInputChange('traveler', item.people)}
             className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer
-              ${formData?.traveler === item.people && 'shadow-lg border-black'}
-              `}>
+              ${formData?.traveler === item.people && 'shadow-lg border-black'}`}>
               <h2 className='text-4xl'>{item.icon}</h2>
               <h2 className='font-bold text-lg'>{item.title}</h2>
               <h2 className='text-sm text-gray-500'>{item.desc}</h2>
