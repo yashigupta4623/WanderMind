@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import { Input } from "@/components/ui/input";
-import {AI_PROMPT, SelectBudgetOptions, SelectTravelsList } from "@/constants/options";
+import { SelectBudgetOptions, SelectTravelsList } from "@/constants/options";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { chatSession } from "@/service/AIModal";
@@ -19,7 +19,7 @@ import axios from "axios";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import Footer from "./custom/Footer";
 
 const apiKey = import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
 
@@ -28,8 +28,7 @@ function CreateTrip() {
   const [formData, setFormData] = useState({});
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  
+
   const handleInputChange = (field, value) => {
     setFormData(prevState => ({ ...prevState, [field]: value }));
   };
@@ -82,21 +81,16 @@ function CreateTrip() {
       console.log(result?.response?.text());
       const tripData = JSON.parse(result?.response?.text());
 
-      // // Add price field to each hotel
-      // tripData.hotels = tripData.hotels.map(hotel => ({
-      //   ...hotel,
-      //   price: hotel.price || "Price not available" // Add price field if not already present
-      // }));
+      // Add price field to each hotel
+      tripData.hotels = tripData.hotels.map(hotel => ({
+        ...hotel,
+        price: hotel.price || "Price not available" // Add price field if not already present
+      }));
 
       const docId = Date.now().toString();
       await SaveAiTrip(JSON.stringify(tripData), docId);
     } catch (error) {
       console.error("Error generating trip:", error);
-      if (error.message.includes("The model is overloaded")) {
-        toast.error("The model is currently overloaded. Please try again later.");
-      } else {
-        toast.error("An error occurred while generating the trip. Please try again.");
-      }
     } finally {
       setLoading(false);
     }
@@ -115,7 +109,6 @@ function CreateTrip() {
       console.error("Error saving trip:", error);
     } finally {
       setLoading(false);
-      navigate(`/view-trip/${docId}`);
     }
   };
 
@@ -184,6 +177,7 @@ function CreateTrip() {
       </div>
     </div>
   );
+  <Footer />
 }
 
 export default CreateTrip;
