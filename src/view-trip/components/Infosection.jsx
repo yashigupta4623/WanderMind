@@ -1,34 +1,69 @@
-import React from "react";
-import { IoShareSocialSharp } from "react-icons/io5";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from 'react';
+import { GetPlaceDetails } from '../../service/GlobalApi';
+
+const PHOTO_REF_URL =
+  "https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=600&maxWidthPx=600&key=" +
+  import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
 
 function Infosection({ trip }) {
+  const [photoUrl, setPhotoUrl] = useState('/bg.jpg');
+
+  useEffect(() => {
+    if (trip) {
+      GetPlacePhoto();
+    }
+  }, [trip]);
+
+  const GetPlacePhoto = async () => {
+    const data = {
+      textQuery: trip.userSelection.location.label,
+    };
+
+    try {
+      const resp = await GetPlaceDetails(data);
+      const photoName = resp.data.places[0].photos[3].name;
+      const newPhotoUrl = PHOTO_REF_URL.replace("{NAME}", photoName);
+      setPhotoUrl(newPhotoUrl);
+      console.log(newPhotoUrl);
+    } catch (error) {
+      console.error("Error fetching photo:", error);
+    }
+  };
+
   return (
     <div>
       <img
-        src="/bg.jpg"
+        src={photoUrl}
         alt="Background"
-        className="h-[400px] w-full object-cover rounded-xl "
+        className="h-[340px] w-full object-cover rounded-xl"
       />
       <div className="flex justify-between items-center">
-        <div className="my-5 flex flex-col gap-2">
-          <h2 className="font-bold text-2xl">
-            {trip?.userSelection?.location?.label}
-          </h2>
-          <div className="flex flex-wrap gap-3 justify-center items-center">
-  <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs sm:text-sm md:text-md">
-    📆 {trip.userSelection?.noofDays} Days
-  </h2>
-  <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs sm:text-sm md:text-md">
-    💸 {trip.userSelection?.budget} Budget
-  </h2>
-  <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs sm:text-sm md:text-md">
-    👓 No. of Traveler : {trip.userSelection?.traveler}
-  </h2>
-</div>
-
+        return (
+    <div className="flex justify-between items-center mt-12 md:mx-16 lg:mx-48 p-6 rounded-lg shadow-lg">
+      <img
+        className="h-40 w-40 rounded-full object-cover"
+        src={photoUrl}
+        alt="Trip Image"
+      />
+      <div className="flex flex-col ml-6 items-end">
+        <div className="text-4xl font-bold mb-2 flex items-center">
+          🗺️ {trip?.userChoice?.location?.label}
         </div>
-        <Button><IoShareSocialSharp /></Button>
+        <div className="text-xl mb-1 flex items-center">
+          📅 <span className="font-semibold ml-2">Duration:</span>
+          {trip?.userChoice?.noOfDays} days
+        </div>
+        <div className="text-xl mb-1 flex items-center">
+          💰 <span className="font-semibold ml-2">Budget:</span>
+          {trip?.userChoice?.budget}
+        </div>
+        <div className="text-xl flex items-center">
+          👥 <span className="font-semibold ml-2">Traveling with:</span>
+          {trip?.userChoice?.noOfPeople}
+        </div>
+      </div>
+    </div>
+  );
       </div>
     </div>
   );

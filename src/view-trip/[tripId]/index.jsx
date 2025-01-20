@@ -4,7 +4,7 @@ import { db } from '@/service/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 import { toast } from 'sonner';
 import Infosection from '../components/Infosection';
-import Hotels from '../components/Hotels.jsx';
+import Hotels from '../components/Hotels';
 import PlacesToVisit from '../components/PlacesToVisit';
 
 
