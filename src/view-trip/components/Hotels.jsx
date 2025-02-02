@@ -14,27 +14,20 @@ function Hotels({ trip }) {
     e.target.src = "/placeholder.jpg"; // Fallback image
   };
 
-  const getGridClass = (length) => {
-    if (length === 1) return 'grid-cols-1';
-    if (length === 2) return 'grid-cols-2';
-    if (length === 3) return 'grid-cols-3';
-    return 'grid-cols-4';
-  };
-
   return (
     <div>
-      <h2 className="font-bold text-xl mt-5 my-4">Hotel Recommendations</h2>
-      <div className={`grid ${getGridClass(tripData?.hotels?.length)} gap-5`}>
+      <h2 className="font-bold text-2xl mt-5 mb-6 text-center">Hotel Recommendations</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
         {tripData?.hotels?.length > 0 ? (
           tripData.hotels.map((hotel, index) => (
-            <div key={index} className="hover:scale-105 cursor-pointer transition-all rounded-xl shadow-md">
+            <div key={index} className="hover:scale-105 cursor-pointer transition-all rounded-xl shadow-md bg-white">
               <img
                 src={hotel.hotelImageUrl || "/placeholder.jpg"}
                 className="h-40 w-full object-cover rounded-t-xl"
                 alt={hotel.hotelName}
                 onError={handleImageError} // Handle image loading errors
               />
-              <div className="p-4 bg-white rounded-b-xl">
+              <div className="p-4">
                 <div className="flex justify-between items-start">
                   <h2 className="text-lg my-2 font-bold">{hotel.hotelName}</h2>
                   <Link to={`https://www.google.com/maps/search/?api=1&query=${hotel.hotelName}`} key={index}>
@@ -52,7 +45,7 @@ function Hotels({ trip }) {
             </div>
           ))
         ) : (
-          <div>No hotels available</div>
+          <div className="text-center text-gray-500">No hotels available</div>
         )}
       </div>
     </div>
