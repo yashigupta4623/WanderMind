@@ -7,7 +7,6 @@ import { GetPlaceDetails, PHOTO_REF_URL } from '../../service/GlobalApi';
 
 function HotelCardItem({hotel}) {
 
-    
       const [photoUrl, setPhotoUrl] = useState();
       useEffect(() => {
         if (hotel) {

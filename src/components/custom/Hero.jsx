@@ -4,7 +4,7 @@ import { Button } from '../ui/button';
 
 function Hero() {
   return (
-    <div className='flex flex-col items-center mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-56 gap-6 text-center'>
+    <div className='flex flex-col items-center mx-4 sm:mx-8 md:mx-16 lg:mx-32 xl:mx-56 gap-6'>
       <h1 className='font-extrabold text-[40px] sm:text-[50px] mt-16'>
         <span className='text-[#f56551]'>Discover Your Next Adventure with AI:</span>
         <br />

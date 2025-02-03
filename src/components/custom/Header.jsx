@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { googleLogout } from "@react-oauth/google"; 
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { googleLogout } from "@react-oauth/google";
 import axios from "axios";
 import { FcGoogle } from "react-icons/fc";
 import {
@@ -56,7 +60,6 @@ function Header() {
       });
   };
 
-
   return (
     <div className="p-3 shadow-sm flex items-center gap-2 px-5 flex-wrap sm:flex-nowrap">
       <img src="/logo.svg" alt="logo" className="w-8 h-8 sm:w-10 sm:h-10" />
@@ -69,9 +72,16 @@ function Header() {
       <div className="ml-auto">
         {user ? (
           <div className="flex items-center gap-3">
-            <Button variant="outline" className="rounded-full">
-              My Trips
-            </Button>
+            <a href="/create-trip">
+              <Button variant="outline" className="rounded-full">
+                + Create Trip
+              </Button>
+            </a>
+            <a href="/my-trips">
+              <Button variant="outline" className="rounded-full">
+                My Trips
+              </Button>
+            </a>
             <Popover>
               <PopoverTrigger>
                 <img
@@ -88,9 +98,13 @@ function Header() {
             </Popover>
           </div>
         ) : (
-          <Button onClick={(()=>{
-            setOpenDialog(true);
-          })}>Sign In</Button>
+          <Button
+            onClick={() => {
+              setOpenDialog(true);
+            }}
+          >
+            Sign In
+          </Button>
         )}
       </div>
 
@@ -129,7 +143,6 @@ function Header() {
           </DialogHeader>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 }
