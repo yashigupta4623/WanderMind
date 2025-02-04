@@ -52,7 +52,7 @@ function Hero() {
           {/* Step 1: Login */}
           <div className="flex flex-col items-center text-center space-y-4">
             <div className="bg-gray-800 p-6 rounded-2xl">
-              <img src="/login.png" alt="Login Icon" className="h-[80px] w-[80px]" />
+              <img src="/login.png" alt="Login Icon" className="hover:scale-105 cursor-pointer transition-all  h-[80px] w-[80px]" />
             </div>
             <p className="font-bold text-2xl text-blue-700">Login</p>
             <p className="text-gray-600 text-lg">Log in to start your journey.</p>
@@ -63,7 +63,7 @@ function Hero() {
           {/* Step 2: Key in the travel idea */}
           <div className="flex flex-col items-center text-center space-y-4">
             <div className="bg-gray-800 p-6 rounded-2xl">
-              <img src="/bulb.png" alt="Idea Icon" className="h-[80px] w-[80px]" />
+              <img src="/bulb.png" alt="Idea Icon" className="hover:scale-105 cursor-pointer transition-all  h-[80px] w-[80px]" />
             </div>
             <h2 className="font-bold text-2xl text-blue-700">Key in the travel idea</h2>
             <p className="text-gray-600 text-lg">Share your perfect trip and allocate your expenses!</p>
@@ -72,7 +72,7 @@ function Hero() {
           {/* Step 3: Get AI Plan */}
           <div className="flex flex-col items-center text-center space-y-4">
             <div className="bg-gray-800 p-6 rounded-2xl">
-              <img src="/plane.png" alt="AI Plan Icon" className="h-[80px] w-[80px]" />
+              <img src="/plane.png" alt="AI Plan Icon" className="hover:scale-105 cursor-pointer transition-all  h-[80px] w-[80px]" />
             </div>
             <h2 className="font-bold text-2xl text-blue-700">Get AI Plan</h2>
             <p className="text-gray-600 text-lg">Get your AI-driven tailored travel plan</p>
