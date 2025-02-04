@@ -88,9 +88,9 @@ function Hero() {
             { name: "Vrindavan, India", img: "/vrin.png" },
             { name: "Ooty, India", img: "/ooty.png" },
             { name: "Greece, Republic", img: "/greece.png" },
-            { name: "Haridwar", img: "./public/haridwar.png" },
-            { name: "London", img: "./public/london.png" },
-            { name: "Delhi, India", img: "./public/india-gate.png" },
+            { name: "Haridwar", img: "/haridwar.png" },
+            { name: "London", img: "/london.png" },
+            { name: "Delhi, India", img: "/india-gate.png" },
             { name: "Mount Everest, India", img: "/mt_everest.jpg" },
             { name: "Paris, NY", img: "/paris.png" },
              
