@@ -171,9 +171,10 @@ function CreateTrip() {
       </div>
 
       <div className='my-10 justify-end flex '>
-        <Button onClick={OnGenerateTrip} disabled={loading}>
-          {loading ? <AiOutlineLoading3Quarters className="animate-spin" /> : "Generate Trip"}
-        </Button>
+      <Button onClick={OnGenerateTrip} disabled={loading}>
+  {loading ? <AiOutlineLoading3Quarters className="animate-spin text-xl inline-block" /> : "Generate Trip"}
+</Button>
+
       </div>
     </div>
   );

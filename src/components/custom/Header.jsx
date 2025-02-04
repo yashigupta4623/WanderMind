@@ -65,7 +65,7 @@ function Header() {
       <img src="/logo.svg" alt="logo" className="w-8 h-8 sm:w-10 sm:h-10" />
       <h2
         className="font-bold text-[20px] sm:text-[25px] md:text-[30px]"
-        style={{ color: "#f56551" }}
+        style={{ color: "#0000FF" }}
       >
         Wander<span className="text-[#000000]">Mind</span>
       </h2>

@@ -5,11 +5,12 @@ import App from './App.jsx';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import CreateTrip from './create-trip/index.jsx';
 import Header from './components/custom/Header.jsx';
-import Footer from './view-trip/components/Footer'; 
+// import Footer from './view-trip/components/Footer'; 
 import { Toaster } from 'sonner';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Viewtrip from './view-trip/[tripId]/index.jsx';
 import MyTrips from './my-trips';
+import Footer from './components/custom/Footer.jsx';
 
 const router = createBrowserRouter([
   {
@@ -36,7 +37,6 @@ createRoot(document.getElementById('root')).render(
       <Header />
       <Toaster />
       <RouterProvider router={router} />
-     
     </GoogleOAuthProvider>
   </StrictMode>
 );

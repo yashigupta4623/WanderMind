@@ -37,8 +37,7 @@ function UserTripCardItem({ trip }) {
             {trip?.userSelection?.location?.label}
           </h2>
           <h2 className="text-sm text-gray-600 mx-4 py-4">
-            {trip?.userSelection?.noofDays} Days trip with
-            {trip?.userSelection?.budget} Budget
+            {trip?.userSelection?.noofDays} Days trip with {trip?.userSelection?.budget} Budget
           </h2>
         </div>
       </div>
