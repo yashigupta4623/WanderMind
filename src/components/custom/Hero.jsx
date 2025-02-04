@@ -90,7 +90,7 @@ function Hero() {
             { name: "Greece, Republic", img: "/greece.png" },
             { name: "Haridwar", img: "/haridwar.png" },
             { name: "London", img: "/london.png" },
-            { name: "Delhi, India", img: "/india-gate.png" },
+            { name: "Delhi, India", img: "/India-Gate.png" },
             { name: "Mount Everest, India", img: "/mt_everest.jpg" },
             { name: "Paris, NY", img: "/paris.png" },
              
