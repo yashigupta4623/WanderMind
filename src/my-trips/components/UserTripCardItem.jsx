@@ -26,7 +26,7 @@ function UserTripCardItem({ trip }) {
 
   return (
     <Link to={`/view-trip/${trip.id}`}>
-      <div className="hover:scale-105 cursor-pointer transition-all rounded-xl shadow-md bg-white">
+      <div className="hover:scale-105 cursor-pointer transition-all rounded-xl shadow-md bg-white my-8">
         <img
           src={photoUrl ? photoUrl : "/placeholder.jpg"}
           alt=""

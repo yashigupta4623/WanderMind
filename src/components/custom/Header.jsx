@@ -67,7 +67,7 @@ function Header() {
         className="font-bold text-[20px] sm:text-[25px] md:text-[30px]"
         style={{ color: "#0000FF" }}
       >
-        Wander<span className="text-[#000000]">Mind</span>
+        Wander<span className="text-[#151414]">Mind</span>
       </h2>
       <div className="ml-auto">
         {user ? (
@@ -86,7 +86,7 @@ function Header() {
               <PopoverTrigger>
                 <img
                   src={user?.picture}
-                  className="h-[35px] w-[35px] rounded-full"
+                  className="h-[18px] w-[18px] rounded-full cursor-pointer"
                   alt={user?.name}
                 />
               </PopoverTrigger>

@@ -24,6 +24,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import Footer from "@/components/custom/Footer";
 
 const apiKey = import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
 
@@ -119,6 +120,7 @@ function CreateTrip() {
   };
 
   const SaveAiTrip = async (TripData, docId) => {
+    setLoading(true);
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       await setDoc(doc(db, "AITrips", docId), {
@@ -215,7 +217,11 @@ function CreateTrip() {
       </div>
 
       <div className="my-10 justify-end flex">
-        <Button onClick={OnGenerateTrip}>Generate Trip</Button>
+        <Button 
+        disabled={loading}
+        onClick={OnGenerateTrip}>
+          {loading? <AiOutlineLoading3Quarters className="animate-spin text-xl inline-block" /> : "Generate Trip"}
+          </Button>
       </div>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
@@ -253,6 +259,8 @@ function CreateTrip() {
           </DialogHeader>
         </DialogContent>
       </Dialog>
+
+      <Footer />
     </div>
   );
 }

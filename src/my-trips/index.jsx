@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../service/firebaseConfig";
 import UserTripCardItem from "./components/UserTripCardItem";
+import Footer from "@/components/custom/Footer";
 
 function MyTrips() {
   const navigate = useNavigate();
@@ -54,6 +55,8 @@ function MyTrips() {
           ))
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }

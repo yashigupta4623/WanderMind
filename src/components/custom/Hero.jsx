@@ -8,7 +8,7 @@ function Hero() {
     <div>
      <hr />
       {/* Hero Section */}
-      <div className="flex flex-col lg:flex-row h-full justify-center items-center mx-10 my-18">
+      <div className="flex flex-col lg:flex-row h-full justify-center items-center mx-10 my-20">
         <article className="flex-1 p-4">
           <h1 className="font-bold lg:text-7xl md:text-6xl text-4xl text-left w-full">
             Uncover the <br /> 

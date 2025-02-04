@@ -174,7 +174,6 @@ function CreateTrip() {
       <Button onClick={OnGenerateTrip} disabled={loading}>
   {loading ? <AiOutlineLoading3Quarters className="animate-spin text-xl inline-block" /> : "Generate Trip"}
 </Button>
-
       </div>
     </div>
   );
