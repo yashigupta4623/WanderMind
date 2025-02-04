@@ -4,15 +4,15 @@
 **WanderMind** is an advanced full-stack AI-powered trip planner designed to streamline the travel planning process. By leveraging cutting-edge technologies such as **React, Gemini AI, TailwindCSS, and Firebase**, this platform enables users to generate personalized travel itineraries, authenticate securely using Google, and explore locations with comprehensive details sourced from Google APIs.
 
 ## Features
-- 🚀 **AI-Powered Trip Generation** – Utilize **Gemini AI** to create intelligent travel itineraries.
-- ⚡ **Modern Frontend Development** – Built using **React and Vite** for high performance and efficiency.
-- 🔐 **Secure Authentication** – Implemented **Google Authentication** for user security.
-- 📍 **Location Search** – Integrated **Google Places Autocomplete** for intuitive search capabilities.
-- 🖼️ **Visual Enhancements** – Display high-quality **place images via Google Photos API**.
-- 🎨 **Responsive UI** – Designed with **TailwindCSS and Shadcn/ui** to ensure seamless user experience across all devices.
-- 🔥 **Data Storage** – Uses **Firebase Database** for efficient trip data management.
-- 🔄 **Navigation Optimization** – Implemented **React Router** for smooth page transitions.
-- ☁️ **Cloud Deployment** – Hosted on **Vercel** for scalable and fast deployment.
+-  **AI-Powered Trip Generation** – Utilize **Gemini AI** to create intelligent travel itineraries.
+-  **Modern Frontend Development** – Built using **React and Vite** for high performance and efficiency.
+-  **Secure Authentication** – Implemented **Google Authentication** for user security.
+-  **Location Search** – Integrated **Google Places Autocomplete** for intuitive search capabilities.
+-  **Visual Enhancements** – Display high-quality **place images via Google Photos API**.
+-  **Responsive UI** – Designed with **TailwindCSS and Shadcn/ui** to ensure seamless experience across all devices.
+-  **Data Storage** – Uses **Firebase Database** for efficient trip data management.
+-  **Navigation Optimization** – Implemented **React Router** for smooth page transitions.
+-  **Cloud Deployment** – Hosted on **Vercel** for scalable and fast deployment.
 
 ## Technology Stack
 - **Frontend:** React, Vite, TailwindCSS, Shadcn/ui
@@ -29,11 +29,12 @@ _Add screenshots here to showcase the UI and functionality._
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/246d9f71-9a83-4992-af60-6c2577aa7377" width="45%" />
-  <img src="https://github.com/user-attachments/assets/997b7062-60df-430e-969e-a1a3d7804dc6" width="45%" />
+  <img src="https://github.com/user-attachments/assets/2449a192-048e-45a5-a0ed-173f4621d7d2" width="45%" />
+
 </p>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/2449a192-048e-45a5-a0ed-173f4621d7d2" width="45%" />
+  <img src="https://github.com/user-attachments/assets/997b7062-60df-430e-969e-a1a3d7804dc6" width="45%" />
   <img src="https://github.com/user-attachments/assets/b474c8fc-9be1-41ad-af02-ab02387a915b" width="45%" />
 </p>
 
