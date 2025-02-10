@@ -123,6 +123,7 @@ function CreateTrip() {
     setLoading(true);
     try {
       const user = JSON.parse(localStorage.getItem("user"));
+      const docId = Date.now().toString();
       await setDoc(doc(db, "AITrips", docId), {
         userSelection: formData,
         tripData: TripData,
