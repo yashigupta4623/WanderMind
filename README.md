@@ -22,7 +22,7 @@
 - **Deployment Platform:** Vercel
 
 ## Live Demonstration
-🔗 **Check out WanderMind live:** [Live Application](https://wander-mind-drab.vercel.app/)
+🔗 **Check out WanderMind live:** [Live Application](https://wander-mind-eight.vercel.app/)
 
 ## Screenshots
 _Add screenshots here to showcase the UI and functionality._
