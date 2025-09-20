@@ -28,6 +28,42 @@ import Footer from "@/components/custom/Footer";
 
 const apiKey = import.meta.env.VITE_GOOGLE_PLACE_API_KEY;
 
+// Helper function to parse AI response and extract JSON
+const parseAIResponse = (responseText) => {
+  try {
+    // First, try to parse as-is
+    return JSON.parse(responseText);
+  } catch (error) {
+    console.log("Direct JSON parse failed, attempting to extract JSON from response...");
+    
+    // Try to extract JSON from markdown code blocks
+    const jsonMatch = responseText.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+    if (jsonMatch) {
+      try {
+        return JSON.parse(jsonMatch[1]);
+      } catch (e) {
+        console.log("JSON extraction from markdown failed:", e);
+      }
+    }
+    
+    // Try to find JSON object in the text
+    const jsonStart = responseText.indexOf('{');
+    const jsonEnd = responseText.lastIndexOf('}');
+    
+    if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+      const jsonString = responseText.substring(jsonStart, jsonEnd + 1);
+      try {
+        return JSON.parse(jsonString);
+      } catch (e) {
+        console.log("JSON extraction from text failed:", e);
+      }
+    }
+    
+    // If all else fails, throw the original error
+    throw new Error(`Failed to parse JSON response: ${error.message}`);
+  }
+};
+
 function CreateTrip() {
   const [place, setPlace] = useState(null);
   const [formData, setFormData] = useState({});
@@ -98,8 +134,11 @@ function CreateTrip() {
 
     try {
       const result = await chatSession.sendMessage(FINAL_PROMPT);
-      console.log(result?.response?.text());
-      const tripData = JSON.parse(result?.response?.text());
+      const responseText = result?.response?.text();
+      console.log("Raw AI response:", responseText);
+      
+      // Clean and parse JSON response
+      const tripData = parseAIResponse(responseText);
 
       const docId = Date.now().toString();
       await SaveAiTrip(JSON.stringify(tripData), docId);
@@ -108,6 +147,18 @@ function CreateTrip() {
       if (error.message.includes("The model is overloaded")) {
         toast.error(
           "The model is currently overloaded. Please try again later."
+        );
+      } else if (error.message.includes("API key not valid")) {
+        toast.error(
+          "Google AI API key is invalid. Please check your environment configuration."
+        );
+      } else if (error.message.includes("not configured")) {
+        toast.error(
+          "AI service is not properly configured. Please contact support."
+        );
+      } else if (error.message.includes("Failed to parse JSON")) {
+        toast.error(
+          "The AI response format is invalid. Please try again."
         );
       } else {
         toast.error(

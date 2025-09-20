@@ -1,6 +1,15 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+const apiKey = import.meta.env.VITE_GOOGLE_GEMINI_AI_API_KEY;
+
+// Debug: Log API key status (without exposing the actual key)
+console.log("API Key status:", apiKey ? "Present" : "Missing");
+
+if (!apiKey) {
+  console.error("VITE_GOOGLE_GEMINI_AI_API_KEY environment variable is not set.");
+  throw new Error("Google AI API key is not configured. Please set VITE_GOOGLE_GEMINI_AI_API_KEY in your environment variables.");
+}
+
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({

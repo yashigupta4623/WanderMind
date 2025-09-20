@@ -55,5 +55,38 @@ export const AI_PROMPT = `
   Traveler type: {traveler}, with a {budget} budget. 
   Provide a list of hotel options including the name, address, and the most recent image URL (ensure the URL is working), geo coordinates, rating, and descriptions and price per night in INR as well. 
   Suggest a daily itinerary with place names, details, image URLs, geo coordinates, ticket pricing, ratings, time to travel and travel time for each location for {totalDays} days, including the best time to visit. 
-  Output in JSON format.
+  
+  IMPORTANT: Return ONLY valid JSON format. Do not include any markdown code blocks, explanations, or additional text. The response must be a valid JSON object that can be parsed directly.
+  
+  Expected JSON structure:
+  {
+    "hotels": [
+      {
+        "hotelName": "string",
+        "hotelAddress": "string", 
+        "price": "string",
+        "hotelImageUrl": "string",
+        "geoCoordinates": {"latitude": number, "longitude": number},
+        "rating": "string",
+        "description": "string"
+      }
+    ],
+    "itinerary": [
+      {
+        "day": "string",
+        "plan": [
+          {
+            "placeName": "string",
+            "placeDetails": "string",
+            "placeImageUrl": "string", 
+            "geoCoordinates": {"latitude": number, "longitude": number},
+            "ticketPricing": "string",
+            "rating": "string",
+            "timeTravel": "string"
+          }
+        ],
+        "bestTimeVisit": "string"
+      }
+    ]
+  }
 `;
