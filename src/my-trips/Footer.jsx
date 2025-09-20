@@ -48,7 +48,7 @@ const Footer = () => {
         <hr style={{ width: '100%', borderTop: '1px solid #d1d1d1' }} />
         <div style={footerStyle}>
           <p style={{ fontWeight: 'bold', fontSize: '1.125rem', color: '#4a4a4a' }}>
-            Made by Yashi Gupta🪽
+            Made by ❤️
           </p>
           <div style={socialIconStyle}>
             {socialIcons.map((item, index) => (
