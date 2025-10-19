@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import { Button } from './components/ui/button'
 import Hero from './components/custom/Hero'
+import FloatingActionButton from './components/custom/FloatingActionButton'
 import Footer from "./components/custom/Footer.jsx";
 
 function App() {
@@ -13,6 +14,8 @@ function App() {
     <>
       {/*Hero*/}
       <Hero/>
+      {/*Floating Action Button*/}
+      <FloatingActionButton/>
     </>
   )
 }

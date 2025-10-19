@@ -1,14 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WanderMind</title>
-    <script type="module">
-      import.meta.env.VITE_GOOGLE_PLACE_API_KEY && document.write(`<script src="https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}&libraries=places"><\/script>`);
-    </script>
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WanderMind - AI-Powered Travel Planning</title>
+
+  <!-- Favicon and App Icons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" sizes="32x32" href="/favicon-32x32.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <!-- Meta Tags for Better SEO -->
+  <meta name="description"
+    content="Transform your travel dreams into reality with AI-powered trip planning. Personalized itineraries, real-time adaptations, and seamless booking." />
+  <meta name="keywords" content="travel planning, AI travel, trip planner, vacation planning, travel itinerary" />
+  <meta name="author" content="WanderMind" />
+  <meta name="theme-color" content="#3B82F6" />
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="WanderMind - AI-Powered Travel Planning" />
+  <meta property="og:description" content="Transform your travel dreams into reality with AI-powered trip planning" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/apple-touch-icon.svg" />
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="WanderMind - AI-Powered Travel Planning" />
+  <meta name="twitter:description" content="Transform your travel dreams into reality with AI-powered trip planning" />
+  <meta name="twitter:image" content="/apple-touch-icon.svg" />
+
+  <script type="module">
+    import.meta.env.VITE_GOOGLE_PLACE_API_KEY && document.write(`<script src="https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_PLACE_API_KEY}&libraries=places"><\/script>`);
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
 </html>

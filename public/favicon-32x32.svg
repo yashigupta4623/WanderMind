@@ -1,0 +1,19 @@
+<svg width="32" height="32" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Globe Base Circle -->
+  <circle cx="50" cy="50" r="28" fill="#3B82F6" stroke="#1E40AF" stroke-width="3"/>
+  
+  <!-- Continents - Simplified -->
+  <path d="M 35 35 Q 45 30 55 35 Q 60 40 55 50 Q 50 55 40 50 Q 30 45 35 35 Z" fill="#22C55E"/>
+  <path d="M 60 45 Q 70 40 75 50 Q 70 60 65 55 Q 55 50 60 45 Z" fill="#22C55E"/>
+  <path d="M 30 60 Q 40 65 45 70 Q 35 75 25 70 Q 25 65 30 60 Z" fill="#22C55E"/>
+  
+  <!-- Airplane - Simplified -->
+  <g transform="translate(85, 45)">
+    <path d="M -6 0 L 0 -2 L 4 0 L 0 2 Z" fill="white" stroke="#374151" stroke-width="1"/>
+    <path d="M -2 0 L 0 -3 L 2 -1 Z" fill="white"/>
+    <path d="M -2 0 L 0 3 L 2 1 Z" fill="white"/>
+  </g>
+  
+  <!-- Trail dot -->
+  <circle cx="80" cy="40" r="2" fill="#F59E0B"/>
+</svg>

@@ -17,6 +17,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useGoogleLogin } from "@react-oauth/google";
+import ThemeToggle from "./ThemeToggle";
+import AnimatedLogo from "./AnimatedLogo";
 
 function Header() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
@@ -61,15 +63,35 @@ function Header() {
   };
 
   return (
-    <div className="p-3 shadow-sm flex items-center gap-2 px-5 flex-wrap sm:flex-nowrap">
-      <img src="/logo.svg" alt="logo" className="w-8 h-8 sm:w-10 sm:h-10" />
-      <h2
-        className="font-bold text-[20px] sm:text-[25px] md:text-[30px]"
-        style={{ color: "#0000FF" }}
-      >
-        Wander<span className="text-[#151414]">Mind</span>
+    <div className="p-3 shadow-sm flex items-center gap-2 px-5 flex-wrap sm:flex-nowrap bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 transition-colors">
+      <AnimatedLogo className="w-8 h-8 sm:w-10 sm:h-10" />
+      <h2 className="font-bold text-[20px] sm:text-[25px] md:text-[30px] text-blue-600 dark:text-blue-400">
+        Wander<span className="text-gray-900 dark:text-white">Mind</span>
       </h2>
-      <div className="ml-auto">
+      <div className="ml-auto flex items-center gap-3">
+        {/* Quick Feature Access - Hidden on mobile */}
+        <div className="hidden lg:flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => window.location.href = '/create-trip?tab=inspire'}
+            className="text-xs"
+          >
+            🎯 Inspire Me
+          </Button>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => window.location.href = '/create-trip?tab=persona'}
+            className="text-xs"
+          >
+            🤖 AI Plan
+          </Button>
+        </div>
+
+        {/* Theme Toggle */}
+        <ThemeToggle />
+        
         {user ? (
           <div className="flex items-center gap-3">
             <a href="/create-trip">
@@ -86,14 +108,24 @@ function Header() {
               <PopoverTrigger>
                 <img
                   src={user?.picture}
-                  className="h-[18px] w-[18px] rounded-full cursor-pointer"
+                  className="h-[35px] w-[35px] rounded-full cursor-pointer border-2 border-gray-200 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
                   alt={user?.name}
                 />
               </PopoverTrigger>
-              <PopoverContent>
-                <h2 className="cursor-pointer" onClick={handleLogout}>
-                  LogOut
-                </h2>
+              <PopoverContent className="w-48">
+                <div className="space-y-2">
+                  <div className="px-2 py-1.5">
+                    <p className="text-sm font-medium">{user?.name}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
+                  </div>
+                  <hr className="border-gray-200 dark:border-gray-600" />
+                  <button 
+                    className="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+                    onClick={handleLogout}
+                  >
+                    Sign Out
+                  </button>
+                </div>
               </PopoverContent>
             </Popover>
           </div>
@@ -115,11 +147,7 @@ function Header() {
               <div
                 style={{ display: "flex", alignItems: "center", gap: "10px" }}
               >
-                <img
-                  src="./public/logo.svg"
-                  alt="logo"
-                  style={{ height: "40px", width: "50px" }}
-                />
+                <AnimatedLogo className="h-10 w-12" />
                 <h2
                   style={{
                     fontWeight: "bold",
