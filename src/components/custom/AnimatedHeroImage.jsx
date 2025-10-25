@@ -59,24 +59,26 @@ const AnimatedHeroImage = () => {
   return (
     <div className="relative w-full h-auto max-w-full">
       {/* View Mode Toggle */}
-      <div className="absolute top-4 left-4 z-20 flex gap-2">
+      <div className="absolute top-2 sm:top-4 left-2 sm:left-4 z-20 flex gap-1 sm:gap-2">
         <Button
           size="sm"
           variant={viewMode === 'animation' ? 'default' : 'outline'}
           onClick={() => setViewMode('animation')}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
         >
-          <Film className="w-4 h-4" />
-          Animation
+          <Film className="w-3 h-3 sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Animation</span>
+          <span className="sm:hidden">Anim</span>
         </Button>
         <Button
           size="sm"
           variant={viewMode === 'map' ? 'default' : 'outline'}
           onClick={() => setViewMode('map')}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
         >
-          <Map className="w-4 h-4" />
-          Interactive Map
+          <Map className="w-3 h-3 sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Interactive Map</span>
+          <span className="sm:hidden">Map</span>
         </Button>
       </div>
 
@@ -91,28 +93,34 @@ const AnimatedHeroImage = () => {
             style={{
               width: '100%',
               height: 'auto',
-              maxHeight: '400px'
+              maxHeight: '300px',
+              '@media (min-width: 640px)': {
+                maxHeight: '350px'
+              },
+              '@media (min-width: 1024px)': {
+                maxHeight: '400px'
+              }
             }}
             onComplete={() => setIsPlaying(false)}
           />
           
           {/* Animation Controls Overlay */}
-          <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 hover:opacity-100 transition-opacity">
+          <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 flex gap-1 sm:gap-2 opacity-0 hover:opacity-100 transition-opacity">
             <Button
               size="sm"
               variant="secondary"
               onClick={isPlaying ? handlePause : handlePlay}
-              className="bg-white/80 hover:bg-white/90 text-gray-700"
+              className="bg-white/80 hover:bg-white/90 text-gray-700 p-1 sm:p-2"
             >
-              {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+              {isPlaying ? <Pause className="w-3 h-3 sm:w-4 sm:h-4" /> : <Play className="w-3 h-3 sm:w-4 sm:h-4" />}
             </Button>
             <Button
               size="sm"
               variant="secondary"
               onClick={handleRestart}
-              className="bg-white/80 hover:bg-white/90 text-gray-700"
+              className="bg-white/80 hover:bg-white/90 text-gray-700 p-1 sm:p-2"
             >
-              <RotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
             </Button>
           </div>
 
@@ -144,7 +152,7 @@ const AnimatedHeroImage = () => {
       )}
 
       {/* Dynamic Interactive Stats - Always visible */}
-      <div className="absolute -bottom-24 left-1/2 transform -translate-x-1/2 w-full max-w-md z-10">
+      <div className="absolute -bottom-16 sm:-bottom-20 lg:-bottom-24 left-1/2 transform -translate-x-1/2 w-full max-w-xs sm:max-w-sm lg:max-w-md z-10 px-2 sm:px-0">
         <DynamicStats />
       </div>
     </div>

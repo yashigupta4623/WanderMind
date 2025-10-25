@@ -45,19 +45,19 @@ const DynamicStats = ({ className = "" }) => {
 
   if (!stats) {
     return (
-      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 border border-gray-200 dark:border-gray-700 ${className}`}>
-        <div className="grid grid-cols-3 gap-4 text-center">
+      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700 ${className}`}>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
           <div className="animate-pulse">
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div className="h-4 sm:h-6 bg-gray-200 dark:bg-gray-700 rounded mb-1 sm:mb-2"></div>
+            <div className="h-3 sm:h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
           <div className="animate-pulse">
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div className="h-4 sm:h-6 bg-gray-200 dark:bg-gray-700 rounded mb-1 sm:mb-2"></div>
+            <div className="h-3 sm:h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
           <div className="animate-pulse">
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
+            <div className="h-4 sm:h-6 bg-gray-200 dark:bg-gray-700 rounded mb-1 sm:mb-2"></div>
+            <div className="h-3 sm:h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
           </div>
         </div>
       </div>
@@ -66,12 +66,12 @@ const DynamicStats = ({ className = "" }) => {
 
   return (
     <>
-      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 border border-gray-200 dark:border-gray-700 ${className}`}>
-        <div className="grid grid-cols-3 gap-4 text-center">
+      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg p-3 sm:p-4 border border-gray-200 dark:border-gray-700 ${className}`}>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
           <div className={`transition-all duration-500 ${isAnimating ? 'scale-110' : ''}`}>
             <div className="flex items-center justify-center gap-1 mb-1">
-              <TrendingUp className="w-4 h-4 text-blue-500" />
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
+              <div className="text-lg sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
                 {formatNumber(stats.tripsPlanned)}+
               </div>
             </div>
@@ -80,8 +80,8 @@ const DynamicStats = ({ className = "" }) => {
           
           <div className={`transition-all duration-500 ${isAnimating ? 'scale-110' : ''}`}>
             <div className="flex items-center justify-center gap-1 mb-1">
-              <MapPin className="w-4 h-4 text-green-500" />
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+              <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />
+              <div className="text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400">
                 {stats.destinations}+
               </div>
             </div>
@@ -90,8 +90,8 @@ const DynamicStats = ({ className = "" }) => {
           
           <div className={`transition-all duration-500 ${isAnimating ? 'scale-110' : ''}`}>
             <div className="flex items-center justify-center gap-1 mb-1">
-              <Star className="w-4 h-4 text-yellow-500" />
-              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+              <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500" />
+              <div className="text-lg sm:text-2xl font-bold text-purple-600 dark:text-purple-400">
                 {stats.userRating}★
               </div>
             </div>
@@ -100,22 +100,24 @@ const DynamicStats = ({ className = "" }) => {
         </div>
 
         {/* Feedback Button */}
-        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-200 dark:border-gray-700">
           <Button
             variant="outline"
             size="sm"
             onClick={() => setShowFeedback(true)}
-            className="w-full flex items-center gap-2 text-xs hover:bg-blue-50 dark:hover:bg-blue-900/20"
+            className="w-full flex items-center gap-1 sm:gap-2 text-xs hover:bg-blue-50 dark:hover:bg-blue-900/20 py-1 sm:py-2"
           >
             <MessageCircle className="w-3 h-3" />
-            Share Your Feedback
+            <span className="hidden sm:inline">Share Your Feedback</span>
+            <span className="sm:hidden">Feedback</span>
           </Button>
         </div>
 
         {/* Live Update Indicator */}
-        <div className="mt-2 flex items-center justify-center gap-2 text-xs text-gray-500">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span>Live Stats • Updated {new Date(stats.lastUpdated).toLocaleTimeString()}</span>
+        <div className="mt-1 sm:mt-2 flex items-center justify-center gap-1 sm:gap-2 text-xs text-gray-500">
+          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span className="hidden sm:inline">Live Stats • Updated {new Date(stats.lastUpdated).toLocaleTimeString()}</span>
+          <span className="sm:hidden">Live • {new Date(stats.lastUpdated).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
         </div>
       </div>
 

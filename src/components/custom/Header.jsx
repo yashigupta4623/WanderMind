@@ -93,14 +93,15 @@ function Header() {
         <ThemeToggle />
         
         {user ? (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <a href="/create-trip">
-              <Button variant="outline" className="rounded-full">
-                + Create Trip
+              <Button variant="outline" className="rounded-full text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2">
+                <span className="hidden sm:inline">+ Create Trip</span>
+                <span className="sm:hidden">+ Trip</span>
               </Button>
             </a>
-            <a href="/my-trips">
-              <Button variant="outline" className="rounded-full">
+            <a href="/my-trips" className="hidden sm:block">
+              <Button variant="outline" className="rounded-full text-xs sm:text-sm px-2 sm:px-4 py-1 sm:py-2">
                 My Trips
               </Button>
             </a>
@@ -108,7 +109,7 @@ function Header() {
               <PopoverTrigger>
                 <img
                   src={user?.picture}
-                  className="h-[35px] w-[35px] rounded-full cursor-pointer border-2 border-gray-200 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
+                  className="h-[30px] w-[30px] sm:h-[35px] sm:w-[35px] rounded-full cursor-pointer border-2 border-gray-200 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
                   alt={user?.name}
                 />
               </PopoverTrigger>
@@ -119,6 +120,11 @@ function Header() {
                     <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
                   </div>
                   <hr className="border-gray-200 dark:border-gray-600" />
+                  <a href="/my-trips" className="block sm:hidden">
+                    <button className="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors">
+                      My Trips
+                    </button>
+                  </a>
                   <button 
                     className="w-full text-left px-2 py-1.5 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                     onClick={handleLogout}
@@ -134,6 +140,7 @@ function Header() {
             onClick={() => {
               setOpenDialog(true);
             }}
+            className="text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2"
           >
             Sign In
           </Button>
