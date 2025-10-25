@@ -6,6 +6,7 @@ import FeatureModal from "./FeatureModal";
 import AnimatedHeroImage from "./AnimatedHeroImage";
 import FeedbackWidget from "./FeedbackWidget";
 import Footer from "./Footer.jsx";
+import ChatBot from "./ChatBot.jsx";
 
 
 function Hero() {
@@ -636,6 +637,9 @@ function Hero() {
           // The stats will update automatically via the feedback service
         }}
       />
+
+      {/* AI ChatBot */}
+      <ChatBot />
     </div>
 
 

@@ -7,6 +7,7 @@ import Hero from './components/custom/Hero'
 import FloatingActionButton from './components/custom/FloatingActionButton'
 import Footer from "./components/custom/Footer.jsx";
 
+
 function App() {
   const [count, setCount] = useState(0)
 
@@ -16,6 +17,7 @@ function App() {
       <Hero/>
       {/*Floating Action Button*/}
       <FloatingActionButton/>
+
     </>
   )
 }

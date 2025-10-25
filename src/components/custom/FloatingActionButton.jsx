@@ -35,7 +35,7 @@ const FloatingActionButton = () => {
   ];
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-20 z-50">
       {/* Quick Action Buttons */}
       {isExpanded && (
         <div className="absolute bottom-16 right-0 space-y-3 animate-in slide-in-from-bottom-2">
@@ -67,7 +67,7 @@ const FloatingActionButton = () => {
       <Button
         size="lg"
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`w-14 h-14 rounded-full shadow-lg transition-all duration-300 ${
+        className={`rounded-full p-4 shadow-lg transition-all duration-300 ${
           isExpanded 
             ? 'bg-red-500 hover:bg-red-600 rotate-45' 
             : 'bg-blue-600 hover:bg-blue-700'
