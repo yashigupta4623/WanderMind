@@ -22,12 +22,12 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
 
-body {
-}
+body {}
 
 h1 {
   font-size: 3.2em;
@@ -45,9 +45,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -58,9 +60,11 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
@@ -94,6 +98,7 @@ button:focus-visible {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -126,30 +131,62 @@ button:focus-visible {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground transition-colors;
   }
-  
+
   /* Smooth transitions for dark mode */
   html {
     @apply transition-colors;
   }
-  
-  /* Custom scrollbar for dark mode */
+
+  /* Custom scrollbar for both light and dark mode */
   ::-webkit-scrollbar {
     @apply w-2;
   }
-  
+
   ::-webkit-scrollbar-track {
     @apply bg-gray-100 dark:bg-gray-800;
   }
-  
+
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
   }
-  
+
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-gray-500;
+    @apply bg-gray-500 dark:bg-gray-500;
+  }
+}
+
+/* Enhanced light mode visibility */
+@layer utilities {
+  .light-mode-text {
+    @apply text-gray-900 dark:text-gray-100;
+  }
+
+  .light-mode-text-secondary {
+    @apply text-gray-800 dark:text-gray-200;
+  }
+
+  .light-mode-text-muted {
+    @apply text-gray-700 dark:text-gray-300;
+  }
+
+  .light-mode-bg {
+    @apply bg-white dark:bg-gray-900;
+  }
+
+  .light-mode-bg-secondary {
+    @apply bg-gray-50 dark:bg-gray-800;
+  }
+
+  .light-mode-border {
+    @apply border-gray-300 dark:border-gray-600;
+  }
+
+  .light-mode-shadow {
+    @apply shadow-lg shadow-gray-200/50 dark:shadow-gray-900/50;
   }
 }
 
@@ -159,6 +196,7 @@ button:focus-visible {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -170,6 +208,7 @@ button:focus-visible {
     opacity: 0;
     transform: translateX(-30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -181,6 +220,7 @@ button:focus-visible {
     opacity: 0;
     transform: translateX(30px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -188,9 +228,12 @@ button:focus-visible {
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-10px);
   }
@@ -217,17 +260,18 @@ button:focus-visible {
 
 /* Mobile-specific optimizations */
 @media (max-width: 640px) {
+
   .animate-slide-in-left,
   .animate-slide-in-right,
   .animate-fade-in-up {
     animation-duration: 0.6s;
   }
-  
+
   /* Reduce animation intensity on mobile for better performance */
   .group:hover .group-hover\:scale-110 {
     transform: scale(1.05);
   }
-  
+
   .hover\:scale-105:hover {
     transform: scale(1.02);
   }
@@ -235,11 +279,12 @@ button:focus-visible {
 
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
+
   .hover\:shadow-xl:hover,
   .hover\:shadow-2xl:hover {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
-  
+
   /* Disable hover animations on touch devices */
   .group:hover .group-hover\:scale-110,
   .hover\:scale-105:hover,

@@ -5,6 +5,18 @@
     <link rel="icon" type="image/png" href="./public/travel.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title> WanderMind</title>
+    <script>
+      (() => {
+        try {
+          const key = 'wandermind-theme';
+          const stored = localStorage.getItem(key);
+          const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          const isDark = stored === 'dark' || (stored === 'system' && prefersDark) || (!stored && prefersDark);
+          if (isDark) document.documentElement.classList.add('dark');
+          document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
+        } catch {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

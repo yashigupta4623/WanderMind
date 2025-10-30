@@ -34,9 +34,9 @@ function Infosection({ trip }) {
           📍 {trip?.userSelection?.location?.label}
         </h2>
         <div className="flex gap-5">
-          <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500">📆 {trip.userSelection?.noofDays} Days</h2>
-          <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500">💸 {trip.userSelection?.budget} Budget</h2>
-          <h2 className="p-1 px-3 bg-gray-200 rounded-full text-gray-500">🏕️ No. of Traveler : {trip.userSelection?.traveler} </h2>
+          <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">📆 {trip.userSelection?.noofDays} Days</h2>
+          <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">💸 {trip.userSelection?.budget} Budget</h2>
+          <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">🏕️ No. of Traveler : {trip.userSelection?.traveler} </h2>
         </div>
       </div>
     </div>
