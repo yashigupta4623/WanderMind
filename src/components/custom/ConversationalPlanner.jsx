@@ -22,6 +22,103 @@ const ConversationalPlanner = ({ currentTrip, onTripUpdate }) => {
   const messagesEndRef = useRef(null);
   const recognition = useRef(null);
 
+  // Format JSON modification response into human-readable text
+  const formatModificationResponse = (modifications) => {
+    let formatted = '';
+
+    // Request Analysis
+    if (modifications.requestAnalysis) {
+      const analysis = modifications.requestAnalysis;
+      if (analysis.changeType) {
+        formatted += `✅ **${analysis.changeType}**\n\n`;
+      }
+      
+      if (analysis.originalBudget && analysis.newBudget) {
+        formatted += `💰 Budget Change: ${analysis.originalBudget} → ${analysis.newBudget}\n`;
+        if (analysis.requestedReduction) {
+          formatted += `� Reduction: ${analysis.requestedReduction}%\n`;
+        }
+        formatted += '\n';
+      }
+    }
+
+    // Budget Impact
+    if (modifications.budgetImpact) {
+      const impact = modifications.budgetImpact;
+      formatted += `📊 **Budget Savings:**\n`;
+      if (impact.accommodationSavings) formatted += `🏨 Accommodation: -${impact.accommodationSavings}\n`;
+      if (impact.transportSavings) formatted += `🚗 Transport: -${impact.transportSavings}\n`;
+      if (impact.foodSavings) formatted += `🍽️ Food: -${impact.foodSavings}\n`;
+      if (impact.activitiesSavings) formatted += `🎯 Activities: -${impact.activitiesSavings}\n`;
+      if (impact.totalSavings) formatted += `\n� **Total Savings: ${impact.totalSavings}**\n\n`;
+    }
+
+    // Smart Budget Breakdown
+    if (modifications.updatedItinerarySections?.smartBudgetBreakdown) {
+      const budget = modifications.updatedItinerarySections.smartBudgetBreakdown;
+      formatted += `📋 **New Budget Allocation:**\n`;
+      if (budget.accommodation) formatted += `🏨 Accommodation: ${budget.accommodation.amount} (${budget.accommodation.percentage}%)\n`;
+      if (budget.transport) formatted += `🚗 Transport: ${budget.transport.amount} (${budget.transport.percentage}%)\n`;
+      if (budget.food) formatted += `🍽️ Food: ${budget.food.amount} (${budget.food.percentage}%)\n`;
+      if (budget.activities) formatted += `🎯 Activities: ${budget.activities.amount} (${budget.activities.percentage}%)\n`;
+      if (budget.shopping) formatted += `🛍️ Shopping: ${budget.shopping.amount} (${budget.shopping.percentage}%)\n`;
+      formatted += '\n';
+
+      // Optimization Tips
+      if (budget.optimizationTips && budget.optimizationTips.length > 0) {
+        formatted += `💡 **Optimization Tips:**\n`;
+        budget.optimizationTips.slice(0, 3).forEach((tip, index) => {
+          formatted += `${index + 1}. ${tip}\n`;
+        });
+        formatted += '\n';
+      }
+    }
+
+    // Alternative Suggestions
+    if (modifications.alternativeSuggestions && modifications.alternativeSuggestions.length > 0) {
+      formatted += `💡 **Money-Saving Suggestions:**\n`;
+      modifications.alternativeSuggestions.slice(0, 4).forEach((suggestion, index) => {
+        formatted += `${index + 1}. ${suggestion}\n`;
+      });
+      formatted += '\n';
+    }
+
+    // Hotel updates
+    if (modifications.updatedItinerarySections?.accommodationOptions) {
+      const hotels = modifications.updatedItinerarySections.accommodationOptions;
+      formatted += `🏨 **Updated Hotels (${hotels.length} options):**\n`;
+      hotels.slice(0, 3).forEach((hotel, index) => {
+        formatted += `\n${index + 1}. **${hotel.name}**\n`;
+        formatted += `   📍 ${hotel.category} • ${hotel.pricePerNight}/night\n`;
+        formatted += `   ⭐ Rating: ${hotel.rating}/5\n`;
+        if (hotel.totalCost) formatted += `   💵 Total: ${hotel.totalCost}\n`;
+      });
+      if (hotels.length > 3) {
+        formatted += `\n...and ${hotels.length - 3} more options\n`;
+      }
+      formatted += '\n';
+    }
+
+    // Itinerary days update
+    if (modifications.updatedItinerarySections?.dynamicItinerary) {
+      const days = modifications.updatedItinerarySections.dynamicItinerary;
+      formatted += `📅 **Itinerary Updated (${days.length} days)**\n`;
+      formatted += `Sample days shown:\n`;
+      days.slice(0, 2).forEach(day => {
+        formatted += `\nDay ${day.day}: ${day.theme}\n`;
+        formatted += `💵 Budget: ${day.dayBudget}\n`;
+      });
+      formatted += '\n';
+    }
+
+    // If no specific formatting matched, provide a generic success message
+    if (!formatted.trim()) {
+      formatted = '✅ Your trip has been updated successfully!\n\nI\'ve applied the changes you requested. The updated details are now reflected in your itinerary.';
+    }
+
+    return formatted;
+  };
+
   // Initialize speech recognition
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -93,24 +190,36 @@ const ConversationalPlanner = ({ currentTrip, onTripUpdate }) => {
       const result = await chatSession.sendMessage(prompt);
       const response = result?.response?.text();
 
+      // Format the response for better readability
+      let formattedContent = response;
+      
+      // Try to parse and format JSON response
+      try {
+        const modifications = JSON.parse(response);
+        console.log('Parsed modifications:', modifications); // Debug log
+        
+        // Create human-readable summary
+        formattedContent = formatModificationResponse(modifications);
+        
+        // Apply changes if it's a valid modification
+        if (modifications.updatedItinerarySections || modifications.updatedItinerary) {
+          onTripUpdate(modifications);
+          toast.success('Trip updated successfully! 🎉');
+        }
+      } catch (parseError) {
+        // Response is already conversational text, use as is
+        console.log('Response is plain text, not JSON:', parseError.message);
+        // Keep the original response as formattedContent
+      }
+
       const botMessage = {
         id: Date.now() + 1,
         type: 'bot',
-        content: response,
+        content: formattedContent,
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, botMessage]);
-
-      // Try to parse and apply changes if it's a valid modification
-      try {
-        const modifications = JSON.parse(response);
-        if (modifications.updatedItinerary) {
-          onTripUpdate(modifications);
-        }
-      } catch (e) {
-        // Response is conversational, not a modification
-      }
 
     } catch (error) {
       console.error('Error in conversation:', error);
@@ -176,7 +285,22 @@ const ConversationalPlanner = ({ currentTrip, onTripUpdate }) => {
                   {message.type === 'bot' && <Bot className="w-4 h-4 mt-1 flex-shrink-0" />}
                   {message.type === 'user' && <User className="w-4 h-4 mt-1 flex-shrink-0" />}
                   <div className="flex-1">
-                    <p className="text-sm">{message.content}</p>
+                    <div className="text-sm whitespace-pre-line">
+                      {message.content.split('\n').map((line, index) => {
+                        // Check if line starts with ** for bold
+                        if (line.includes('**')) {
+                          const parts = line.split('**');
+                          return (
+                            <div key={index} className="mb-1">
+                              {parts.map((part, i) => 
+                                i % 2 === 1 ? <strong key={i}>{part}</strong> : <span key={i}>{part}</span>
+                              )}
+                            </div>
+                          );
+                        }
+                        return <div key={index} className="mb-1">{line}</div>;
+                      })}
+                    </div>
                     <p className="text-xs opacity-70 mt-1">
                       {message.timestamp.toLocaleTimeString()}
                     </p>
