@@ -209,7 +209,18 @@ const ConversationalPlanner = ({ currentTrip, onTripUpdate }) => {
       } catch (parseError) {
         // Response is already conversational text, use as is
         console.log('Response is plain text, not JSON:', parseError.message);
-        // Keep the original response as formattedContent
+        console.log('Using plain text response:', response);
+        // formattedContent is already set to response above
+        
+        // Clean up the response if it has incomplete formatting
+        if (formattedContent && formattedContent.trim()) {
+          // If response is too short or looks incomplete, add helpful text
+          if (formattedContent.length < 20) {
+            formattedContent = `✅ ${formattedContent}\n\nI've noted your preference. The changes will be reflected in your trip planning.`;
+          }
+        } else {
+          formattedContent = "I've received your request and will update your trip accordingly! 🎯";
+        }
       }
 
       const botMessage = {
@@ -256,37 +267,40 @@ const ConversationalPlanner = ({ currentTrip, onTripUpdate }) => {
   };
 
   return (
-    <Card className="w-full max-w-4xl mx-auto h-[600px] flex flex-col">
-      <CardContent className="flex-1 flex flex-col p-4">
+    <Card className="w-full mx-auto max-h-[80vh] flex flex-col">
+      <CardContent className="flex-1 flex flex-col p-3 sm:p-4 md:p-6">
         {/* Chat Header */}
         <div className="border-b pb-3 mb-4">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <Bot className="w-5 h-5 text-blue-500" />
+          <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+            <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
             Travel Assistant
           </h3>
-          <p className="text-sm text-gray-500">Refine your trip with natural language</p>
+          <p className="text-xs sm:text-sm text-gray-500">Refine your trip with natural language</p>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+        <div className="flex-1 overflow-y-auto space-y-3 sm:space-y-4 mb-4 max-h-[45vh] sm:max-h-[50vh]">
           {messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[80%] rounded-lg p-3 ${
+                className={`max-w-[85%] sm:max-w-[80%] rounded-lg p-2 sm:p-3 ${
                   message.type === 'user'
                     ? 'bg-blue-500 text-white'
                     : 'bg-gray-100 text-gray-800'
                 }`}
               >
                 <div className="flex items-start gap-2">
-                  {message.type === 'bot' && <Bot className="w-4 h-4 mt-1 flex-shrink-0" />}
-                  {message.type === 'user' && <User className="w-4 h-4 mt-1 flex-shrink-0" />}
+                  {message.type === 'bot' && <Bot className="w-3 h-3 sm:w-4 sm:h-4 mt-1 flex-shrink-0" />}
+                  {message.type === 'user' && <User className="w-3 h-3 sm:w-4 sm:h-4 mt-1 flex-shrink-0" />}
                   <div className="flex-1">
-                    <div className="text-sm whitespace-pre-line">
-                      {message.content.split('\n').map((line, index) => {
+                    <div className="text-xs sm:text-sm whitespace-pre-line break-words">
+                      {message.content && message.content.split('\n').map((line, index) => {
+                        // Skip empty lines at the start
+                        if (!line.trim() && index === 0) return null;
+                        
                         // Check if line starts with ** for bold
                         if (line.includes('**')) {
                           const parts = line.split('**');
@@ -298,10 +312,10 @@ const ConversationalPlanner = ({ currentTrip, onTripUpdate }) => {
                             </div>
                           );
                         }
-                        return <div key={index} className="mb-1">{line}</div>;
+                        return <div key={index} className="mb-1">{line || '\u00A0'}</div>;
                       })}
                     </div>
-                    <p className="text-xs opacity-70 mt-1">
+                    <p className="text-[10px] sm:text-xs opacity-70 mt-1">
                       {message.timestamp.toLocaleTimeString()}
                     </p>
                   </div>
@@ -311,13 +325,13 @@ const ConversationalPlanner = ({ currentTrip, onTripUpdate }) => {
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-gray-100 rounded-lg p-3">
+              <div className="bg-gray-100 rounded-lg p-2 sm:p-3">
                 <div className="flex items-center gap-2">
-                  <Bot className="w-4 h-4" />
+                  <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                   </div>
                 </div>
               </div>
@@ -327,16 +341,16 @@ const ConversationalPlanner = ({ currentTrip, onTripUpdate }) => {
         </div>
 
         {/* Quick Suggestions */}
-        <div className="mb-4">
-          <p className="text-sm text-gray-500 mb-2">Quick suggestions:</p>
-          <div className="flex flex-wrap gap-2">
+        <div className="mb-3 sm:mb-4">
+          <p className="text-xs sm:text-sm text-gray-500 mb-2">Quick suggestions:</p>
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {quickSuggestions.map((suggestion, index) => (
               <Button
                 key={index}
                 variant="outline"
                 size="sm"
                 onClick={() => handleQuickSuggestion(suggestion)}
-                className="text-xs"
+                className="text-[10px] sm:text-xs px-2 py-1 h-auto"
               >
                 {suggestion}
               </Button>
@@ -351,27 +365,28 @@ const ConversationalPlanner = ({ currentTrip, onTripUpdate }) => {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your request... (e.g., 'Add a day in Goa' or 'Reduce budget to ₹15K')"
+              placeholder="Type your request..."
               disabled={isLoading}
-              className="pr-12"
+              className="pr-10 text-xs sm:text-sm h-9 sm:h-10"
             />
             <Button
               size="sm"
               variant="ghost"
               onClick={handleVoiceInput}
-              className={`absolute right-2 top-1/2 transform -translate-y-1/2 p-1 h-8 w-8 ${
+              className={`absolute right-1 top-1/2 transform -translate-y-1/2 p-1 h-7 w-7 sm:h-8 sm:w-8 ${
                 isListening ? 'text-red-500' : 'text-gray-400'
               }`}
             >
-              {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+              {isListening ? <MicOff className="w-3 h-3 sm:w-4 sm:h-4" /> : <Mic className="w-3 h-3 sm:w-4 sm:h-4" />}
             </Button>
           </div>
           <Button
             onClick={handleSendMessage}
             disabled={isLoading || !inputMessage.trim()}
             size="sm"
+            className="h-9 sm:h-10 px-3 sm:px-4"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-3 h-3 sm:w-4 sm:h-4" />
           </Button>
         </div>
       </CardContent>

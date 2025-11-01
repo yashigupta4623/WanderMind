@@ -290,56 +290,56 @@ function Viewtrip() {
   };
 
   return (
-    <div className='p-10 md:px-20 lg:px-44 xl:px-56'>
+    <div className='p-4 sm:p-6 md:px-10 lg:px-20 xl:px-44 2xl:px-56'>
       {/* Trip Header with Quick Actions */}
       <div className="mb-6">
         <Infosection trip={trip} />
         
         {/* Quick Action Buttons */}
-        <div className="flex flex-wrap gap-3 mt-4">
+        <div className="flex flex-wrap gap-2 sm:gap-3 mt-4">
           <Button 
             variant="outline" 
             size="sm"
             onClick={generateShareableCard}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
           >
-            <Share2 className="w-4 h-4" />
+            <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
             Share Trip
           </Button>
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setActiveTab('story')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
           >
-            <BookOpen className="w-4 h-4" />
+            <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
             Generate Story
           </Button>
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setActiveTab('eco')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
           >
-            <Leaf className="w-4 h-4" />
+            <Leaf className="w-3 h-3 sm:w-4 sm:h-4" />
             Eco Score
           </Button>
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setActiveTab('booking')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
           >
-            <CreditCard className="w-4 h-4" />
+            <CreditCard className="w-3 h-3 sm:w-4 sm:h-4" />
             Book Now
           </Button>
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => setActiveTab('realtime')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
           >
-            <Zap className="w-4 h-4" />
+            <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
             Live Updates
           </Button>
         </div>
@@ -347,38 +347,46 @@ function Viewtrip() {
 
       {/* Enhanced Trip View with Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
-          <TabsTrigger value="overview" className="flex items-center gap-1 text-xs">
+        <TabsList className="grid w-full grid-cols-4 sm:grid-cols-4 lg:grid-cols-8 h-auto gap-1">
+          <TabsTrigger value="overview" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
             <MapPin className="w-3 h-3" />
             <span className="hidden sm:inline">Overview</span>
+            <span className="sm:hidden">Over</span>
           </TabsTrigger>
-          <TabsTrigger value="booking" className="flex items-center gap-1 text-xs">
+          <TabsTrigger value="booking" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
             <CreditCard className="w-3 h-3" />
             <span className="hidden sm:inline">Book</span>
+            <span className="sm:hidden">Book</span>
           </TabsTrigger>
-          <TabsTrigger value="realtime" className="flex items-center gap-1 text-xs">
+          <TabsTrigger value="realtime" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
             <Zap className="w-3 h-3" />
             <span className="hidden sm:inline">Live</span>
+            <span className="sm:hidden">Live</span>
           </TabsTrigger>
-          <TabsTrigger value="chat" className="flex items-center gap-1 text-xs">
+          <TabsTrigger value="chat" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
             <MessageCircle className="w-3 h-3" />
             <span className="hidden sm:inline">Chat</span>
+            <span className="sm:hidden">Chat</span>
           </TabsTrigger>
-          <TabsTrigger value="multilingual" className="flex items-center gap-1 text-xs">
+          <TabsTrigger value="multilingual" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
             <Globe className="w-3 h-3" />
             <span className="hidden sm:inline">Language</span>
+            <span className="sm:hidden">Lang</span>
           </TabsTrigger>
-          <TabsTrigger value="weather" className="flex items-center gap-1 text-xs">
+          <TabsTrigger value="weather" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
             <Cloud className="w-3 h-3" />
             <span className="hidden sm:inline">Weather</span>
+            <span className="sm:hidden">Wthr</span>
           </TabsTrigger>
-          <TabsTrigger value="story" className="flex items-center gap-1 text-xs">
+          <TabsTrigger value="story" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
             <BookOpen className="w-3 h-3" />
             <span className="hidden sm:inline">Story</span>
+            <span className="sm:hidden">Story</span>
           </TabsTrigger>
-          <TabsTrigger value="share" className="flex items-center gap-1 text-xs">
+          <TabsTrigger value="share" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
             <Share2 className="w-3 h-3" />
             <span className="hidden sm:inline">Share</span>
+            <span className="sm:hidden">Share</span>
           </TabsTrigger>
         </TabsList>
 
@@ -532,7 +540,8 @@ function Viewtrip() {
         </TabsContent>
       </Tabs>
 
-      <div className='mt-10'>
+      {/* Footer - Always at bottom */}
+      <div className='mt-16'>
         <Footer />
       </div>
 
