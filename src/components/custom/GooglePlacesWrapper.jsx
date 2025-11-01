@@ -22,25 +22,20 @@ const GooglePlacesWrapper = ({ apiKey, selectProps, onPlaceSelect }) => {
       if (onPlaceSelect) {
         onPlaceSelect(mockPlace);
       }
+      toast.success(`Selected destination: ${manualInput}`);
+      setManualInput(''); // Clear input after selection
     }
   };
 
   // If no valid API key, show manual input
   if (useManualInput) {
     return (
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <AlertCircle className="w-4 h-4 text-yellow-600" />
-          <p className="text-sm text-yellow-800">
-            Google Places API key not configured. Using manual input mode.
-          </p>
-        </div>
-        
+      <div className="space-y-3">        
         <div className="flex gap-2">
           <div className="flex-1 relative">
             <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <Input
-              placeholder="Enter destination manually (e.g., 'Paris, France' or 'Mumbai, India')"
+              placeholder={selectProps?.placeholder || "Enter destination (e.g., 'Paris, France' or 'Mumbai, India')"}
               value={manualInput}
               onChange={(e) => setManualInput(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleManualSubmit()}
@@ -53,6 +48,36 @@ const GooglePlacesWrapper = ({ apiKey, selectProps, onPlaceSelect }) => {
           >
             Select
           </Button>
+        </div>
+
+        {/* Popular destinations for quick selection */}
+        <div className="flex flex-wrap gap-2">
+          <p className="text-xs text-gray-500 w-full mb-1">Quick select:</p>
+          {['Mumbai, India', 'Delhi, India', 'Goa, India', 'Jaipur, India', 'Kerala, India', 'Manali, India'].map((destination) => (
+            <Button
+              key={destination}
+              variant="outline"
+              size="sm"
+              className="text-xs"
+              onClick={() => {
+                setManualInput(destination);
+                const mockPlace = {
+                  label: destination,
+                  value: destination,
+                  place_id: `manual_${Date.now()}`
+                };
+                if (selectProps?.onChange) {
+                  selectProps.onChange(mockPlace);
+                }
+                if (onPlaceSelect) {
+                  onPlaceSelect(mockPlace);
+                }
+                toast.success(`Selected destination: ${destination}`);
+              }}
+            >
+              {destination.split(',')[0]}
+            </Button>
+          ))}
         </div>
 
         {apiKey && apiKey !== 'AIzaSyDemoKey123456789' && (

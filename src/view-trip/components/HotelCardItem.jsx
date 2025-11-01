@@ -15,15 +15,22 @@ function HotelCardItem({hotel}) {
       }, [hotel]);
     
       const GetPlacePhoto = async () => {
-        const data = {
-          textQuery: hotel?.hotelName,
-        };
-        const result = await GetPlaceDetails(data).then(resp=>{
-          console.log(resp.data.places[0].photos[3].name)
-          const PhotoUrl = PHOTO_REF_URL.replace("{NAME}", resp.data.places[0].photos[1].name);
-          setPhotoUrl(PhotoUrl);
-        });
-    
+        try {
+          const data = {
+            textQuery: hotel?.hotelName,
+          };
+          const result = await GetPlaceDetails(data);
+          if (result?.data?.places?.[0]?.photos?.[1]?.name) {
+            const PhotoUrl = PHOTO_REF_URL.replace("{NAME}", result.data.places[0].photos[1].name);
+            setPhotoUrl(PhotoUrl);
+          }
+        } catch (error) {
+          // Photo fetch failed, using fallback image
+          // Use hotel image from data if available
+          if (hotel?.hotelImageUrl) {
+            setPhotoUrl(hotel.hotelImageUrl);
+          }
+        }
       }
 
   return (

@@ -178,13 +178,14 @@ function CreateTrip() {
       toast("Please login to generate trip");
     }
 
-    if (
-      !formData?.location ||
-      !formData?.noofDays ||
-      !formData?.budget ||
-      !formData?.traveler
-    ) {
-      toast("Please fill all the details");
+    const missingFields = [];
+    if (!formData?.location) missingFields.push("destination");
+    if (!formData?.noofDays) missingFields.push("number of days");
+    if (!formData?.budget) missingFields.push("budget");
+    if (!formData?.traveler) missingFields.push("traveler type");
+
+    if (missingFields.length > 0) {
+      toast.error(`Please fill in: ${missingFields.join(", ")}`);
       return;
     }
 
@@ -216,9 +217,20 @@ function CreateTrip() {
 
       const docId = Date.now().toString();
       await SaveAiTrip(JSON.stringify(tripData), docId);
+      
+      if (isDemoMode) {
+        toast.success("Demo trip generated successfully! 🎉");
+      } else {
+        toast.success("Your personalized trip has been created! ✨");
+      }
     } catch (error) {
       console.error("Error generating trip:", error);
-      if (error.message.includes("The model is overloaded")) {
+      if (error.message.includes("429") || error.message.includes("Resource exhausted")) {
+        setRateLimitHit(true);
+        toast.success(
+          "🎯 Switched to demo mode due to API limits. Your trip is being generated with sample data!"
+        );
+      } else if (error.message.includes("The model is overloaded")) {
         toast.error(
           "The model is currently overloaded. Please try again later."
         );
@@ -263,6 +275,9 @@ function CreateTrip() {
     }
   };
 
+  const isDemoMode = !import.meta.env.VITE_GOOGLE_GEMINI_AI_API_KEY || import.meta.env.VITE_GOOGLE_GEMINI_AI_API_KEY === 'AIzaSyDemoKey123456789';
+  const [rateLimitHit, setRateLimitHit] = useState(false);
+
   return (
     <div className="sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10">
       <div className="text-center mb-8">
@@ -272,6 +287,45 @@ function CreateTrip() {
         <p className="mt-3 text-gray-700 dark:text-gray-300 text-lg">
           AI-powered travel planning with personalized recommendations
         </p>
+        {(isDemoMode || rateLimitHit) && (
+          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <p className="text-sm text-blue-800 dark:text-blue-200">
+              {rateLimitHit ? (
+                <>⚡ <strong>Rate Limit Mode:</strong> API quota exceeded. Using demo mode with realistic sample data!</>
+              ) : (
+                <>🎯 <strong>Demo Mode:</strong> Experience our AI travel planner with sample data. All features are fully functional!</>
+              )}
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Progress Indicator */}
+      <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-semibold text-sm">Trip Planning Progress</h3>
+          <span className="text-xs text-gray-500">
+            {[formData?.location, formData?.noofDays, formData?.traveler, formData?.budget].filter(Boolean).length}/4 completed
+          </span>
+        </div>
+        <div className="grid grid-cols-4 gap-2 text-xs">
+          <div className={`flex items-center gap-1 ${formData?.location ? 'text-green-600' : 'text-gray-400'}`}>
+            <div className={`w-2 h-2 rounded-full ${formData?.location ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            Destination
+          </div>
+          <div className={`flex items-center gap-1 ${formData?.noofDays ? 'text-green-600' : 'text-gray-400'}`}>
+            <div className={`w-2 h-2 rounded-full ${formData?.noofDays ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            Duration
+          </div>
+          <div className={`flex items-center gap-1 ${formData?.traveler ? 'text-green-600' : 'text-gray-400'}`}>
+            <div className={`w-2 h-2 rounded-full ${formData?.traveler ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+            Travelers
+          </div>
+          <div className={`flex items-center gap-1 ${formData?.budget ? 'text-green-600' : 'text-red-500 font-medium'}`}>
+            <div className={`w-2 h-2 rounded-full ${formData?.budget ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            Budget {!formData?.budget && '(Required)'}
+          </div>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -292,10 +346,13 @@ function CreateTrip() {
           </TabsTrigger>
           <TabsTrigger
             value="basic"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
+            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300 relative"
           >
             <MapPin className="w-3 h-3" />
             <span className="hidden sm:inline">Details</span>
+            {(!formData?.location || !formData?.noofDays || !formData?.traveler) && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            )}
           </TabsTrigger>
           <TabsTrigger
             value="group"
@@ -306,10 +363,13 @@ function CreateTrip() {
           </TabsTrigger>
           <TabsTrigger
             value="budget"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
+            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300 relative"
           >
             <Calculator className="w-3 h-3" />
             <span className="hidden sm:inline">Budget</span>
+            {!formData?.budget && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            )}
           </TabsTrigger>
           <TabsTrigger
             value="realtime"
@@ -576,12 +636,12 @@ function CreateTrip() {
           {loading ? (
             <>
               <AiOutlineLoading3Quarters className="animate-spin text-xl mr-2" />
-              Generating Your Perfect Trip...
+              {isDemoMode ? 'Generating Demo Trip...' : 'Generating Your Perfect Trip...'}
             </>
           ) : (
             <>
               <Sparkles className="w-5 h-5 mr-2" />
-              Generate AI-Powered Trip
+              {isDemoMode ? 'Generate Demo Trip' : 'Generate AI-Powered Trip'}
             </>
           )}
         </Button>

@@ -15,27 +15,50 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
 
   useEffect(() => {
     if (destination && days && travelers) {
-      predictBudget();
+      // IMMEDIATE TEST: Set hardcoded realistic values first
+      const testBudget = {
+        budget: 25000,   // ₹25,000 for 2 people, 5 days budget
+        moderate: 60000, // ₹60,000 for 2 people, 5 days moderate  
+        luxury: 140000   // ₹1,40,000 for 2 people, 5 days luxury
+      };
+
+      console.log('Setting test budget first:', testBudget);
+      setBudgetPrediction(testBudget);
+
+      // Then calculate the real budget
+      setTimeout(() => {
+        const defaultBudget = getDefaultBudgetEstimate();
+        console.log('Budget Calculation Debug:', {
+          destination,
+          days,
+          travelers,
+          calculatedBudget: defaultBudget
+        });
+        setBudgetPrediction(defaultBudget);
+        predictBudget();
+      }, 100);
     }
   }, [destination, days, travelers]);
 
   const predictBudget = async () => {
     setIsLoading(true);
     try {
-      const prompt = BUDGET_PREDICTOR_PROMPT
-        .replace('{destination}', destination)
-        .replace('{days}', days)
-        .replace('{travelers}', travelers);
+      // ALWAYS use default realistic budget - don't trust AI parsing for now
+      const defaultBudget = getDefaultBudgetEstimate();
+      console.log('Using default realistic budget:', defaultBudget);
+      setBudgetPrediction(defaultBudget);
 
-      const result = await chatSession.sendMessage(prompt);
-      const response = result?.response?.text();
-      
-      // Parse the AI response for budget ranges
-      const budgetData = parseBudgetResponse(response);
-      setBudgetPrediction(budgetData);
+      // Optional: Try AI but don't use the result if it's unrealistic
+      // const prompt = BUDGET_PREDICTOR_PROMPT
+      //   .replace('{destination}', destination)
+      //   .replace('{days}', days)
+      //   .replace('{travelers}', travelers);
+      // const result = await chatSession.sendMessage(prompt);
+      // const response = result?.response?.text();
+      // console.log('AI Response (not used):', response);
+
     } catch (error) {
       console.error('Budget prediction error:', error);
-      toast.error('Failed to predict budget. Using default estimates.');
       setBudgetPrediction(getDefaultBudgetEstimate());
     } finally {
       setIsLoading(false);
@@ -45,7 +68,7 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
   const parseBudgetResponse = (response) => {
     // Default budget structure if AI parsing fails
     const defaultBudget = getDefaultBudgetEstimate();
-    
+
     try {
       // Try to extract budget information from AI response
       const budgetMatch = response.match(/budget|cost|price|₹|INR/gi);
@@ -67,23 +90,86 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
   };
 
   const getDefaultBudgetEstimate = () => {
-    const basePerDay = {
-      budget: 2000,
-      moderate: 4000,
-      luxury: 8000
-    };
+    // Extract number from travelers string (e.g., "2 People" -> 2, "Solo Traveler" -> 1)
+    let travelerCount = 1;
+    if (travelers) {
+      const match = travelers.match(/\d+/);
+      if (match) {
+        travelerCount = parseInt(match[0]);
+      } else if (travelers.toLowerCase().includes('solo')) {
+        travelerCount = 1;
+      } else if (travelers.toLowerCase().includes('couple')) {
+        travelerCount = 2;
+      } else if (travelers.toLowerCase().includes('family')) {
+        travelerCount = 4;
+      } else if (travelers.toLowerCase().includes('friends')) {
+        travelerCount = 6;
+      }
+    }
 
-    const multiplier = parseInt(travelers) || 1;
     const totalDays = parseInt(days) || 1;
 
-    return {
-      budget: basePerDay.budget * totalDays * multiplier,
-      moderate: basePerDay.moderate * totalDays * multiplier,
-      luxury: basePerDay.luxury * totalDays * multiplier
+    // Realistic Indian travel costs per person per day (in INR)
+    const costPerPersonPerDay = {
+      budget: {
+        accommodation: 800,   // Budget hotels/hostels
+        food: 600,           // Local food, street food
+        transport: 400,      // Local transport, buses
+        activities: 500,     // Basic sightseeing
+        miscellaneous: 200   // Shopping, tips, etc.
+      },
+      moderate: {
+        accommodation: 2500,  // 3-star hotels
+        food: 1200,          // Mix of local and restaurants
+        transport: 800,      // Taxis, trains
+        activities: 1000,    // Paid attractions, tours
+        miscellaneous: 500   // Shopping, souvenirs
+      },
+      luxury: {
+        accommodation: 6000,  // 4-5 star hotels
+        food: 2500,          // Fine dining, room service
+        transport: 2000,     // Private cars, flights
+        activities: 2500,    // Premium experiences
+        miscellaneous: 1000  // Luxury shopping
+      }
     };
+
+    // Calculate total per category
+    const calculateTotal = (category) => {
+      const dailyCost = Object.values(costPerPersonPerDay[category]).reduce((sum, cost) => sum + cost, 0);
+      const total = dailyCost * travelerCount * totalDays;
+      console.log(`${category} calculation:`, {
+        dailyCost,
+        travelerCount,
+        totalDays,
+        total
+      });
+      return total;
+    };
+
+    const result = {
+      budget: calculateTotal('budget'),
+      moderate: calculateTotal('moderate'),
+      luxury: calculateTotal('luxury')
+    };
+
+    console.log('Final budget calculation:', {
+      travelers,
+      days,
+      travelerCount,
+      totalDays,
+      result
+    });
+
+    return result;
   };
 
   const formatCurrency = (amount) => {
+    // Handle NaN or invalid amounts
+    if (!amount || isNaN(amount)) {
+      return '₹0';
+    }
+
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
@@ -92,30 +178,57 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
   };
 
   const getBudgetBreakdown = (totalBudget) => {
+    // Handle invalid budget amounts
+    const budget = parseInt(totalBudget) || 0;
+
+    // More realistic Indian travel budget breakdown
     return {
-      accommodation: Math.round(totalBudget * 0.4),
-      food: Math.round(totalBudget * 0.25),
-      activities: Math.round(totalBudget * 0.2),
-      transport: Math.round(totalBudget * 0.1),
-      miscellaneous: Math.round(totalBudget * 0.05)
+      accommodation: Math.round(budget * 0.35),  // 35% - Hotels/stays
+      food: Math.round(budget * 0.25),          // 25% - Meals and dining
+      activities: Math.round(budget * 0.20),    // 20% - Sightseeing, tours
+      transport: Math.round(budget * 0.15),     // 15% - Local and intercity transport
+      miscellaneous: Math.round(budget * 0.05)  // 5% - Shopping, tips, emergency
     };
   };
 
   const BudgetCard = ({ type, amount, isRecommended = false }) => {
     const breakdown = getBudgetBreakdown(amount);
-    
+
+    const getBudgetTitle = (type) => {
+      switch (type) {
+        case 'budget': return 'Budget Travel';
+        case 'moderate': return 'Comfortable';
+        case 'luxury': return 'Luxury';
+        default: return type;
+      }
+    };
+
+    const getBudgetDescription = (type) => {
+      switch (type) {
+        case 'budget': return 'Hostels, local food, public transport';
+        case 'moderate': return '3-star hotels, mix dining, private transport';
+        case 'luxury': return '4-5 star hotels, fine dining, premium experiences';
+        default: return '';
+      }
+    };
+
     return (
-      <Card className={`cursor-pointer transition-all hover:shadow-lg ${
-        isRecommended ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-      }`} onClick={() => onBudgetSelect && onBudgetSelect(type, amount)}>
+      <Card className={`cursor-pointer transition-all hover:shadow-lg ${isRecommended ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+        }`} onClick={() => onBudgetSelect && onBudgetSelect(type, amount)}>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg capitalize">{type}</CardTitle>
+            <div>
+              <CardTitle className="text-lg">{getBudgetTitle(type)}</CardTitle>
+              <p className="text-xs text-gray-500 mt-1">{getBudgetDescription(type)}</p>
+            </div>
             {isRecommended && <Badge variant="default">Recommended</Badge>}
           </div>
           <div className="text-2xl font-bold text-green-600">
             {formatCurrency(amount)}
           </div>
+          <p className="text-xs text-gray-500">
+            ₹{Math.round(amount / parseInt(days) / (parseInt(travelers?.match(/\d+/)?.[0]) || 1)).toLocaleString()} per person per day
+          </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-2 text-sm">
@@ -181,17 +294,17 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
 
       {budgetPrediction && (
         <div className="grid md:grid-cols-3 gap-4">
-          <BudgetCard 
-            type="budget" 
+          <BudgetCard
+            type="budget"
             amount={budgetPrediction.budget}
           />
-          <BudgetCard 
-            type="moderate" 
+          <BudgetCard
+            type="moderate"
             amount={budgetPrediction.moderate}
             isRecommended={true}
           />
-          <BudgetCard 
-            type="luxury" 
+          <BudgetCard
+            type="luxury"
             amount={budgetPrediction.luxury}
           />
         </div>
@@ -213,7 +326,7 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
                 className="pl-10"
               />
             </div>
-            <Button 
+            <Button
               onClick={() => onBudgetSelect && onBudgetSelect('custom', parseInt(customBudget))}
               disabled={!customBudget || parseInt(customBudget) < 1000}
             >
