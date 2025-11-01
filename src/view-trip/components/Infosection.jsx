@@ -18,18 +18,39 @@ function Infosection({ trip }) {
     const budgetAmount = trip?.userSelection?.budgetAmount;
     console.log('Infosection budget data:', { budgetAmount, budget: trip?.userSelection?.budget, userSelection: trip?.userSelection });
     
-    if (budgetAmount) {
-      return `₹${parseInt(budgetAmount).toLocaleString()} Budget`;
+    // Try to show actual budget amount first
+    if (budgetAmount && budgetAmount > 0) {
+      return `₹${parseInt(budgetAmount).toLocaleString()}`;
     }
     
-    // Fallback to budget type if amount not available
-    const budgetMap = {
-      'budget': 'Budget Travel',
-      'moderate': 'Comfortable',
-      'luxury': 'Luxury',
-      'custom': 'Custom Budget'
-    };
-    return budgetMap[trip?.userSelection?.budget] || 'Budget Travel';
+    // Try to extract amount from trip data or generate realistic amount based on budget type
+    const budget = trip?.userSelection?.budget;
+    const days = parseInt(trip?.userSelection?.noofDays) || 3;
+    const travelers = trip?.userSelection?.traveler || '1 Person';
+    
+    // Extract number of people
+    const peopleCount = travelers.includes('2') ? 2 : 
+                      travelers.includes('3') ? 3 : 
+                      travelers.includes('4') ? 4 : 
+                      travelers.includes('Group') ? 4 : 1;
+    
+    // Generate realistic budget amounts based on type
+    let estimatedAmount = 0;
+    switch(budget) {
+      case 'budget':
+        estimatedAmount = days * peopleCount * 2500; // ₹2,500 per person per day
+        break;
+      case 'moderate':
+        estimatedAmount = days * peopleCount * 4500; // ₹4,500 per person per day
+        break;
+      case 'luxury':
+        estimatedAmount = days * peopleCount * 8000; // ₹8,000 per person per day
+        break;
+      default:
+        estimatedAmount = days * peopleCount * 4000; // Default moderate
+    }
+    
+    return `₹${estimatedAmount.toLocaleString()}`;
   };
 
   const GetPlacePhoto = async () => {

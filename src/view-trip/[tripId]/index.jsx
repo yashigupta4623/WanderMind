@@ -460,6 +460,46 @@ function Viewtrip() {
               </p>
             </div>
 
+            {/* Helper function for budget display */}
+            {(() => {
+              const formatShareBudget = (trip) => {
+                const budgetAmount = trip?.userSelection?.budgetAmount;
+                
+                if (budgetAmount && budgetAmount > 0) {
+                  return `₹${parseInt(budgetAmount).toLocaleString()}`;
+                }
+                
+                // Generate realistic amount based on budget type
+                const budget = trip?.userSelection?.budget;
+                const days = parseInt(trip?.userSelection?.noofDays) || 3;
+                const travelers = trip?.userSelection?.traveler || '1 Person';
+                const peopleCount = travelers.includes('2') ? 2 : 
+                                  travelers.includes('3') ? 3 : 
+                                  travelers.includes('4') ? 4 : 
+                                  travelers.includes('Group') ? 4 : 1;
+                
+                let estimatedAmount = 0;
+                switch(budget) {
+                  case 'budget':
+                    estimatedAmount = days * peopleCount * 2500;
+                    break;
+                  case 'moderate':
+                    estimatedAmount = days * peopleCount * 4500;
+                    break;
+                  case 'luxury':
+                    estimatedAmount = days * peopleCount * 8000;
+                    break;
+                  default:
+                    estimatedAmount = days * peopleCount * 4000;
+                }
+                
+                return `₹${estimatedAmount.toLocaleString()}`;
+              };
+              
+              window.formatShareBudget = formatShareBudget; // Make it available
+              return null;
+            })()}
+
             {/* Enhanced Shareable Trip Card Preview */}
             <div ref={tripCardRef} className="relative overflow-hidden bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 text-white rounded-2xl shadow-2xl">
               {/* Background Pattern */}
