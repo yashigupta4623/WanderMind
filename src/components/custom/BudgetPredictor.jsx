@@ -12,6 +12,7 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
   const [budgetPrediction, setBudgetPrediction] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [customBudget, setCustomBudget] = useState('');
+  const [selectedBudgetType, setSelectedBudgetType] = useState(null);
 
   useEffect(() => {
     if (destination && days && travelers) {
@@ -193,6 +194,7 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
 
   const BudgetCard = ({ type, amount, isRecommended = false }) => {
     const breakdown = getBudgetBreakdown(amount);
+    const isSelected = selectedBudgetType === type;
 
     const getBudgetTitle = (type) => {
       switch (type) {
@@ -212,45 +214,93 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
       }
     };
 
+    const handleCardClick = () => {
+      setSelectedBudgetType(type);
+      if (onBudgetSelect) {
+        onBudgetSelect(type, amount);
+      }
+    };
+
     return (
-      <Card className={`cursor-pointer transition-all hover:shadow-lg ${isRecommended ? 'ring-2 ring-blue-500 bg-blue-50' : ''
-        }`} onClick={() => onBudgetSelect && onBudgetSelect(type, amount)}>
+      <Card 
+        className={`cursor-pointer transition-all hover:shadow-lg border-2 ${
+          isSelected 
+            ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20 border-blue-500' 
+            : isRecommended 
+              ? 'border-orange-300 bg-orange-50 dark:bg-orange-900/20' 
+              : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+        }`} 
+        onClick={handleCardClick}
+      >
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg">{getBudgetTitle(type)}</CardTitle>
-              <p className="text-xs text-gray-500 mt-1">{getBudgetDescription(type)}</p>
+              <CardTitle className={`text-lg ${
+                isSelected ? 'text-blue-700 dark:text-blue-300' : 'text-gray-900 dark:text-gray-100'
+              }`}>
+                {getBudgetTitle(type)}
+              </CardTitle>
+              <p className={`text-xs mt-1 ${
+                isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'
+              }`}>
+                {getBudgetDescription(type)}
+              </p>
             </div>
-            {isRecommended && <Badge variant="default">Recommended</Badge>}
+            <div className="flex flex-col gap-1">
+              {isSelected && (
+                <Badge variant="default" className="bg-blue-600 text-white">
+                  Selected
+                </Badge>
+              )}
+              {isRecommended && !isSelected && (
+                <Badge variant="outline" className="border-orange-400 text-orange-600 bg-orange-100 dark:bg-orange-900/30">
+                  Recommended
+                </Badge>
+              )}
+            </div>
           </div>
-          <div className="text-2xl font-bold text-green-600">
+          <div className={`text-2xl font-bold ${
+            isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'
+          }`}>
             {formatCurrency(amount)}
           </div>
-          <p className="text-xs text-gray-500">
+          <p className={`text-xs ${
+            isSelected ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'
+          }`}>
             ₹{Math.round(amount / parseInt(days) / (parseInt(travelers?.match(/\d+/)?.[0]) || 1)).toLocaleString()} per person per day
           </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
+            <div className={`flex justify-between ${
+              isSelected ? 'text-gray-800 dark:text-gray-200' : 'text-gray-700 dark:text-gray-300'
+            }`}>
               <span>🏨 Accommodation</span>
-              <span>{formatCurrency(breakdown.accommodation)}</span>
+              <span className="font-medium">{formatCurrency(breakdown.accommodation)}</span>
             </div>
-            <div className="flex justify-between">
+            <div className={`flex justify-between ${
+              isSelected ? 'text-gray-800 dark:text-gray-200' : 'text-gray-700 dark:text-gray-300'
+            }`}>
               <span>🍽️ Food</span>
-              <span>{formatCurrency(breakdown.food)}</span>
+              <span className="font-medium">{formatCurrency(breakdown.food)}</span>
             </div>
-            <div className="flex justify-between">
+            <div className={`flex justify-between ${
+              isSelected ? 'text-gray-800 dark:text-gray-200' : 'text-gray-700 dark:text-gray-300'
+            }`}>
               <span>🎯 Activities</span>
-              <span>{formatCurrency(breakdown.activities)}</span>
+              <span className="font-medium">{formatCurrency(breakdown.activities)}</span>
             </div>
-            <div className="flex justify-between">
+            <div className={`flex justify-between ${
+              isSelected ? 'text-gray-800 dark:text-gray-200' : 'text-gray-700 dark:text-gray-300'
+            }`}>
               <span>🚗 Transport</span>
-              <span>{formatCurrency(breakdown.transport)}</span>
+              <span className="font-medium">{formatCurrency(breakdown.transport)}</span>
             </div>
-            <div className="flex justify-between">
+            <div className={`flex justify-between ${
+              isSelected ? 'text-gray-800 dark:text-gray-200' : 'text-gray-700 dark:text-gray-300'
+            }`}>
               <span>💼 Miscellaneous</span>
-              <span>{formatCurrency(breakdown.miscellaneous)}</span>
+              <span className="font-medium">{formatCurrency(breakdown.miscellaneous)}</span>
             </div>
           </div>
         </CardContent>
@@ -293,26 +343,58 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
       </Card>
 
       {budgetPrediction && (
-        <div className="grid md:grid-cols-3 gap-4">
-          <BudgetCard
-            type="budget"
-            amount={budgetPrediction.budget}
-          />
-          <BudgetCard
-            type="moderate"
-            amount={budgetPrediction.moderate}
-            isRecommended={true}
-          />
-          <BudgetCard
-            type="luxury"
-            amount={budgetPrediction.luxury}
-          />
-        </div>
+        <>
+          <div className="grid md:grid-cols-3 gap-4">
+            <BudgetCard
+              type="budget"
+              amount={budgetPrediction.budget}
+            />
+            <BudgetCard
+              type="moderate"
+              amount={budgetPrediction.moderate}
+              isRecommended={true}
+            />
+            <BudgetCard
+              type="luxury"
+              amount={budgetPrediction.luxury}
+            />
+          </div>
+          
+          {/* Quick Budget Selection */}
+          <Card className="bg-gray-50 dark:bg-gray-800">
+            <CardContent className="pt-6">
+              <h4 className="font-semibold mb-3 text-gray-800 dark:text-gray-200">Quick Budget Selection:</h4>
+              <div className="flex flex-wrap gap-2">
+                {[15000, 25000, 50000, 75000, 100000, 150000].map((amount) => (
+                  <Button
+                    key={amount}
+                    variant={selectedBudgetType === 'quick' && customBudget == amount ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => {
+                      setCustomBudget(amount.toString());
+                      setSelectedBudgetType('quick');
+                      onBudgetSelect && onBudgetSelect('custom', amount);
+                    }}
+                    className="text-xs"
+                  >
+                    ₹{amount.toLocaleString()}
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </>
       )}
 
-      <Card>
+      <Card className="border-2 border-dashed border-gray-300 dark:border-gray-600">
         <CardHeader>
-          <CardTitle className="text-lg">Custom Budget</CardTitle>
+          <CardTitle className="text-lg flex items-center gap-2">
+            <Calculator className="w-5 h-5" />
+            Custom Budget
+          </CardTitle>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Set your own budget amount for personalized planning
+          </p>
         </CardHeader>
         <CardContent>
           <div className="flex gap-3">
@@ -320,29 +402,41 @@ const BudgetPredictor = ({ destination, days, travelers, onBudgetSelect }) => {
               <IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
                 type="number"
-                placeholder="Enter your budget"
+                placeholder="Enter your budget (min ₹1,000)"
                 value={customBudget}
                 onChange={(e) => setCustomBudget(e.target.value)}
-                className="pl-10"
+                className="pl-10 text-lg font-medium"
+                min="1000"
+                step="1000"
               />
             </div>
             <Button
-              onClick={() => onBudgetSelect && onBudgetSelect('custom', parseInt(customBudget))}
+              onClick={() => {
+                setSelectedBudgetType('custom');
+                onBudgetSelect && onBudgetSelect('custom', parseInt(customBudget));
+              }}
               disabled={!customBudget || parseInt(customBudget) < 1000}
+              className="px-6"
             >
               Use This Budget
             </Button>
           </div>
           {customBudget && parseInt(customBudget) >= 1000 && (
-            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-              <h4 className="font-medium mb-2">Budget Breakdown:</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm">
+            <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg border border-green-200 dark:border-green-800">
+              <h4 className="font-semibold mb-3 text-green-800 dark:text-green-200">Budget Breakdown:</h4>
+              <div className="grid grid-cols-2 gap-3 text-sm">
                 {Object.entries(getBudgetBreakdown(parseInt(customBudget))).map(([key, value]) => (
-                  <div key={key} className="flex justify-between">
-                    <span className="capitalize">{key}:</span>
-                    <span>{formatCurrency(value)}</span>
+                  <div key={key} className="flex justify-between p-2 bg-white/50 dark:bg-gray-800/50 rounded">
+                    <span className="capitalize font-medium text-gray-700 dark:text-gray-300">{key}:</span>
+                    <span className="font-bold text-green-600 dark:text-green-400">{formatCurrency(value)}</span>
                   </div>
                 ))}
+              </div>
+              <div className="mt-3 pt-3 border-t border-green-200 dark:border-green-700">
+                <div className="flex justify-between font-bold text-green-800 dark:text-green-200">
+                  <span>Per Person Per Day:</span>
+                  <span>₹{Math.round(parseInt(customBudget) / parseInt(days) / (parseInt(travelers?.match(/\d+/)?.[0]) || 1)).toLocaleString()}</span>
+                </div>
               </div>
             </div>
           )}

@@ -122,7 +122,22 @@ function CreateTrip() {
       budget: type,
       budgetAmount: amount
     }));
-    toast.success(`Budget set to ${type}: ₹${amount.toLocaleString()}`);
+    
+    const budgetNames = {
+      budget: 'Budget Travel',
+      moderate: 'Comfortable',
+      luxury: 'Luxury',
+      custom: 'Custom Budget'
+    };
+    
+    toast.success(`✅ ${budgetNames[type] || type} selected: ₹${amount.toLocaleString()}`);
+    
+    // Auto-navigate to next step if all required fields are filled
+    if (formData?.location && formData?.noofDays && formData?.traveler) {
+      setTimeout(() => {
+        toast.info('All details completed! Ready to generate your trip 🚀');
+      }, 1000);
+    }
   };
 
   const handleDestinationFromInspire = (destination) => {
@@ -323,7 +338,7 @@ function CreateTrip() {
           </div>
           <div className={`flex items-center gap-1 ${formData?.budget ? 'text-green-600' : 'text-red-500 font-medium'}`}>
             <div className={`w-2 h-2 rounded-full ${formData?.budget ? 'bg-green-500' : 'bg-red-500'}`}></div>
-            Budget {!formData?.budget && '(Required)'}
+            Budget {formData?.budget ? `(${formData.budget})` : '(Required)'}
           </div>
         </div>
       </div>
