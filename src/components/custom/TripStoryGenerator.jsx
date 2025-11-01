@@ -169,7 +169,7 @@ const TripStoryGenerator = ({ tripData }) => {
                 <Card
                   key={style.id}
                   className={`cursor-pointer transition-all hover:shadow-md ${
-                    storyStyle === style.id ? 'ring-2 ring-purple-500 bg-purple-50' : ''
+                    storyStyle === style.id ? 'ring-2 ring-purple-500 bg-purple-50 dark:bg-purple-900/20' : ''
                   }`}
                   onClick={() => setStoryStyle(style.id)}
                 >
@@ -254,11 +254,11 @@ const TripStoryGenerator = ({ tripData }) => {
 
             {/* Story Highlights */}
             {generatedStory.highlights && (
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-medium text-blue-800 mb-2">Story Highlights</h4>
+              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+                <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">Story Highlights</h4>
                 <ul className="space-y-1">
                   {generatedStory.highlights.map((highlight, index) => (
-                    <li key={index} className="text-sm text-blue-700 flex items-center gap-2">
+                    <li key={index} className="text-sm text-blue-700 dark:text-blue-300 flex items-center gap-2">
                       <MapPin className="w-3 h-3" />
                       {highlight}
                     </li>

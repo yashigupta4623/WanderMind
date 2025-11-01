@@ -34,26 +34,44 @@ function HotelCardItem({hotel}) {
       }
 
   return (
-      <div className="hover:scale-105 cursor-pointer transition-all rounded-xl shadow-md bg-white">
+      <div className="hover:scale-105 cursor-pointer transition-all rounded-xl shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
               <img
-                src={photoUrl?photoUrl: "/placeholder.jpg"}
+                src={photoUrl ? photoUrl : "/header.png"}
                 className="h-40 w-full object-cover rounded-t-xl"
-                alt={hotel.hotelName}
-                
+                alt={hotel.hotelName || "Hotel"}
+                onError={(e) => {
+                  e.target.src = "/header.png";
+                }}
               />
               <div className="p-4">
                 <div className="flex justify-between items-start">
-                  <h2 className="text-lg my-2 font-bold">{hotel.hotelName}</h2>
-                  <Link to={`https://www.google.com/maps/search/?api=1&query=${hotel.hotelName}`}>
-                    <Button className="text-white">
+                  <h2 className="text-lg my-2 font-bold text-gray-800 dark:text-gray-100 truncate">
+                    {hotel.hotelName || "Premium Hotel"}
+                  </h2>
+                  <Link to={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.hotelName || 'hotel')}`}>
+                    <Button size="sm" className="text-white bg-blue-600 hover:bg-blue-700">
                       <FaMapMarkedAlt />
                     </Button>
                   </Link>
                 </div>
-                <h2 className="text-xs text-gray-500 my-1">📍 {hotel.hotelAddress || "Address not available"}</h2>
-                <div className="mt-2 text-sm">
-                  <h2>💰 {hotel.pricePerNight || hotel.price || "Price not available"} per night</h2>
-                  <h2>⭐ {hotel.rating || "Rating not available"}</h2>
+                <div className="flex items-start gap-1 my-1">
+                  <span className="text-gray-500 mt-0.5">📍</span>
+                  <span className="text-xs text-gray-600 dark:text-gray-400">
+                    {hotel.hotelAddress || "Central location with easy access to attractions"}
+                  </span>
+                </div>
+                <div className="mt-2 text-sm space-y-1">
+                  <div className="flex items-center gap-1">
+                    <span>💰</span>
+                    <span className="font-semibold text-green-600">
+                      {hotel.pricePerNight || hotel.price || "Price on request"}
+                      {(hotel.pricePerNight || hotel.price) && !hotel.price?.includes('per') ? ' per night' : ''}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span>⭐</span>
+                    <span>{hotel.rating || "4.0"} rating</span>
+                  </div>
                 </div>
               </div>
             </div>

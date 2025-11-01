@@ -43,6 +43,67 @@ import { Sparkles, Calculator, Camera, Users, MapPin, Calendar, Zap, Globe, Sett
 
 const apiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
 
+// Demo data fallback for when JSON parsing fails
+const generateDemoTripData = (formData) => {
+  const destination = formData?.location?.label || "Delhi";
+  const days = parseInt(formData?.noofDays) || 3;
+  
+  return {
+    tripDetails: {
+      destination: destination,
+      duration: `${days} days`,
+      travelers: formData?.traveler || "1 Person",
+      budget: formData?.budget || "moderate",
+      totalBudget: formData?.budgetAmount || 25000
+    },
+    hotels: [
+      {
+        name: `Premium Hotel in ${destination}`,
+        address: `Central ${destination}`,
+        price: "₹3,500/night",
+        rating: 4.2,
+        description: "Comfortable accommodation with modern amenities"
+      }
+    ],
+    itinerary: Array.from({ length: days }, (_, i) => ({
+      day: i + 1,
+      activities: [
+        {
+          time: "9:00 AM",
+          activity: `Explore ${destination} landmarks`,
+          details: "Visit popular attractions and local sites",
+          ticketPricing: "₹500-1000",
+          timeToTravel: "30 mins"
+        },
+        {
+          time: "2:00 PM",
+          activity: "Local cuisine experience",
+          details: "Try authentic local food",
+          ticketPricing: "₹800-1200",
+          timeToTravel: "15 mins"
+        }
+      ]
+    }))
+  };
+};
+
+// Helper function to repair common JSON issues
+const repairJSON = (jsonString) => {
+  let repaired = jsonString
+    // Remove trailing commas
+    .replace(/,(\s*[}\]])/g, '$1')
+    // Remove control characters
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '')
+    // Fix unescaped quotes in strings (basic attempt)
+    .replace(/([^\\])"([^"]*[^\\])"([^,}\]\s])/g, '$1"$2\\"$3')
+    // Fix unterminated strings at end of object/array
+    .replace(/("[^"]*[^\\])([}\]])/g, '$1"$2')
+    // Ensure proper string termination
+    .replace(/("[^"]*[^\\])$/g, '$1"');
+
+  return repaired;
+};
+
 // Helper function to parse AI response and extract JSON
 const parseAIResponse = (responseText) => {
   try {
@@ -51,26 +112,81 @@ const parseAIResponse = (responseText) => {
   } catch (error) {
     console.log("Direct JSON parse failed, attempting to extract JSON from response...");
 
+    // Clean the response text first
+    let cleanedText = responseText.trim();
+
     // Try to extract JSON from markdown code blocks
-    const jsonMatch = responseText.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+    const jsonMatch = cleanedText.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
     if (jsonMatch) {
       try {
-        return JSON.parse(jsonMatch[1]);
+        const repairedJson = repairJSON(jsonMatch[1].trim());
+        return JSON.parse(repairedJson);
       } catch (e) {
         console.log("JSON extraction from markdown failed:", e);
       }
     }
 
-    // Try to find JSON object in the text
-    const jsonStart = responseText.indexOf('{');
-    const jsonEnd = responseText.lastIndexOf('}');
+    // Try to find JSON object in the text with better bracket matching
+    const jsonStart = cleanedText.indexOf('{');
+    if (jsonStart !== -1) {
+      let bracketCount = 0;
+      let jsonEnd = -1;
+      let inString = false;
+      let escapeNext = false;
+      
+      for (let i = jsonStart; i < cleanedText.length; i++) {
+        const char = cleanedText[i];
+        
+        if (escapeNext) {
+          escapeNext = false;
+          continue;
+        }
+        
+        if (char === '\\') {
+          escapeNext = true;
+          continue;
+        }
+        
+        if (char === '"' && !escapeNext) {
+          inString = !inString;
+          continue;
+        }
+        
+        if (!inString) {
+          if (char === '{') {
+            bracketCount++;
+          } else if (char === '}') {
+            bracketCount--;
+            if (bracketCount === 0) {
+              jsonEnd = i;
+              break;
+            }
+          }
+        }
+      }
 
-    if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
-      const jsonString = responseText.substring(jsonStart, jsonEnd + 1);
-      try {
-        return JSON.parse(jsonString);
-      } catch (e) {
-        console.log("JSON extraction from text failed:", e);
+      if (jsonEnd !== -1) {
+        const jsonString = cleanedText.substring(jsonStart, jsonEnd + 1);
+        try {
+          const repairedJson = repairJSON(jsonString);
+          return JSON.parse(repairedJson);
+        } catch (e) {
+          console.log("JSON extraction from text failed:", e);
+          console.log("Attempted to parse:", jsonString.substring(0, 200) + "...");
+          
+          // Last resort: try to truncate at the last valid JSON structure
+          try {
+            const lastValidBrace = jsonString.lastIndexOf('}', jsonString.length - 50);
+            if (lastValidBrace > 100) {
+              const truncatedJson = jsonString.substring(0, lastValidBrace + 1);
+              const repairedTruncated = repairJSON(truncatedJson);
+              console.log("Attempting truncated JSON parse...");
+              return JSON.parse(repairedTruncated);
+            }
+          } catch (truncateError) {
+            console.log("Truncated JSON parse also failed:", truncateError);
+          }
+        }
       }
     }
 
@@ -90,6 +206,17 @@ function CreateTrip() {
   const [groupData, setGroupData] = useState(null);
   const [activeTab, setActiveTab] = useState("basic");
   const navigate = useNavigate();
+
+  // Function to format budget display
+  const formatBudget = (budget) => {
+    const budgetMap = {
+      'budget': 'Budget Travel',
+      'moderate': 'Comfortable',
+      'luxury': 'Luxury',
+      'custom': 'Custom Budget'
+    };
+    return budgetMap[budget] || budget || 'Budget Travel';
+  };
 
   // Handle URL parameters for direct tab navigation
   useEffect(() => {
@@ -227,8 +354,18 @@ function CreateTrip() {
       const responseText = result?.response?.text();
       console.log("Raw AI response:", responseText);
 
+      // Validate response exists
+      if (!responseText || responseText.trim().length === 0) {
+        throw new Error("Empty response from AI service");
+      }
+
       // Clean and parse JSON response
       const tripData = parseAIResponse(responseText);
+
+      // Validate parsed data structure
+      if (!tripData || typeof tripData !== 'object') {
+        throw new Error("Invalid trip data structure received");
+      }
 
       const docId = Date.now().toString();
       await SaveAiTrip(JSON.stringify(tripData), docId);
@@ -240,6 +377,15 @@ function CreateTrip() {
       }
     } catch (error) {
       console.error("Error generating trip:", error);
+      
+      // Log the raw response for debugging
+      if (error.message.includes("Failed to parse JSON")) {
+        const rawResponse = result?.response?.text();
+        console.error("Raw response that failed to parse (first 500 chars):", rawResponse?.substring(0, 500));
+        console.error("Raw response length:", rawResponse?.length);
+        console.error("Response ends with:", rawResponse?.substring(Math.max(0, rawResponse.length - 100)));
+      }
+      
       if (error.message.includes("429") || error.message.includes("Resource exhausted")) {
         setRateLimitHit(true);
         toast.success(
@@ -247,7 +393,7 @@ function CreateTrip() {
         );
       } else if (error.message.includes("The model is overloaded")) {
         toast.error(
-          "The model is currently overloaded. Please try again later."
+          "The model is currently overloaded. Please try again in a few moments."
         );
       } else if (error.message.includes("API key not valid")) {
         toast.error(
@@ -257,9 +403,22 @@ function CreateTrip() {
         toast.error(
           "AI service is not properly configured. Please contact support."
         );
-      } else if (error.message.includes("Failed to parse JSON")) {
+      } else if (error.message.includes("Failed to parse JSON") || error.message.includes("Unterminated string")) {
+        // Use demo data as fallback when JSON parsing fails
+        console.log("JSON parsing failed, using demo data fallback");
+        try {
+          const demoTripData = generateDemoTripData(formData);
+          const docId = Date.now().toString();
+          await SaveAiTrip(JSON.stringify(demoTripData), docId);
+          toast.success("Trip generated with demo data due to AI response format issue! 🎯");
+          return; // Exit early since we handled it with demo data
+        } catch (demoError) {
+          console.error("Demo fallback also failed:", demoError);
+          toast.error("Unable to generate trip. Please try again.");
+        }
+      } else if (error.message.includes("Empty response")) {
         toast.error(
-          "The AI response format is invalid. Please try again."
+          "No response received from AI service. Please check your connection and try again."
         );
       } else {
         toast.error(
@@ -338,7 +497,7 @@ function CreateTrip() {
           </div>
           <div className={`flex items-center gap-1 ${formData?.budget ? 'text-green-600' : 'text-red-500 font-medium'}`}>
             <div className={`w-2 h-2 rounded-full ${formData?.budget ? 'bg-green-500' : 'bg-red-500'}`}></div>
-            Budget {formData?.budget ? `(${formData.budget})` : '(Required)'}
+            Budget {formData?.budgetAmount ? `(₹${parseInt(formData.budgetAmount).toLocaleString()})` : formData?.budget ? `(${formatBudget(formData.budget)})` : '(Required)'}
           </div>
         </div>
       </div>
@@ -347,21 +506,21 @@ function CreateTrip() {
         <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1 bg-gray-100 dark:bg-gray-800 p-1">
           <TabsTrigger
             value="inspire"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-100 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-100 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
           >
             <Camera className="w-3 h-3" />
             <span className="hidden sm:inline">Inspire</span>
           </TabsTrigger>
           <TabsTrigger
             value="persona"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
           >
             <Sparkles className="w-3 h-3" />
             <span className="hidden sm:inline">Style</span>
           </TabsTrigger>
           <TabsTrigger
             value="basic"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
+            className="flex items-center gap-1 text-xs data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
           >
             <MapPin className="w-3 h-3" />
             <span className="hidden sm:inline">Details</span>
@@ -371,14 +530,14 @@ function CreateTrip() {
           </TabsTrigger>
           <TabsTrigger
             value="group"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
           >
             <Users className="w-3 h-3" />
             <span className="hidden sm:inline">Group</span>
           </TabsTrigger>
           <TabsTrigger
             value="budget"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
+            className="flex items-center gap-1 text-xs data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
           >
             <Calculator className="w-3 h-3" />
             <span className="hidden sm:inline">Budget</span>
@@ -388,21 +547,21 @@ function CreateTrip() {
           </TabsTrigger>
           <TabsTrigger
             value="realtime"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
           >
             <Zap className="w-3 h-3" />
             <span className="hidden sm:inline">Live</span>
           </TabsTrigger>
           <TabsTrigger
             value="multilingual"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
           >
             <Globe className="w-3 h-3" />
             <span className="hidden sm:inline">Language</span>
           </TabsTrigger>
           <TabsTrigger
             value="advanced"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
           >
             <Settings className="w-3 h-3" />
             <span className="hidden sm:inline">More</span>

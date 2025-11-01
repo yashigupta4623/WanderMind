@@ -147,7 +147,7 @@ const OfflineMode = ({ tripData }) => {
   return (
     <div className="space-y-6">
       {/* Connection Status */}
-      <Card className={isOnline ? 'bg-green-50' : 'bg-orange-50'}>
+      <Card className={isOnline ? 'bg-green-50 dark:bg-green-900/20' : 'bg-orange-50 dark:bg-orange-900/20'}>
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -225,7 +225,7 @@ const OfflineMode = ({ tripData }) => {
           )}
 
           {offlineData && (
-            <div className="bg-blue-50 p-3 rounded-lg">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
               <div className="flex items-center gap-2 mb-2">
                 <CheckCircle className="w-4 h-4 text-blue-600" />
                 <span className="text-sm font-medium text-blue-800">
@@ -251,7 +251,7 @@ const OfflineMode = ({ tripData }) => {
         <CardContent>
           <div className="space-y-3">
             {offlineFeatures.map((item, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+              <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <div className="mt-1">
                   {item.available ? (
                     <CheckCircle className="w-4 h-4 text-green-500" />
@@ -282,7 +282,7 @@ const OfflineMode = ({ tripData }) => {
       </Card>
 
       {/* PWA Install Prompt */}
-      <Card className="bg-gradient-to-r from-purple-50 to-blue-50">
+      <Card className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             <div className="text-2xl">📱</div>

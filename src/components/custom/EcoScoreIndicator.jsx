@@ -83,7 +83,7 @@ const EcoScoreIndicator = ({ tripData, ecoScore = 0 }) => {
   return (
     <div className="space-y-6">
       {/* Overall Eco Score */}
-      <Card className="bg-gradient-to-r from-green-50 to-blue-50">
+      <Card className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Leaf className="w-5 h-5 text-green-600" />
@@ -212,7 +212,7 @@ const EcoScoreIndicator = ({ tripData, ecoScore = 0 }) => {
       </Card>
 
       {/* Eco Achievements */}
-      <Card className="bg-gradient-to-r from-yellow-50 to-green-50">
+      <Card className="bg-gradient-to-r from-yellow-50 to-green-50 dark:from-yellow-900/20 dark:to-green-900/20">
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             <Award className="w-8 h-8 text-yellow-600" />

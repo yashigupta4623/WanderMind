@@ -34,7 +34,7 @@ function PlacesToVisit({ trip }) {
           (tripData?.itinerary || tripData?.dynamicItinerary || []).map((item, index) => (
             <div key={index}>
               <h2 className='font-medium text-lg my-2 text-blue-600'>
-                {item.day || `Day ${item.day || index + 1}`}
+                Itinerary for Day {item.day || index + 1}
               </h2>
               <div className='grid md:grid-cols-2 gap-5'>
                 {/* Handle both plan and timeline structures */}

@@ -413,7 +413,7 @@ const InspireMe = ({ onDestinationSelect }) => {
                     className="w-full h-32 object-cover rounded-t-lg group-hover:scale-105 transition-transform"
                   />
                   <div className="absolute top-2 right-2">
-                    <Badge className="bg-white/90 text-gray-800 text-xs">
+                    <Badge className="bg-white/90 dark:bg-gray-800/90 text-gray-800 dark:text-gray-200 text-xs">
                       {trip.duration}
                     </Badge>
                   </div>
@@ -492,7 +492,7 @@ const InspireMe = ({ onDestinationSelect }) => {
             {curatedTrips.slice(0, 4).map((trip) => (
               <div 
                 key={`seasonal-${trip.id}`}
-                className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                className="flex items-center gap-3 p-3 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors dark:border-gray-700"
                 onClick={() => handleCuratedTripSelect(trip)}
               >
                 <img 
@@ -686,7 +686,7 @@ const InspireMe = ({ onDestinationSelect }) => {
                       </div>
                     </div>
 
-                    <p className="text-sm text-blue-600 bg-blue-50 p-2 rounded">
+                    <p className="text-sm text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">
                       💡 {destination.matchReason}
                     </p>
 

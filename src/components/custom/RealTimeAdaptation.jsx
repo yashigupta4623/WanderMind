@@ -174,10 +174,10 @@ const RealTimeAdaptation = ({ tripData, currentLocation, onItineraryUpdate }) =>
 
   const getSeverityColor = (severity) => {
     switch (severity) {
-      case 'high': return 'border-red-500 bg-red-50';
-      case 'medium': return 'border-yellow-500 bg-yellow-50';
-      case 'low': return 'border-blue-500 bg-blue-50';
-      default: return 'border-gray-500 bg-gray-50';
+      case 'high': return 'border-red-500 bg-red-50 dark:bg-red-900/20';
+      case 'medium': return 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20';
+      case 'low': return 'border-blue-500 bg-blue-50 dark:bg-blue-900/20';
+      default: return 'border-gray-500 bg-gray-50 dark:bg-gray-800';
     }
   };
 
@@ -291,7 +291,7 @@ const RealTimeAdaptation = ({ tripData, currentLocation, onItineraryUpdate }) =>
                     </div>
 
                     {adaptation.alternatives.length > 0 && (
-                      <div className="mt-3 p-2 bg-white rounded border">
+                      <div className="mt-3 p-2 bg-white dark:bg-gray-800 rounded border dark:border-gray-600">
                         <h5 className="text-sm font-medium mb-2">Alternative Options:</h5>
                         {adaptation.alternatives.map((alt, index) => (
                           <div key={index} className="text-sm">

@@ -40,9 +40,12 @@ function PlaceCardItem({ place }) {
       <div className="border rounded-xl p-3 mt-2 flex gap-5 items-start">
         {/* Left - Image */}
         <img
-          src={photoUrl ? photoUrl : "/placeholder.jpg"}
+          src={photoUrl ? photoUrl : "/header.png"}
           className="w-[130px] h-[130px] rounded-xl object-cover flex-shrink-0"
           alt={place.placeName}
+          onError={(e) => {
+            e.target.src = "/header.png";
+          }}
         />
 
         {/* Middle - Text Content (Expands Fully) */}

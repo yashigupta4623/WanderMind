@@ -181,7 +181,7 @@ const MultilingualSupport = ({ currentLanguage = 'en', onLanguageChange }) => {
               >
                 <span className="text-2xl mb-1">{language.flag}</span>
                 <span className="text-xs font-medium">{language.nativeName}</span>
-                <span className="text-xs text-gray-500">{language.name}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">{language.name}</span>
               </Button>
             ))}
           </div>
@@ -227,9 +227,9 @@ const MultilingualSupport = ({ currentLanguage = 'en', onLanguageChange }) => {
           </div>
 
           {voiceInput && (
-            <div className="p-3 bg-blue-50 rounded-lg">
-              <p className="text-sm font-medium text-blue-800">Voice Input Detected:</p>
-              <p className="text-blue-700">{voiceInput}</p>
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <p className="text-sm font-medium text-blue-800 dark:text-blue-200">Voice Input Detected:</p>
+              <p className="text-blue-700 dark:text-blue-300">{voiceInput}</p>
             </div>
           )}
 
@@ -237,7 +237,7 @@ const MultilingualSupport = ({ currentLanguage = 'en', onLanguageChange }) => {
             {Object.entries(getCurrentPhrases()).map(([key, phrase]) => (
               <div
                 key={key}
-                className="p-3 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                className="p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors dark:border-gray-700"
                 onClick={() => speakText(phrase)}
               >
                 <div className="flex items-center justify-between">
@@ -271,14 +271,14 @@ const MultilingualSupport = ({ currentLanguage = 'en', onLanguageChange }) => {
               }, {})
             ).map(([category, phrases]) => (
               <div key={category}>
-                <h4 className="font-medium text-sm text-gray-700 mb-2 flex items-center gap-2">
+                <h4 className="font-medium text-sm text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-2">
                   <Badge variant="secondary">{category}</Badge>
                 </h4>
                 <div className="grid gap-2">
                   {phrases.map((phrase, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100 transition-colors"
+                      className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                       onClick={() => speakText(phrase)}
                     >
                       <span className="text-sm">{phrase}</span>
@@ -322,9 +322,9 @@ const MultilingualSupport = ({ currentLanguage = 'en', onLanguageChange }) => {
               </ul>
             </div>
 
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <h4 className="font-medium text-blue-800 mb-1">Emergency Phrases</h4>
-              <div className="text-sm text-blue-700 space-y-1">
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+              <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-1">Emergency Phrases</h4>
+              <div className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
                 <div className="flex justify-between items-center">
                   <span>Help: मदद (Madad)</span>
                   <Volume2 className="w-3 h-3 cursor-pointer" onClick={() => speakText('मदद')} />

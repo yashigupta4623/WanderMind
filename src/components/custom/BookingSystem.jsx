@@ -155,7 +155,7 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
 
   const BookingItem = ({ item }) => (
     <Card className={`cursor-pointer transition-all hover:shadow-lg ${
-      selectedItems.includes(item.id) ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+      selectedItems.includes(item.id) ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''
     }`} onClick={() => handleItemToggle(item.id)}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
@@ -221,7 +221,7 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
             Your trip has been successfully booked. Confirmation details have been sent to your email.
           </p>
           
-          <div className="bg-gray-50 p-4 rounded-lg mb-6">
+          <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg mb-6">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="font-medium">Booking ID:</span>
@@ -292,7 +292,7 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
 
       {/* Booking Summary */}
       {selectedItems.length > 0 && (
-        <Card className="sticky bottom-4 bg-white shadow-lg border-2 border-blue-200">
+        <Card className="sticky bottom-4 bg-white dark:bg-gray-800 shadow-lg border-2 border-blue-200 dark:border-blue-700">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -354,8 +354,8 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
                 onClick={() => setPaymentMethod(method.id)}
                 className={`p-3 border rounded-lg cursor-pointer text-center transition-all ${
                   paymentMethod === method.id 
-                    ? 'border-blue-500 bg-blue-50' 
-                    : 'hover:border-gray-300'
+                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100' 
+                    : 'hover:border-gray-300 dark:hover:border-gray-600 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100'
                 }`}
               >
                 <div className="text-2xl mb-1">{method.icon}</div>
@@ -367,7 +367,7 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
       </Card>
 
       {/* Security & Guarantees */}
-      <Card className="bg-green-50">
+      <Card className="bg-green-50 dark:bg-green-900/20">
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
             <Shield className="w-8 h-8 text-green-600" />
