@@ -34,15 +34,23 @@ const TripStoryGenerator = ({ tripData }) => {
     - Vivid descriptions of places, food, and experiences
     - Conclusion that reflects on the journey
     
+    IMPORTANT FORMATTING RULES:
+    - Use simple, clean text formatting
+    - Use **bold** only for emphasis (sparingly)
+    - Use *italic* only for emphasis (sparingly)
+    - Separate paragraphs with double line breaks
+    - Write in a natural, flowing narrative style
+    - Avoid excessive formatting or special characters
+    
     Make it shareable and inspiring for other travelers. 
-    Length: 800-1200 words.
+    Length: 600-800 words.
     Tone: {tone}
     
     Return as JSON with:
     {
       "title": "story title",
       "subtitle": "engaging subtitle", 
-      "story": "full story text",
+      "story": "full story text with minimal formatting",
       "highlights": ["key highlight 1", "key highlight 2", "key highlight 3"],
       "tags": ["tag1", "tag2", "tag3"],
       "readTime": "estimated read time",
@@ -115,6 +123,38 @@ const TripStoryGenerator = ({ tripData }) => {
       readTime: '3 min read',
       shareText: `Just had an amazing ${days}-day trip to ${destination}! ✈️ #Travel #Adventure`
     };
+  };
+
+  // Format story text by converting simple markdown to JSX
+  const formatStoryText = (text) => {
+    if (!text) return null;
+    
+    // Clean up the text first
+    let cleanText = text
+      // Remove excessive asterisks and formatting
+      .replace(/\*{3,}/g, '') // Remove triple or more asterisks
+      .replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>') // Bold italic
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>') // Bold
+      .replace(/\*([^*]+)\*/g, '<em>$1</em>') // Italic
+      // Clean up extra spaces and line breaks
+      .replace(/\n{3,}/g, '\n\n') // Max 2 line breaks
+      .trim();
+    
+    // Split text into paragraphs
+    const paragraphs = cleanText.split('\n\n').filter(p => p.trim());
+    
+    return paragraphs.map((paragraph, index) => {
+      // Convert remaining line breaks to <br />
+      const formattedText = paragraph.replace(/\n/g, '<br />');
+      
+      return (
+        <p 
+          key={index} 
+          className="mb-6 text-base leading-7 text-gray-700 dark:text-gray-300"
+          dangerouslySetInnerHTML={{ __html: formattedText }}
+        />
+      );
+    });
   };
 
   const copyToClipboard = (text) => {
@@ -246,9 +286,9 @@ const TripStoryGenerator = ({ tripData }) => {
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Story Content */}
-            <div className="prose max-w-none">
-              <div className="whitespace-pre-line text-gray-800 leading-relaxed">
-                {generatedStory.story}
+            <div className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+              <div className="text-gray-800 dark:text-gray-200 leading-relaxed">
+                {formatStoryText(generatedStory.story)}
               </div>
             </div>
 
