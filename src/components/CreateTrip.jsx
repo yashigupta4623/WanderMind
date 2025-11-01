@@ -173,7 +173,7 @@ function CreateTrip() {
   };
 
   return (
-    <div className='sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10'>
+    <div className='sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10 pb-10'>
       <h2 className='font-bold text-3xl'>Tell us your travel preferences 🏕️</h2>
       <p className='mt-3 text-gray-500'>Just provide some basic information, and we'll help you plan your trip.</p>
 
@@ -202,11 +202,11 @@ function CreateTrip() {
 
       <div>
         <h2 className='text-xl my-3 font-medium'>What is your Budget?</h2>
-        <div className='grid grid-cols-3 gap-5 mt-5'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-5'>
           {SelectBudgetOptions.map((item, index) => (
             <div key={index} onClick={() => handleInputChange('budget', item.title)}
-            className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer
-            ${formData?.budget === item.title ? 'shadow-lg border-black' : ''}`}>
+            className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer transition-all
+            ${formData?.budget === item.title ? 'shadow-lg border-[#2196f3] border-2 bg-[#e3f2fd] dark:bg-[#1565c0]/20' : 'border-gray-200 dark:border-gray-700'}`}>
               <h2 className='text-4xl'>{item.icon}</h2>
               <h2 className='font-bold text-lg'>{item.title}</h2>
               <h2 className='text-sm text-gray-500'>{item.desc}</h2>
@@ -217,11 +217,11 @@ function CreateTrip() {
       
       <div>
         <h2 className='text-xl my-3 font-medium'>Who do you plan on travelling with on your next adventure?</h2>
-        <div className='grid grid-cols-4 gap-5 mt-5'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5'>
           {SelectTravelsList.map((item, index) => (
             <div key={index} onClick={() => handleInputChange('traveler', item.people)}
-            className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer
-              ${formData?.traveler === item.people ? 'shadow-lg border-black' : ''}`}>
+            className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer transition-all
+              ${formData?.traveler === item.people ? 'shadow-lg border-[#2196f3] border-2 bg-[#e3f2fd] dark:bg-[#1565c0]/20' : 'border-gray-200 dark:border-gray-700'}`}>
               <h2 className='text-4xl'>{item.icon}</h2>
               <h2 className='font-bold text-lg'>{item.title}</h2>
               <h2 className='text-sm text-gray-500'>{item.desc}</h2>
@@ -231,9 +231,13 @@ function CreateTrip() {
       </div>
 
       <div className='my-10 justify-end flex '>
-      <Button onClick={OnGenerateTrip} disabled={loading}>
-  {loading ? <AiOutlineLoading3Quarters className="animate-spin text-xl inline-block" /> : "Generate Trip"}
-</Button>
+      <Button 
+        onClick={OnGenerateTrip} 
+        disabled={loading}
+        className="bg-[#ff6f00] hover:bg-[#f57c00] text-white rounded-full px-8 py-3 font-semibold transition-all shadow-lg hover:shadow-xl"
+      >
+        {loading ? <AiOutlineLoading3Quarters className="animate-spin text-xl inline-block" /> : "Generate Trip"}
+      </Button>
       </div>
     </div>
   );

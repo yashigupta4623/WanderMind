@@ -76,8 +76,8 @@ function Hero() {
         <article className="flex-1 p-2 sm:p-4 text-center lg:text-left">
           <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl w-full text-gray-900 dark:text-white leading-tight">
             Uncover the <br />
-            <span className="text-blue-500 dark:text-blue-400">AI</span> Travel{" "}
-            <span className="text-blue-500 dark:text-blue-400">Plan</span>
+            <span className="text-[#2196f3] dark:text-[#42a5f5]">AI</span> Travel{" "}
+            <span className="text-[#2196f3] dark:text-[#42a5f5]">Plan</span>
           </h1>
 
           <div className="mt-4 sm:mt-6 lg:mt-10 text-center lg:text-left text-sm sm:text-base lg:text-lg">
@@ -154,10 +154,10 @@ function Hero() {
                   <div className="absolute bottom-12 right-12 w-3 h-3 bg-indigo-400/60 rounded-full animate-pulse" style={{ animationDuration: '2.5s', animationDelay: '1.5s' }}></div>
                 </div>
                 <div className="relative">
-                  <div className="absolute -top-4 -right-4 bg-blue-500 text-white text-sm font-bold rounded-full w-8 h-8 flex items-center justify-center animate-pulse">
+                  <div className="absolute -top-4 -right-4 bg-[#2196f3] text-white text-sm font-bold rounded-full w-8 h-8 flex items-center justify-center animate-pulse">
                     1
                   </div>
-                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="bg-[#2196f3] p-6 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <div className="relative">
                       <img src="/login.png" alt="Sign Up Icon" className="h-16 w-16 filter brightness-0 invert" />
                       <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-400 rounded-full animate-ping"></div>
@@ -173,7 +173,7 @@ function Hero() {
                       Create your unique travel profile with preferences, budget, and dream destinations. Our AI learns what makes you tick!
                     </p>
                   </div>
-                  <div className="mt-4 text-sm text-blue-600 dark:text-blue-400 font-semibold">
+                  <div className="mt-4 text-sm text-[#2196f3] dark:text-[#42a5f5] font-semibold">
                     ⚡ Takes just 2 minutes
                   </div>
                 </div>
@@ -200,7 +200,7 @@ function Hero() {
                   <div className="absolute -top-4 -right-4 bg-orange-500 text-white text-sm font-bold rounded-full w-8 h-8 flex items-center justify-center animate-pulse">
                     2
                   </div>
-                  <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="bg-[#ff6f00] p-6 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <div className="relative">
                       <img src="/bulb.png" alt="Idea Icon" className="h-16 w-16 filter brightness-0 invert" />
                       <div className="absolute -top-1 -right-1 text-yellow-300">💡</div>
@@ -245,7 +245,7 @@ function Hero() {
                   <div className="absolute -top-4 -right-4 bg-green-500 text-white text-sm font-bold rounded-full w-8 h-8 flex items-center justify-center animate-pulse">
                     3
                   </div>
-                  <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="bg-[#4caf50] p-6 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <div className="relative">
                       <img src="/plane.png" alt="AI Plan Icon" className="h-16 w-16 filter brightness-0 invert" />
                       <div className="absolute -top-2 -left-2 text-white">✈️</div>
@@ -364,56 +364,56 @@ function Hero() {
               title: 'Multilingual Support',
               desc: '12+ Indian languages with voice assistance',
               action: 'multilingual',
-              color: 'hover:bg-blue-600'
+              color: 'hover:bg-[#2196f3]'
             },
             {
               icon: '🎯',
               title: 'Personalized Personas',
               desc: 'Heritage, Adventure, Luxury travel styles',
               action: 'personas',
-              color: 'hover:bg-purple-600'
+              color: 'hover:bg-[#673ab7]'
             },
             {
               icon: '💰',
               title: 'Smart Budget Planning',
               desc: 'AI-powered cost optimization and predictions',
               action: 'budget',
-              color: 'hover:bg-green-600'
+              color: 'hover:bg-[#4caf50]'
             },
             {
               icon: '🤝',
               title: 'Group Travel Mode',
               desc: 'Collaborative planning for group trips',
               action: 'group',
-              color: 'hover:bg-orange-600'
+              color: 'hover:bg-[#ff6f00]'
             },
             {
               icon: '🌦️',
               title: 'Weather Adaptation',
               desc: 'Real-time weather-based recommendations',
               action: 'weather',
-              color: 'hover:bg-cyan-600'
+              color: 'hover:bg-[#00bcd4]'
             },
             {
               icon: '🌱',
               title: 'Eco-Friendly Options',
               desc: 'Sustainability scoring and green alternatives',
               action: 'eco',
-              color: 'hover:bg-emerald-600'
+              color: 'hover:bg-[#4caf50]'
             },
             {
               icon: '📖',
               title: 'Trip Story Generator',
               desc: 'AI-generated shareable travel stories',
               action: 'story',
-              color: 'hover:bg-pink-600'
+              color: 'hover:bg-[#e91e63]'
             },
             {
               icon: '📱',
               title: 'Offline Mode',
               desc: 'Access your itinerary without internet',
               action: 'offline',
-              color: 'hover:bg-gray-600'
+              color: 'hover:bg-[#757575]'
             }
           ].map((feature, index) => (
             <div
@@ -560,7 +560,7 @@ function Hero() {
                     alt={destination.name}
                     className="w-full h-40 sm:h-48 object-cover group-hover:scale-110 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
 
                 {/* Content */}
@@ -598,7 +598,7 @@ function Hero() {
                 </div>
 
                 {/* Hover Effect Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="absolute inset-0 bg-[#2196f3]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
             ))}
           </div>

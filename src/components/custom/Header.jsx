@@ -64,10 +64,13 @@ function Header() {
 
   return (
     <div className="p-3 shadow-sm flex items-center gap-2 px-5 flex-wrap sm:flex-nowrap bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 transition-colors">
-      <AnimatedLogo className="w-8 h-8 sm:w-10 sm:h-10" />
-      <h2 className="font-bold text-[20px] sm:text-[25px] md:text-[30px] text-blue-600 dark:text-blue-400">
-        Wander<span className="text-gray-900 dark:text-white">Mind</span>
-      </h2>
+      {/* Clickable Logo - Redirects to Home */}
+      <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+        <AnimatedLogo className="w-8 h-8 sm:w-10 sm:h-10" />
+        <h2 className="font-bold text-[20px] sm:text-[25px] md:text-[30px] text-[#2196f3] dark:text-[#42a5f5]">
+          Wander<span className="text-gray-900 dark:text-white">Mind</span>
+        </h2>
+      </a>
       <div className="ml-auto flex items-center gap-3">
         {/* Quick Feature Access - Hidden on mobile */}
         <div className="hidden lg:flex items-center gap-2">
@@ -147,32 +150,30 @@ function Header() {
         )}
       </div>
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogContent>
+      {/* Sign-In Modal with proper close functionality */}
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
+            <DialogTitle className="sr-only">Sign In</DialogTitle>
             <DialogDescription>
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "10px" }}
-              >
+              <div className="flex items-center justify-center gap-3 mb-6">
                 <AnimatedLogo className="h-10 w-12" />
-                <h2
-                  style={{
-                    fontWeight: "bold",
-                    color: "#f56551",
-                    fontSize: "25px",
-                  }}
-                >
-                  Wander<span className="text-[#000000]">Mind</span>
+                <h2 className="font-bold text-2xl text-[#2196f3] dark:text-[#42a5f5]">
+                  Wander<span className="text-gray-900 dark:text-white">Mind</span>
                 </h2>
               </div>
-              <h2 className="font-bold text-lg mt-5">Sign In With Google</h2>
-              <p>Sign in to the App with the Google authentication sexure.</p>
+              <h2 className="font-bold text-xl mt-5 text-gray-900 dark:text-white text-center">
+                Sign In With Google
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 text-center mt-2">
+                Sign in to the app with secure Google authentication.
+              </p>
               <Button
                 onClick={login}
-                className="mt-5 w-full flex gap-4 items-center"
+                className="mt-6 w-full flex gap-4 items-center justify-center bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white dark:border-gray-600 py-3 rounded-lg transition-all"
               >
-                <FcGoogle style={{ height: "35px", width: "25px" }} />
-                Sign In With Google
+                <FcGoogle className="h-6 w-6" />
+                <span className="font-semibold">Sign In With Google</span>
               </Button>
             </DialogDescription>
           </DialogHeader>

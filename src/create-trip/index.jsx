@@ -279,9 +279,9 @@ function CreateTrip() {
   const [rateLimitHit, setRateLimitHit] = useState(false);
 
   return (
-    <div className="sm:px-10 md:px-32 lg:px-56 xl:px-72 px-5 mt-10">
+    <div className="container mx-auto max-w-7xl px-5 sm:px-10 md:px-12 lg:px-16 xl:px-20 mt-10 pb-16">
       <div className="text-center mb-8">
-        <h2 className="font-bold text-4xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <h2 className="font-bold text-4xl text-gray-900 dark:text-white">
           Create Your Perfect Trip ✨
         </h2>
         <p className="mt-3 text-gray-700 dark:text-gray-300 text-lg">
@@ -329,24 +329,24 @@ function CreateTrip() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 bg-gray-100 dark:bg-gray-800">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1 bg-gray-100 dark:bg-gray-800 p-1">
           <TabsTrigger
             value="inspire"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-100 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
           >
             <Camera className="w-3 h-3" />
             <span className="hidden sm:inline">Inspire</span>
           </TabsTrigger>
           <TabsTrigger
             value="persona"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
           >
             <Sparkles className="w-3 h-3" />
             <span className="hidden sm:inline">Style</span>
           </TabsTrigger>
           <TabsTrigger
             value="basic"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300 relative"
+            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
           >
             <MapPin className="w-3 h-3" />
             <span className="hidden sm:inline">Details</span>
@@ -356,14 +356,14 @@ function CreateTrip() {
           </TabsTrigger>
           <TabsTrigger
             value="group"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
           >
             <Users className="w-3 h-3" />
             <span className="hidden sm:inline">Group</span>
           </TabsTrigger>
           <TabsTrigger
             value="budget"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300 relative"
+            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
           >
             <Calculator className="w-3 h-3" />
             <span className="hidden sm:inline">Budget</span>
@@ -373,21 +373,21 @@ function CreateTrip() {
           </TabsTrigger>
           <TabsTrigger
             value="realtime"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
           >
             <Zap className="w-3 h-3" />
             <span className="hidden sm:inline">Live</span>
           </TabsTrigger>
           <TabsTrigger
             value="multilingual"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
           >
             <Globe className="w-3 h-3" />
             <span className="hidden sm:inline">Language</span>
           </TabsTrigger>
           <TabsTrigger
             value="advanced"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-white data-[state=active]:text-gray-900 dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-white data-[state=active]:text-[#2196f3] dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
           >
             <Settings className="w-3 h-3" />
             <span className="hidden sm:inline">More</span>
@@ -546,7 +546,7 @@ function CreateTrip() {
             {/* Feature Grid */}
             <div className="grid md:grid-cols-2 gap-6">
               {/* Weather Adaptation */}
-              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow bg-white dark:bg-gray-800">
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-900 hover:border-[#2196f3] transition-colors">
                 <div className="flex items-center gap-3 mb-4">
                   <Cloud className="w-8 h-8 text-blue-500" />
                   <div>
@@ -565,7 +565,7 @@ function CreateTrip() {
               </div>
 
               {/* Booking System */}
-              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow bg-white dark:bg-gray-800">
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-900 hover:border-[#2196f3] transition-colors">
                 <div className="flex items-center gap-3 mb-4">
                   <CreditCard className="w-8 h-8 text-green-500" />
                   <div>
@@ -583,12 +583,12 @@ function CreateTrip() {
               </div>
 
               {/* Eco Score */}
-              <div className="border rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-900 hover:border-[#2196f3] transition-colors">
                 <div className="flex items-center gap-3 mb-4">
                   <Leaf className="w-8 h-8 text-emerald-500" />
                   <div>
-                    <h3 className="text-lg font-semibold">Eco-Friendly Travel</h3>
-                    <p className="text-sm text-gray-600">Sustainability scoring and green alternatives</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Eco-Friendly Travel</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Sustainability scoring and green alternatives</p>
                   </div>
                 </div>
                 <EcoScoreIndicator
@@ -598,24 +598,24 @@ function CreateTrip() {
               </div>
 
               {/* Trip Story Generator */}
-              <div className="border rounded-lg p-6 hover:shadow-lg transition-shadow">
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-900 hover:border-[#2196f3] transition-colors">
                 <div className="flex items-center gap-3 mb-4">
                   <BookOpen className="w-8 h-8 text-purple-500" />
                   <div>
-                    <h3 className="text-lg font-semibold">Trip Story Generator</h3>
-                    <p className="text-sm text-gray-600">AI-generated shareable travel stories</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Trip Story Generator</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">AI-generated shareable travel stories</p>
                   </div>
                 </div>
                 <TripStoryGenerator tripData={formData} />
               </div>
 
               {/* Offline Mode */}
-              <div className="border rounded-lg p-6 hover:shadow-lg transition-shadow col-span-full">
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-900 hover:border-[#2196f3] transition-colors col-span-full">
                 <div className="flex items-center gap-3 mb-4">
                   <Wifi className="w-8 h-8 text-gray-500" />
                   <div>
-                    <h3 className="text-lg font-semibold">Offline Mode</h3>
-                    <p className="text-sm text-gray-600">Access your itinerary without internet connection</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Offline Mode</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Access your itinerary without internet connection</p>
                   </div>
                 </div>
                 <OfflineMode tripData={formData} />
@@ -686,7 +686,7 @@ function CreateTrip() {
         </div>
       )}
 
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogDescription>

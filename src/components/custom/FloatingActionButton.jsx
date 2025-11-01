@@ -12,25 +12,25 @@ const FloatingActionButton = () => {
       icon: <Sparkles className="w-4 h-4" />,
       label: 'AI Plan',
       action: () => navigate('/create-trip?tab=persona'),
-      color: 'bg-purple-500 hover:bg-purple-600'
+      color: 'bg-[#673ab7] hover:bg-[#5e35b1]'
     },
     {
       icon: <Camera className="w-4 h-4" />,
       label: 'Inspire Me',
       action: () => navigate('/create-trip?tab=inspire'),
-      color: 'bg-blue-500 hover:bg-blue-600'
+      color: 'bg-[#2196f3] hover:bg-[#1976d2]'
     },
     {
       icon: <Users className="w-4 h-4" />,
       label: 'Group Trip',
       action: () => navigate('/create-trip?tab=group'),
-      color: 'bg-green-500 hover:bg-green-600'
+      color: 'bg-[#4caf50] hover:bg-[#43a047]'
     },
     {
       icon: <Calculator className="w-4 h-4" />,
       label: 'Budget Plan',
       action: () => navigate('/create-trip?tab=budget'),
-      color: 'bg-orange-500 hover:bg-orange-600'
+      color: 'bg-[#ff6f00] hover:bg-[#f57c00]'
     }
   ];
 
@@ -45,7 +45,7 @@ const FloatingActionButton = () => {
               className="flex items-center gap-3 animate-in slide-in-from-right-2"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded-full text-sm font-medium shadow-lg border">
+              <span className="bg-white dark:bg-gray-800 px-3 py-1 rounded-full text-sm font-medium shadow-lg border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white">
                 {action.label}
               </span>
               <Button
@@ -70,7 +70,7 @@ const FloatingActionButton = () => {
         className={`rounded-full p-4 shadow-lg transition-all duration-300 ${
           isExpanded 
             ? 'bg-red-500 hover:bg-red-600 rotate-45' 
-            : 'bg-blue-600 hover:bg-blue-700'
+            : 'bg-[#ff6f00] hover:bg-[#f57c00]'
         }`}
       >
         <Plus className="w-6 h-6" />

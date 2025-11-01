@@ -21,7 +21,7 @@ function Footer() {
     <>
       {/* Full-width horizontal line */}
       <div className="w-full">
-        <hr className="w-full border-t border-gray-300" />
+        <hr className="w-full border-t border-gray-200 dark:border-gray-700" />
       </div>
 
       {/* Footer Content */}
@@ -29,7 +29,13 @@ function Footer() {
         <p className="font-semibold text-lg text-gray-600">Made by Flux ⚡</p>
         <div className="flex items-center justify-center gap-5 mt-2">
           {socialIcons.map((item, index) => (
-            <Link key={index} to={item.link} target="_blank" rel="noopener noreferrer">
+            <Link 
+              key={index} 
+              to={item.link} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-2xl text-gray-600 dark:text-gray-400 hover:text-[#2196f3] dark:hover:text-[#42a5f5] transition-colors transform hover:scale-110"
+            >
               {item.icon}
             </Link>
           ))}
