@@ -447,73 +447,151 @@ function Viewtrip() {
         <TabsContent value="share" className="mt-6">
           <div className="space-y-6">
             <div className="text-center">
-              <h3 className="text-2xl font-bold mb-4">Share Your Amazing Trip</h3>
-              <p className="text-gray-600 mb-6">
-                Let others discover this incredible destination through your experience
+              <div className="inline-flex items-center gap-2 mb-4">
+                <span className="text-2xl">✨</span>
+                <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Share Your Amazing Trip
+                </h3>
+                <span className="text-2xl">✨</span>
+              </div>
+              <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
+                Let others discover this incredible destination through your experience. 
+                Create lasting memories and inspire fellow travelers!
               </p>
             </div>
 
-            {/* Shareable Trip Card Preview */}
-            <div ref={tripCardRef} className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-lg">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h4 className="text-xl font-bold">
-                    {trip?.userSelection?.location?.label || 'Amazing Destination'}
-                  </h4>
-                  <p className="opacity-90">
-                    {trip?.userSelection?.noofDays} days • {trip?.userSelection?.traveler}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl">✈️</div>
-                  <p className="text-sm opacity-75">WanderMind</p>
-                </div>
+            {/* Enhanced Shareable Trip Card Preview */}
+            <div ref={tripCardRef} className="relative overflow-hidden bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 text-white rounded-2xl shadow-2xl">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -translate-x-16 -translate-y-16"></div>
+                <div className="absolute bottom-0 right-0 w-24 h-24 bg-white rounded-full translate-x-12 translate-y-12"></div>
+                <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-white rounded-full"></div>
               </div>
               
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="opacity-75">Budget</p>
-                  <p className="font-semibold">{trip?.userSelection?.budget || 'Moderate'}</p>
+              {/* Content */}
+              <div className="relative z-10 p-8">
+                {/* Header */}
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 bg-yellow-300 rounded-full animate-pulse"></div>
+                      <span className="text-xs font-medium uppercase tracking-wider opacity-90">
+                        Travel Experience
+                      </span>
+                    </div>
+                    <h4 className="text-2xl font-bold leading-tight mb-2">
+                      {trip?.userSelection?.location?.label || 'Amazing Destination'}
+                    </h4>
+                    <div className="flex items-center gap-4 text-sm opacity-90">
+                      <span className="flex items-center gap-1">
+                        <span>📅</span>
+                        {trip?.userSelection?.noofDays} days
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span>👥</span>
+                        {trip?.userSelection?.traveler}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-3xl mb-1">✈️</div>
+                    <div className="text-xs font-bold tracking-wider">
+                      WANDER<span className="text-yellow-300">MIND</span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <p className="opacity-75">Trip Style</p>
-                  <p className="font-semibold">AI-Optimized</p>
+                
+                {/* Trip Details Grid */}
+                <div className="grid grid-cols-2 gap-6 mb-6">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">💰</span>
+                      <span className="text-xs font-medium uppercase tracking-wide opacity-75">Budget</span>
+                    </div>
+                    <p className="font-bold text-lg capitalize">
+                      {trip?.userSelection?.budget === 'budget' ? 'Budget Travel' :
+                       trip?.userSelection?.budget === 'moderate' ? 'Comfortable' :
+                       trip?.userSelection?.budget === 'luxury' ? 'Luxury' :
+                       trip?.userSelection?.budget || 'Moderate'}
+                    </p>
+                  </div>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-lg">🤖</span>
+                      <span className="text-xs font-medium uppercase tracking-wide opacity-75">Trip Style</span>
+                    </div>
+                    <p className="font-bold text-lg">AI-Optimized</p>
+                  </div>
+                </div>
+
+                {/* Bottom Stats */}
+                <div className="flex items-center justify-between pt-4 border-t border-white/20">
+                  <div className="flex items-center gap-4 text-xs">
+                    <span className="flex items-center gap-1 opacity-75">
+                      <span>🌟</span>
+                      Personalized
+                    </span>
+                    <span className="flex items-center gap-1 opacity-75">
+                      <span>🎯</span>
+                      AI-Powered
+                    </span>
+                    <span className="flex items-center gap-1 opacity-75">
+                      <span>⚡</span>
+                      Smart Planning
+                    </span>
+                  </div>
+                  <div className="text-xs opacity-75">
+                    Created {new Date().toLocaleDateString()}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Share Options */}
-            <div className="grid md:grid-cols-3 gap-4">
+            {/* Enhanced Share Options */}
+            <div className="grid md:grid-cols-3 gap-6">
               <Button 
-                className="h-16 flex flex-col items-center gap-2"
+                className="h-20 flex flex-col items-center justify-center gap-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 onClick={handleDownloadPDF}
               >
-                <Download className="w-5 h-5" />
-                <span>Download PDF</span>
+                <Download className="w-6 h-6" />
+                <div className="text-center">
+                  <div className="font-semibold">Download PDF</div>
+                  <div className="text-xs opacity-90">Save offline copy</div>
+                </div>
               </Button>
               <Button 
                 variant="outline" 
-                className="h-16 flex flex-col items-center gap-2"
+                className="h-20 flex flex-col items-center justify-center gap-3 border-2 border-purple-200 hover:border-purple-300 bg-white hover:bg-purple-50 text-purple-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 onClick={handleShareLink}
               >
-                <Share2 className="w-5 h-5" />
-                <span>Share Link</span>
+                <Share2 className="w-6 h-6" />
+                <div className="text-center">
+                  <div className="font-semibold">Share Link</div>
+                  <div className="text-xs opacity-75">Copy shareable URL</div>
+                </div>
               </Button>
               <Button 
                 variant="outline" 
-                className="h-16 flex flex-col items-center gap-2"
+                className="h-20 flex flex-col items-center justify-center gap-3 border-2 border-pink-200 hover:border-pink-300 bg-white hover:bg-pink-50 text-pink-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 onClick={handleShowQRCode}
               >
-                📱
-                <span>QR Code</span>
+                <div className="text-2xl">📱</div>
+                <div className="text-center">
+                  <div className="font-semibold">QR Code</div>
+                  <div className="text-xs opacity-75">Scan to view</div>
+                </div>
               </Button>
             </div>
 
-            {/* QR Code Display */}
+            {/* Enhanced QR Code Display */}
             {showQRCode && (
-              <div className="flex flex-col items-center justify-center p-6 bg-white rounded-lg border-2 border-gray-200">
-                <h4 className="text-lg font-semibold mb-4">Scan to View Trip</h4>
-                <div className="bg-white p-4 rounded-lg">
+              <div className="flex flex-col items-center justify-center p-8 bg-gradient-to-br from-gray-50 to-white rounded-2xl border-2 border-gray-200 shadow-xl">
+                <div className="text-center mb-6">
+                  <h4 className="text-xl font-bold text-gray-800 mb-2">Scan to View Trip</h4>
+                  <p className="text-sm text-gray-600">Share this QR code with friends and family</p>
+                </div>
+                <div className="bg-white p-6 rounded-2xl shadow-lg border-4 border-gray-100">
                   <QRCodeSVG 
                     id="trip-qr-code"
                     value={`${window.location.origin}/view-trip/${tripId}`}
