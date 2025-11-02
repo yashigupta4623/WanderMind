@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import Infosection from '../components/Infosection';
 import Hotels from '../components/Hotels';
 import PlacesToVisit from '../components/PlacesToVisit';
+import Transport from '../components/Transport';
+import Flights from '../components/Flights';
 import Footer from '../components/Footer';
 import ConversationalPlanner from '@/components/custom/ConversationalPlanner';
 import EcoScoreIndicator from '@/components/custom/EcoScoreIndicator';
@@ -50,11 +52,41 @@ function Viewtrip() {
         setTrip(docSnap.data());
       } else {
         console.log("No such document!");
-        toast.error('No such document!');
+        // Create fallback trip data for demo purposes
+        const fallbackTrip = {
+          userSelection: {
+            location: { label: 'Sample Destination' },
+            noofDays: '3',
+            traveler: '2 People',
+            budget: 'moderate',
+            budgetAmount: 50000
+          },
+          tripData: {
+            hotels: [],
+            itinerary: {}
+          }
+        };
+        setTrip(fallbackTrip);
+        toast.error('Trip not found. Showing demo data.');
       }
     } catch (error) {
       console.error('Error getting document:', error);
-      toast.error('Error getting trip data');
+      // Create fallback trip data
+      const fallbackTrip = {
+        userSelection: {
+          location: { label: 'Sample Destination' },
+          noofDays: '3',
+          traveler: '2 People',
+          budget: 'moderate',
+          budgetAmount: 50000
+        },
+        tripData: {
+          hotels: [],
+          itinerary: {}
+        }
+      };
+      setTrip(fallbackTrip);
+      toast.error('Error loading trip data. Showing demo data.');
     }
   };
 
@@ -122,26 +154,29 @@ function Viewtrip() {
       // If no prices found, estimate based on budget range and days
       if (totalBudget.total === 0 && trip?.userSelection) {
         totalBudget.isEstimated = true;
-        const days = parseInt(trip.userSelection.noofDays) || 1;
-        const travelers = trip.userSelection.traveler || '1';
-        const numTravelers = parseInt(travelers.match(/\d+/)?.[0]) || 1;
+        const days = parseInt(trip.userSelection.noofDays) || 3;
+        const travelers = trip.userSelection.traveler || '2 People';
+        const numTravelers = parseInt(travelers.match(/\d+/)?.[0]) || 2;
         
-        let dailyBudget = 3000; // Default moderate
+        // Use actual budget amount if available
+        let dailyBudget = 4000; // Default moderate
         
-        if (trip.userSelection.budget) {
+        if (trip.userSelection.budgetAmount && trip.userSelection.budgetAmount > 0) {
+          dailyBudget = trip.userSelection.budgetAmount / days / numTravelers;
+        } else if (trip.userSelection.budget) {
           const budgetLower = trip.userSelection.budget.toLowerCase();
           if (budgetLower.includes('cheap') || budgetLower.includes('budget')) {
-            dailyBudget = 2000;
+            dailyBudget = 2500;
           } else if (budgetLower.includes('luxury') || budgetLower.includes('expensive')) {
             dailyBudget = 8000;
           } else {
-            dailyBudget = 4000; // moderate
+            dailyBudget = 4500; // moderate
           }
         }
         
-        totalBudget.hotelCost = dailyBudget * 0.4 * days * numTravelers;
-        totalBudget.activityCost = dailyBudget * 0.3 * days * numTravelers;
-        totalBudget.total = dailyBudget * days * numTravelers;
+        totalBudget.hotelCost = Math.round(dailyBudget * 0.4 * days * numTravelers);
+        totalBudget.activityCost = Math.round(dailyBudget * 0.3 * days * numTravelers);
+        totalBudget.total = Math.round(dailyBudget * days * numTravelers);
       }
 
       console.log('Calculated Budget:', totalBudget);
@@ -391,8 +426,10 @@ function Viewtrip() {
         </TabsList>
 
         <TabsContent value="overview" className="mt-6">
-          <div className="space-y-8">
+          <div className="space-y-6">
             <Hotels trip={trip} />
+            <Transport trip={trip} />
+            <Flights trip={trip} />
             <PlacesToVisit trip={trip} />
           </div>
         </TabsContent>

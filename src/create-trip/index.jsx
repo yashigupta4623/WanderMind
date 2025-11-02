@@ -349,8 +349,9 @@ function CreateTrip() {
 
     console.log(FINAL_PROMPT);
 
+    let result = null;
     try {
-      const result = await chatSession.sendMessage(FINAL_PROMPT);
+      result = await chatSession.sendMessage(FINAL_PROMPT);
       const responseText = result?.response?.text();
       console.log("Raw AI response:", responseText);
 
@@ -379,11 +380,17 @@ function CreateTrip() {
       console.error("Error generating trip:", error);
       
       // Log the raw response for debugging
-      if (error.message.includes("Failed to parse JSON")) {
-        const rawResponse = result?.response?.text();
-        console.error("Raw response that failed to parse (first 500 chars):", rawResponse?.substring(0, 500));
-        console.error("Raw response length:", rawResponse?.length);
-        console.error("Response ends with:", rawResponse?.substring(Math.max(0, rawResponse.length - 100)));
+      if (error.message.includes("Failed to parse JSON") && result) {
+        try {
+          const rawResponse = result?.response?.text();
+          if (rawResponse) {
+            console.error("Raw response that failed to parse (first 500 chars):", rawResponse?.substring(0, 500));
+            console.error("Raw response length:", rawResponse?.length);
+            console.error("Response ends with:", rawResponse?.substring(Math.max(0, rawResponse.length - 100)));
+          }
+        } catch (resultError) {
+          console.error("Could not access result for debugging:", resultError);
+        }
       }
       
       if (error.message.includes("429") || error.message.includes("Resource exhausted")) {

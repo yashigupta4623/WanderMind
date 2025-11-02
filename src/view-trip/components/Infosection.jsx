@@ -18,21 +18,26 @@ function Infosection({ trip }) {
     const budgetAmount = trip?.userSelection?.budgetAmount;
     console.log('Infosection budget data:', { budgetAmount, budget: trip?.userSelection?.budget, userSelection: trip?.userSelection });
     
+    // Return default if no trip data
+    if (!trip?.userSelection) {
+      return '₹25,000';
+    }
+    
     // Try to show actual budget amount first
     if (budgetAmount && budgetAmount > 0) {
       return `₹${parseInt(budgetAmount).toLocaleString()}`;
     }
     
     // Try to extract amount from trip data or generate realistic amount based on budget type
-    const budget = trip?.userSelection?.budget;
+    const budget = trip?.userSelection?.budget || 'moderate';
     const days = parseInt(trip?.userSelection?.noofDays) || 3;
-    const travelers = trip?.userSelection?.traveler || '1 Person';
+    const travelers = trip?.userSelection?.traveler || '2 People';
     
     // Extract number of people
     const peopleCount = travelers.includes('2') ? 2 : 
                       travelers.includes('3') ? 3 : 
                       travelers.includes('4') ? 4 : 
-                      travelers.includes('Group') ? 4 : 1;
+                      travelers.includes('Group') ? 4 : 2;
     
     // Generate realistic budget amounts based on type
     let estimatedAmount = 0;
@@ -55,8 +60,16 @@ function Infosection({ trip }) {
 
   const GetPlacePhoto = async () => {
     try {
+      const locationLabel = trip?.userSelection?.location?.label;
+      
+      // Don't make API call if location is not available
+      if (!locationLabel || locationLabel.trim() === '') {
+        console.log("No location available for photo fetch");
+        return;
+      }
+
       const data = {
-        textQuery: trip?.userSelection?.location?.label,
+        textQuery: locationLabel,
       };
 
       const resp = await GetPlaceDetails(data);
@@ -103,12 +116,12 @@ function Infosection({ trip }) {
       </div>
       <div className="my-5 flex flex-col gap-2">
         <h2 className="font-bold text-2xl">
-          📍 {trip?.userSelection?.location?.label}
+          📍 {trip?.userSelection?.location?.label || 'Your Destination'}
         </h2>
         <div className="flex gap-5">
-          <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">📆 {trip.userSelection?.noofDays} Days</h2>
+          <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">📆 {trip?.userSelection?.noofDays || '3'} Days</h2>
           <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">💸 {formatBudgetDisplay(trip)}</h2>
-          <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">🏕️ No. of Traveler : {trip.userSelection?.traveler} </h2>
+          <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">🏕️ No. of Traveler : {trip?.userSelection?.traveler || '2 People'} </h2>
         </div>
       </div>
     </div>
