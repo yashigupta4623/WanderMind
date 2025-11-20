@@ -21,7 +21,8 @@ import OfflineMode from '@/components/custom/OfflineMode';
 import BookingSystem from '@/components/custom/BookingSystem';
 import RealTimeAdaptation from '@/components/custom/RealTimeAdaptation';
 import MultilingualSupport from '@/components/custom/MultilingualSupport';
-import { MapPin, MessageCircle, Leaf, BookOpen, Share2, Download, Cloud, Wifi, CreditCard, Zap, Globe } from 'lucide-react';
+import AICopilotAlert from '@/components/custom/AICopilotAlert';
+import { MapPin, MessageCircle, Leaf, BookOpen, Share2, Download, Cloud, Wifi, CreditCard, Zap, Globe, Bot } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { QRCodeSVG } from 'qrcode.react';
@@ -377,6 +378,15 @@ function Viewtrip() {
             <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
             Live Updates
           </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => setActiveTab('copilot')}
+            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm bg-purple-50 dark:bg-purple-900/20 border-purple-300"
+          >
+            <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
+            AI Copilot
+          </Button>
         </div>
       </div>
 
@@ -397,6 +407,11 @@ function Viewtrip() {
             <Zap className="w-3 h-3" />
             <span className="hidden sm:inline">Live</span>
             <span className="sm:hidden">Live</span>
+          </TabsTrigger>
+          <TabsTrigger value="copilot" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2 bg-purple-50 dark:bg-purple-900/20">
+            <Bot className="w-3 h-3" />
+            <span className="hidden sm:inline">Copilot</span>
+            <span className="sm:hidden">AI</span>
           </TabsTrigger>
           <TabsTrigger value="chat" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
             <MessageCircle className="w-3 h-3" />
@@ -450,6 +465,27 @@ function Viewtrip() {
             currentLocation={trip?.userSelection?.location}
             onItineraryUpdate={handleTripUpdate}
           />
+        </TabsContent>
+
+        <TabsContent value="copilot" className="mt-6">
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
+                <Bot className="w-6 h-6 text-purple-600" />
+                AI Copilot - Real-Time Adaptive Assistant
+              </h2>
+              <p className="text-gray-700 dark:text-gray-300 mb-6">
+                Your intelligent travel companion that monitors conditions and suggests real-time adjustments
+              </p>
+            </div>
+            <AICopilotAlert 
+              tripData={trip}
+              onReplan={(updatedTrip) => {
+                setTrip(updatedTrip);
+                toast.success('Trip updated by AI Copilot!');
+              }}
+            />
+          </div>
         </TabsContent>
 
         <TabsContent value="chat" className="mt-6">

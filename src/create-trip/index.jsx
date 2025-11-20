@@ -33,6 +33,7 @@ import BudgetPredictor from "@/components/custom/BudgetPredictor";
 import BudgetValidator from "@/components/custom/BudgetValidator";
 import TravelConstraints from "@/components/custom/TravelConstraints";
 import PreferenceLearningIndicator from "@/components/custom/PreferenceLearningIndicator";
+import LastMinuteQuickPlan from "@/components/custom/LastMinuteQuickPlan";
 import InspireMe from "@/components/custom/InspireMe";
 import { preferenceLearning } from "@/service/PreferenceLearningService";
 import GroupTravelMode from "@/components/custom/GroupTravelMode";
@@ -535,6 +536,13 @@ function CreateTrip() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1 bg-gray-100 dark:bg-gray-800 p-1">
           <TabsTrigger
+            value="quickplan"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-white bg-gradient-to-r from-purple-600 to-pink-600 data-[state=active]:from-purple-700 data-[state=active]:to-pink-700"
+          >
+            <Zap className="w-3 h-3" />
+            <span className="hidden sm:inline">Quick</span>
+          </TabsTrigger>
+          <TabsTrigger
             value="inspire"
             className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-100 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
           >
@@ -604,6 +612,26 @@ function CreateTrip() {
             <span className="hidden sm:inline">More</span>
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="quickplan" className="mt-6">
+          <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
+                <Zap className="w-6 h-6 text-yellow-500" />
+                Last-Minute Quick Plan
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Just landed? Get an instant hyper-compressed plan in seconds!
+              </p>
+            </div>
+            <LastMinuteQuickPlan 
+              onPlanGenerated={(plan) => {
+                console.log('Quick plan generated:', plan);
+                toast.success('Quick plan ready! Start exploring now! 🚀');
+              }}
+            />
+          </div>
+        </TabsContent>
 
         <TabsContent value="inspire" className="mt-6">
           <InspireMe onDestinationSelect={handleDestinationFromInspire} />
