@@ -24,7 +24,8 @@ import MultilingualSupport from '@/components/custom/MultilingualSupport';
 import AICopilotAlert from '@/components/custom/AICopilotAlert';
 import MultilingualTripDisplay from '@/components/custom/MultilingualTripDisplay';
 import GroupPlanningCollaboration from '@/components/custom/GroupPlanningCollaboration';
-import { MapPin, MessageCircle, Leaf, BookOpen, Share2, Download, Cloud, Wifi, CreditCard, Zap, Globe, Bot, Users } from 'lucide-react';
+import SmartMapsUI from '@/components/custom/SmartMapsUI';
+import { MapPin, MessageCircle, Leaf, BookOpen, Share2, Download, Cloud, Wifi, CreditCard, Zap, Globe, Bot, Users, Map } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { QRCodeSVG } from 'qrcode.react';
@@ -442,6 +443,11 @@ function Viewtrip() {
             <span className="hidden sm:inline">Story</span>
             <span className="sm:hidden">Story</span>
           </TabsTrigger>
+          <TabsTrigger value="maps" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20">
+            <Map className="w-3 h-3" />
+            <span className="hidden sm:inline">Maps</span>
+            <span className="sm:hidden">Maps</span>
+          </TabsTrigger>
           <TabsTrigger value="group" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
             <Users className="w-3 h-3" />
             <span className="hidden sm:inline">Group</span>
@@ -506,6 +512,13 @@ function Viewtrip() {
           <ConversationalPlanner 
             currentTrip={trip}
             onTripUpdate={handleTripUpdate}
+          />
+        </TabsContent>
+
+        <TabsContent value="maps" className="mt-6">
+          <SmartMapsUI 
+            tripData={trip}
+            tripId={tripId}
           />
         </TabsContent>
 
