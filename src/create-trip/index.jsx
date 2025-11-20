@@ -45,7 +45,9 @@ import OfflineMode from "@/components/custom/OfflineMode";
 import TripStoryGenerator from "@/components/custom/TripStoryGenerator";
 import EcoScoreIndicator from "@/components/custom/EcoScoreIndicator";
 import BookingSystem from "@/components/custom/BookingSystem";
-import { Sparkles, Calculator, Camera, Users, MapPin, Calendar, Zap, Globe, Settings, Cloud, Wifi, BookOpen, Leaf, CreditCard } from "lucide-react";
+import SafetyAccessibilityFilters from "@/components/custom/SafetyAccessibilityFilters";
+import { safetyAccessibilityService } from "@/service/SafetyAccessibilityService";
+import { Sparkles, Calculator, Camera, Users, MapPin, Calendar, Zap, Globe, Settings, Cloud, Wifi, BookOpen, Leaf, CreditCard, Shield } from "lucide-react";
 
 const apiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
 
@@ -212,6 +214,7 @@ function CreateTrip() {
   const [groupData, setGroupData] = useState(null);
   const [activeTab, setActiveTab] = useState("basic");
   const [travelConstraints, setTravelConstraints] = useState(null);
+  const [safetyFilters, setSafetyFilters] = useState(null);
   const navigate = useNavigate();
 
   // Function to format budget display
@@ -363,6 +366,15 @@ function CreateTrip() {
     if (preferencePrompt) {
       FINAL_PROMPT += preferencePrompt;
       console.log('✨ Applied learned preferences to trip generation');
+    }
+
+    // Add safety & accessibility requirements
+    if (safetyFilters) {
+      const safetyPrompt = safetyAccessibilityService.generateSafetyPrompt(safetyFilters);
+      if (safetyPrompt) {
+        FINAL_PROMPT += safetyPrompt;
+        console.log('🛡️ Applied safety & accessibility filters to trip generation');
+      }
     }
 
     console.log(FINAL_PROMPT);
@@ -535,7 +547,7 @@ function CreateTrip() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1 bg-gray-100 dark:bg-gray-800 p-1">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-1 bg-gray-100 dark:bg-gray-800 p-1">
           <TabsTrigger
             value="voice"
             className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-white bg-gradient-to-r from-orange-600 to-red-600 data-[state=active]:from-orange-700 data-[state=active]:to-red-700"
@@ -590,6 +602,13 @@ function CreateTrip() {
             {!formData?.budget && (
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             )}
+          </TabsTrigger>
+          <TabsTrigger
+            value="safety"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-white bg-gradient-to-r from-pink-600 to-purple-600 data-[state=active]:from-pink-700 data-[state=active]:to-purple-700"
+          >
+            <Shield className="w-3 h-3" />
+            <span className="hidden sm:inline">Safety</span>
           </TabsTrigger>
           <TabsTrigger
             value="constraints"
@@ -800,6 +819,29 @@ function CreateTrip() {
               </p>
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="safety" className="mt-6">
+          <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
+                <Shield className="w-6 h-6 text-pink-500" />
+                Safety & Accessibility
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                India-first filters for safe, accessible, and comfortable travel 🇮🇳
+              </p>
+            </div>
+            <SafetyAccessibilityFilters 
+              onFiltersUpdate={(filters) => {
+                setSafetyFilters(filters);
+                setFormData(prev => ({
+                  ...prev,
+                  safetyFilters: filters
+                }));
+              }} 
+            />
+          </div>
         </TabsContent>
 
         <TabsContent value="constraints" className="mt-6">
