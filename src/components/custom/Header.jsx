@@ -75,18 +75,18 @@ function Header() {
         {/* Quick Feature Access - Hidden on mobile */}
         <div className="hidden lg:flex items-center gap-2">
           <Button 
-            variant="ghost" 
+            variant="outline" 
             size="sm"
             onClick={() => window.location.href = '/create-trip?tab=inspire'}
-            className="text-xs"
+            className="text-xs bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             🎯 Inspire Me
           </Button>
           <Button 
-            variant="ghost" 
+            variant="outline" 
             size="sm"
             onClick={() => window.location.href = '/create-trip?tab=persona'}
-            className="text-xs"
+            className="text-xs bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
           >
             🤖 AI Plan
           </Button>

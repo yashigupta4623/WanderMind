@@ -547,96 +547,40 @@ function CreateTrip() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-1 bg-gray-100 dark:bg-gray-800 p-1">
-          <TabsTrigger
-            value="voice"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-white bg-gradient-to-r from-orange-600 to-red-600 data-[state=active]:from-orange-700 data-[state=active]:to-red-700"
-          >
-            <Sparkles className="w-3 h-3" />
-            <span className="hidden sm:inline">Voice</span>
+        <TabsList className="inline-flex h-12 items-center justify-start rounded-lg !bg-white dark:!bg-gray-800 p-1 w-full overflow-x-auto border border-gray-200 dark:border-gray-700">
+          <TabsTrigger value="voice" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-orange-600 data-[state=active]:!text-white transition-all">
+            <Sparkles className="w-4 h-4 mr-2" />
+            Voice
           </TabsTrigger>
-          <TabsTrigger
-            value="quickplan"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-white bg-gradient-to-r from-purple-600 to-pink-600 data-[state=active]:from-purple-700 data-[state=active]:to-pink-700"
-          >
-            <Zap className="w-3 h-3" />
-            <span className="hidden sm:inline">Quick</span>
+          <TabsTrigger value="quickplan" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-purple-600 data-[state=active]:!text-white transition-all">
+            <Zap className="w-4 h-4 mr-2" />
+            Quick
           </TabsTrigger>
-          <TabsTrigger
-            value="inspire"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-100 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
-          >
-            <Camera className="w-3 h-3" />
-            <span className="hidden sm:inline">Inspire</span>
+          <TabsTrigger value="inspire" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-blue-600 data-[state=active]:!text-white transition-all">
+            <Camera className="w-4 h-4 mr-2" />
+            Inspire
           </TabsTrigger>
-          <TabsTrigger
-            value="persona"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
-          >
-            <Sparkles className="w-3 h-3" />
-            <span className="hidden sm:inline">Style</span>
+          <TabsTrigger value="persona" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-indigo-600 data-[state=active]:!text-white transition-all">
+            <Sparkles className="w-4 h-4 mr-2" />
+            Style
           </TabsTrigger>
-          <TabsTrigger
-            value="basic"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
-          >
-            <MapPin className="w-3 h-3" />
-            <span className="hidden sm:inline">Details</span>
+          <TabsTrigger value="basic" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-blue-600 data-[state=active]:!text-white transition-all relative">
+            <MapPin className="w-4 h-4 mr-2" />
+            Details
             {(!formData?.location || !formData?.noofDays || !formData?.traveler) && (
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             )}
           </TabsTrigger>
-          <TabsTrigger
-            value="group"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
-          >
-            <Users className="w-3 h-3" />
-            <span className="hidden sm:inline">Group</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="budget"
-            className="flex items-center gap-1 text-xs data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white text-gray-700 dark:text-gray-300"
-          >
-            <Calculator className="w-3 h-3" />
-            <span className="hidden sm:inline">Budget</span>
+          <TabsTrigger value="budget" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-green-600 data-[state=active]:!text-white transition-all relative">
+            <Calculator className="w-4 h-4 mr-2" />
+            Budget
             {!formData?.budget && (
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             )}
           </TabsTrigger>
-          <TabsTrigger
-            value="safety"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-white bg-gradient-to-r from-pink-600 to-purple-600 data-[state=active]:from-pink-700 data-[state=active]:to-purple-700"
-          >
-            <Shield className="w-3 h-3" />
-            <span className="hidden sm:inline">Safety</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="constraints"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
-          >
-            <Settings className="w-3 h-3" />
-            <span className="hidden sm:inline">Rules</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="realtime"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
-          >
-            <Zap className="w-3 h-3" />
-            <span className="hidden sm:inline">Live</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="multilingual"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
-          >
-            <Globe className="w-3 h-3" />
-            <span className="hidden sm:inline">Language</span>
-          </TabsTrigger>
-          <TabsTrigger
-            value="advanced"
-            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
-          >
-            <Settings className="w-3 h-3" />
-            <span className="hidden sm:inline">More</span>
+          <TabsTrigger value="safety" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-pink-600 data-[state=active]:!text-white transition-all">
+            <Shield className="w-4 h-4 mr-2" />
+            Safety
           </TabsTrigger>
         </TabsList>
 
