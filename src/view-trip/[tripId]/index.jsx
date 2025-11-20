@@ -23,7 +23,8 @@ import RealTimeAdaptation from '@/components/custom/RealTimeAdaptation';
 import MultilingualSupport from '@/components/custom/MultilingualSupport';
 import AICopilotAlert from '@/components/custom/AICopilotAlert';
 import MultilingualTripDisplay from '@/components/custom/MultilingualTripDisplay';
-import { MapPin, MessageCircle, Leaf, BookOpen, Share2, Download, Cloud, Wifi, CreditCard, Zap, Globe, Bot } from 'lucide-react';
+import GroupPlanningCollaboration from '@/components/custom/GroupPlanningCollaboration';
+import { MapPin, MessageCircle, Leaf, BookOpen, Share2, Download, Cloud, Wifi, CreditCard, Zap, Globe, Bot, Users } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { QRCodeSVG } from 'qrcode.react';
@@ -40,6 +41,13 @@ function Viewtrip() {
   useEffect(() => {
     if (tripId) {
       GetTripData();
+    }
+    
+    // Check for tab parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    if (tabParam) {
+      setActiveTab(tabParam);
     }
   }, [tripId]);
 
@@ -434,6 +442,11 @@ function Viewtrip() {
             <span className="hidden sm:inline">Story</span>
             <span className="sm:hidden">Story</span>
           </TabsTrigger>
+          <TabsTrigger value="group" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
+            <Users className="w-3 h-3" />
+            <span className="hidden sm:inline">Group</span>
+            <span className="sm:hidden">Group</span>
+          </TabsTrigger>
           <TabsTrigger value="share" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
             <Share2 className="w-3 h-3" />
             <span className="hidden sm:inline">Share</span>
@@ -493,6 +506,13 @@ function Viewtrip() {
           <ConversationalPlanner 
             currentTrip={trip}
             onTripUpdate={handleTripUpdate}
+          />
+        </TabsContent>
+
+        <TabsContent value="group" className="mt-6">
+          <GroupPlanningCollaboration 
+            tripData={trip}
+            tripId={tripId}
           />
         </TabsContent>
 
