@@ -34,6 +34,7 @@ import BudgetValidator from "@/components/custom/BudgetValidator";
 import TravelConstraints from "@/components/custom/TravelConstraints";
 import PreferenceLearningIndicator from "@/components/custom/PreferenceLearningIndicator";
 import LastMinuteQuickPlan from "@/components/custom/LastMinuteQuickPlan";
+import VoiceFirstPlanner from "@/components/custom/VoiceFirstPlanner";
 import InspireMe from "@/components/custom/InspireMe";
 import { preferenceLearning } from "@/service/PreferenceLearningService";
 import GroupTravelMode from "@/components/custom/GroupTravelMode";
@@ -536,6 +537,13 @@ function CreateTrip() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1 bg-gray-100 dark:bg-gray-800 p-1">
           <TabsTrigger
+            value="voice"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-white bg-gradient-to-r from-orange-600 to-red-600 data-[state=active]:from-orange-700 data-[state=active]:to-red-700"
+          >
+            <Sparkles className="w-3 h-3" />
+            <span className="hidden sm:inline">Voice</span>
+          </TabsTrigger>
+          <TabsTrigger
             value="quickplan"
             className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-white bg-gradient-to-r from-purple-600 to-pink-600 data-[state=active]:from-purple-700 data-[state=active]:to-pink-700"
           >
@@ -612,6 +620,47 @@ function CreateTrip() {
             <span className="hidden sm:inline">More</span>
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="voice" className="mt-6">
+          <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">
+                <Sparkles className="w-6 h-6 text-orange-500" />
+                Bolkar Plan Banao 🇮🇳
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Apni bhasha mein boliye, AI samajh jayega! Voice-first planning for India.
+              </p>
+            </div>
+            <VoiceFirstPlanner 
+              onPlanCreated={(parsed) => {
+                console.log('Voice plan created:', parsed);
+                // Auto-fill form with voice data
+                if (parsed.destination) {
+                  handleInputChange('location', { label: parsed.destination });
+                  setPlace({ label: parsed.destination });
+                }
+                if (parsed.days) {
+                  handleInputChange('noofDays', parsed.days.toString());
+                }
+                if (parsed.budget) {
+                  handleInputChange('budget', parsed.budget);
+                  // Also set budget amount for validation
+                  const budgetAmounts = {
+                    'budget': 15000,
+                    'moderate': 35000,
+                    'luxury': 75000
+                  };
+                  handleInputChange('budgetAmount', budgetAmounts[parsed.budget] || 25000);
+                }
+                if (parsed.preferences && parsed.preferences.length > 0) {
+                  handleInputChange('themes', parsed.preferences);
+                }
+                toast.success('✅ Voice plan ready! All fields filled. You can generate trip now! 🎤');
+              }}
+            />
+          </div>
+        </TabsContent>
 
         <TabsContent value="quickplan" className="mt-6">
           <div className="space-y-4">
@@ -902,7 +951,7 @@ function CreateTrip() {
       {/* Generate Trip Button */}
       <div className="my-10 flex justify-center">
         <Button
-          disabled={loading || !formData?.location || !formData?.noofDays || !formData?.traveler}
+          disabled={loading || !formData?.location || !formData?.noofDays || !formData?.traveler || !formData?.budget}
           onClick={OnGenerateTrip}
           size="lg"
           className="px-8 py-3 text-lg"

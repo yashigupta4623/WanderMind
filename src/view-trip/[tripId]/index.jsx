@@ -22,6 +22,7 @@ import BookingSystem from '@/components/custom/BookingSystem';
 import RealTimeAdaptation from '@/components/custom/RealTimeAdaptation';
 import MultilingualSupport from '@/components/custom/MultilingualSupport';
 import AICopilotAlert from '@/components/custom/AICopilotAlert';
+import MultilingualTripDisplay from '@/components/custom/MultilingualTripDisplay';
 import { MapPin, MessageCircle, Leaf, BookOpen, Share2, Download, Cloud, Wifi, CreditCard, Zap, Globe, Bot } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
