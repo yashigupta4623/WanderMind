@@ -342,127 +342,59 @@ function Viewtrip() {
       <div className="mb-6">
         <Infosection trip={trip} />
         
-        {/* Quick Action Buttons */}
-        <div className="flex flex-wrap gap-2 sm:gap-3 mt-4">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={generateShareableCard}
-            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
-          >
-            <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
-            Share Trip
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setActiveTab('story')}
-            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
-          >
-            <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
-            Generate Story
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setActiveTab('eco')}
-            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
-          >
-            <Leaf className="w-3 h-3 sm:w-4 sm:h-4" />
-            Eco Score
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setActiveTab('booking')}
-            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
-          >
-            <CreditCard className="w-3 h-3 sm:w-4 sm:h-4" />
-            Book Now
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setActiveTab('realtime')}
-            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
-          >
-            <Zap className="w-3 h-3 sm:w-4 sm:h-4" />
-            Live Updates
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => setActiveTab('copilot')}
-            className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm bg-purple-50 dark:bg-purple-900/20 border-purple-300"
-          >
-            <Bot className="w-3 h-3 sm:w-4 sm:h-4" />
-            AI Copilot
-          </Button>
-        </div>
       </div>
 
-      {/* Enhanced Trip View with Tabs */}
+      {/* Clean Trip View with Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 sm:grid-cols-4 lg:grid-cols-8 h-auto gap-1">
-          <TabsTrigger value="overview" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
-            <MapPin className="w-3 h-3" />
-            <span className="hidden sm:inline">Overview</span>
-            <span className="sm:hidden">Over</span>
+        <TabsList className="inline-flex h-12 items-center justify-start rounded-lg !bg-white dark:!bg-gray-800 p-1 w-full overflow-x-auto border border-gray-200 dark:border-gray-700">
+          <TabsTrigger 
+            value="overview" 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-blue-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            Overview
           </TabsTrigger>
-          <TabsTrigger value="booking" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
-            <CreditCard className="w-3 h-3" />
-            <span className="hidden sm:inline">Book</span>
-            <span className="sm:hidden">Book</span>
+          <TabsTrigger 
+            value="maps" 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-green-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <Map className="w-4 h-4 mr-2" />
+            Maps
           </TabsTrigger>
-          <TabsTrigger value="realtime" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
-            <Zap className="w-3 h-3" />
-            <span className="hidden sm:inline">Live</span>
-            <span className="sm:hidden">Live</span>
+          <TabsTrigger 
+            value="sustainability" 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-emerald-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <Leaf className="w-4 h-4 mr-2" />
+            Eco
           </TabsTrigger>
-          <TabsTrigger value="copilot" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2 bg-purple-50 dark:bg-purple-900/20">
-            <Bot className="w-3 h-3" />
-            <span className="hidden sm:inline">Copilot</span>
-            <span className="sm:hidden">AI</span>
+          <TabsTrigger 
+            value="group" 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-purple-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <Users className="w-4 h-4 mr-2" />
+            Group
           </TabsTrigger>
-          <TabsTrigger value="chat" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
-            <MessageCircle className="w-3 h-3" />
-            <span className="hidden sm:inline">Chat</span>
-            <span className="sm:hidden">Chat</span>
+          <TabsTrigger 
+            value="copilot" 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-indigo-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <Bot className="w-4 h-4 mr-2" />
+            AI Copilot
           </TabsTrigger>
-          <TabsTrigger value="multilingual" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
-            <Globe className="w-3 h-3" />
-            <span className="hidden sm:inline">Language</span>
-            <span className="sm:hidden">Lang</span>
+          <TabsTrigger 
+            value="booking" 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-orange-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <CreditCard className="w-4 h-4 mr-2" />
+            Book
           </TabsTrigger>
-          <TabsTrigger value="weather" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
-            <Cloud className="w-3 h-3" />
-            <span className="hidden sm:inline">Weather</span>
-            <span className="sm:hidden">Wthr</span>
-          </TabsTrigger>
-          <TabsTrigger value="story" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
-            <BookOpen className="w-3 h-3" />
-            <span className="hidden sm:inline">Story</span>
-            <span className="sm:hidden">Story</span>
-          </TabsTrigger>
-          <TabsTrigger value="maps" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2 bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20">
-            <Map className="w-3 h-3" />
-            <span className="hidden sm:inline">Maps</span>
-            <span className="sm:hidden">Maps</span>
-          </TabsTrigger>
-          <TabsTrigger value="sustainability" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
-            <Leaf className="w-3 h-3" />
-            <span className="hidden sm:inline">Eco</span>
-            <span className="sm:hidden">Eco</span>
-          </TabsTrigger>
-          <TabsTrigger value="group" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
-            <Users className="w-3 h-3" />
-            <span className="hidden sm:inline">Group</span>
-            <span className="sm:hidden">Group</span>
-          </TabsTrigger>
-          <TabsTrigger value="share" className="flex items-center gap-1 text-[10px] sm:text-xs px-1 sm:px-3 py-2">
-            <Share2 className="w-3 h-3" />
-            <span className="hidden sm:inline">Share</span>
-            <span className="sm:hidden">Share</span>
+          <TabsTrigger 
+            value="share" 
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-gray-900 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <Share2 className="w-4 h-4 mr-2" />
+            Share
           </TabsTrigger>
         </TabsList>
 
