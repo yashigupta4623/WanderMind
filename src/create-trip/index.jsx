@@ -30,7 +30,11 @@ import { useNavigate } from "react-router-dom";
 import Footer from "@/components/custom/Footer";
 import TravelPersonaSelector from "@/components/custom/TravelPersonaSelector";
 import BudgetPredictor from "@/components/custom/BudgetPredictor";
+import BudgetValidator from "@/components/custom/BudgetValidator";
+import TravelConstraints from "@/components/custom/TravelConstraints";
+import PreferenceLearningIndicator from "@/components/custom/PreferenceLearningIndicator";
 import InspireMe from "@/components/custom/InspireMe";
+import { preferenceLearning } from "@/service/PreferenceLearningService";
 import GroupTravelMode from "@/components/custom/GroupTravelMode";
 import RealTimeAdaptation from "@/components/custom/RealTimeAdaptation";
 import MultilingualSupport from "@/components/custom/MultilingualSupport";
@@ -205,6 +209,7 @@ function CreateTrip() {
   const [predictedBudget, setPredictedBudget] = useState(null);
   const [groupData, setGroupData] = useState(null);
   const [activeTab, setActiveTab] = useState("basic");
+  const [travelConstraints, setTravelConstraints] = useState(null);
   const navigate = useNavigate();
 
   // Function to format budget display
@@ -333,12 +338,17 @@ function CreateTrip() {
 
     setLoading(true);
 
+    // Get learned preferences
+    const userEmail = JSON.parse(user)?.email;
+    const learnedPrefs = await preferenceLearning.getLearnedPreferences(userEmail);
+    const preferencePrompt = preferenceLearning.generatePreferencePrompt(learnedPrefs?.insights);
+
     const personaKeywords = selectedPersona?.keywords || '';
     const themeNames = selectedThemes.map(id =>
       TravelThemes.find(t => t.id === id)?.name
     ).filter(Boolean).join(', ');
 
-    const FINAL_PROMPT = AI_PROMPT
+    let FINAL_PROMPT = AI_PROMPT
       .replace("{location}", formData?.location?.label)
       .replace("{totalDays}", formData?.noofDays)
       .replace("{traveler}", formData?.traveler)
@@ -346,6 +356,12 @@ function CreateTrip() {
       .replace("{persona}", selectedPersona?.title || 'General Traveler')
       .replace("{personaKeywords}", personaKeywords)
       .replace("{themes}", themeNames || 'General sightseeing');
+
+    // Add learned preferences to prompt
+    if (preferencePrompt) {
+      FINAL_PROMPT += preferencePrompt;
+      console.log('✨ Applied learned preferences to trip generation');
+    }
 
     console.log(FINAL_PROMPT);
 
@@ -481,6 +497,13 @@ function CreateTrip() {
         )}
       </div>
 
+      {/* Preference Learning Indicator */}
+      <div className="mb-6">
+        <PreferenceLearningIndicator 
+          userId={JSON.parse(localStorage.getItem("user") || '{}')?.email}
+        />
+      </div>
+
       {/* Progress Indicator */}
       <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
         <div className="flex items-center justify-between mb-2">
@@ -551,6 +574,13 @@ function CreateTrip() {
             {!formData?.budget && (
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             )}
+          </TabsTrigger>
+          <TabsTrigger
+            value="constraints"
+            className="flex items-center justify-center gap-1 text-xs h-9 rounded-md text-gray-200 bg-gray-900 dark:text-gray-300 data-[state=active]:bg-blue-500 data-[state=active]:text-white dark:data-[state=active]:bg-blue-600 dark:data-[state=active]:text-white"
+          >
+            <Settings className="w-3 h-3" />
+            <span className="hidden sm:inline">Rules</span>
           </TabsTrigger>
           <TabsTrigger
             value="realtime"
@@ -653,12 +683,35 @@ function CreateTrip() {
 
         <TabsContent value="budget" className="mt-6">
           {formData?.location && formData?.noofDays && formData?.traveler ? (
-            <BudgetPredictor
-              destination={formData.location.label}
-              days={formData.noofDays}
-              travelers={formData.traveler}
-              onBudgetSelect={handleBudgetSelect}
-            />
+            <div className="space-y-6">
+              <BudgetPredictor
+                destination={formData.location.label}
+                days={formData.noofDays}
+                travelers={formData.traveler}
+                onBudgetSelect={handleBudgetSelect}
+              />
+              
+              {formData?.budgetAmount && (
+                <BudgetValidator
+                  destination={formData.location.label}
+                  days={formData.noofDays}
+                  travelers={formData.traveler}
+                  budget={formData.budgetAmount}
+                  onSuggestionAccept={(suggestion) => {
+                    console.log('Accepted suggestion:', suggestion);
+                    if (suggestion.type === 'days') {
+                      handleInputChange('noofDays', suggestion.value.toString());
+                      toast.success(`Trip duration adjusted to ${suggestion.value} days`);
+                    } else if (suggestion.type === 'budget') {
+                      handleBudgetSelect('custom', suggestion.value);
+                      toast.success(`Budget increased to ₹${suggestion.value.toLocaleString()}`);
+                    } else {
+                      toast.success(`Great choice! ${suggestion.type} suggestion accepted`);
+                    }
+                  }}
+                />
+              )}
+            </div>
           ) : (
             <div className="text-center py-8">
               <Calculator className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -670,6 +723,18 @@ function CreateTrip() {
               </p>
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="constraints" className="mt-6">
+          <div className="space-y-4">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold mb-2">Travel Constraints</h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                Set rules that AI must follow when planning your trip
+              </p>
+            </div>
+            <TravelConstraints onConstraintsUpdate={setTravelConstraints} />
+          </div>
         </TabsContent>
 
         <TabsContent value="realtime" className="mt-6">

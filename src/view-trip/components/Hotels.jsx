@@ -130,7 +130,14 @@ function Hotels({ trip }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4">
         {finalHotels.map((hotel, index) => (
           <div key={index} className="relative">
-            <HotelCardItem hotel={hotel} />
+            <HotelCardItem 
+              hotel={hotel} 
+              tripContext={{
+                budget: trip?.userSelection?.budgetAmount || trip?.userSelection?.budget,
+                days: trip?.userSelection?.noofDays,
+                travelers: trip?.userSelection?.traveler
+              }}
+            />
             {index === 0 && (
               <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
                 Best Value

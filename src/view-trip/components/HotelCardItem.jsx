@@ -4,8 +4,9 @@ import { FaMapMarkedAlt } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from 'react';
 import { GetPlaceDetails, PHOTO_REF_URL } from '../../service/GlobalApi';
+import WhyThisPlanButton from '@/components/custom/WhyThisPlanButton';
 
-function HotelCardItem({ hotel }) {
+function HotelCardItem({ hotel, tripContext }) {
 
   const [photoUrl, setPhotoUrl] = useState();
   useEffect(() => {
@@ -97,6 +98,21 @@ function HotelCardItem({ hotel }) {
               </div>
             </div>
           )}
+        </div>
+        
+        <div className="px-3 pb-3">
+          <WhyThisPlanButton 
+            item={{
+              name: hotel.hotelName,
+              price: hotel.pricePerNight || hotel.price,
+              rating: hotel.rating,
+              address: hotel.hotelAddress,
+              description: hotel.description,
+              amenities: hotel.amenities
+            }}
+            type="hotel"
+            context={tripContext}
+          />
         </div>
       </div>
     </div>
