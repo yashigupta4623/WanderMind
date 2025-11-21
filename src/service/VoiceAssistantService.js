@@ -197,6 +197,7 @@ Extract and return JSON with:
   "destination": "city name",
   "days": number,
   "budget": "budget/moderate/luxury",
+  "traveler": "Solo Traveler/Couple/Family/Friends",
   "preferences": ["heritage", "food", etc],
   "language": "${language}",
   "understood": true/false,
@@ -205,9 +206,9 @@ Extract and return JSON with:
 
 Examples:
 - "Mujhe 3 din ka budget friendly trip chahiye Jaipur, heritage + street food, Hindi mein batao"
-  → destination: Jaipur, days: 3, budget: budget, preferences: [heritage, street food]
-- "I want a 5 day luxury trip to Goa with beaches and nightlife"
-  → destination: Goa, days: 5, budget: luxury, preferences: [beaches, nightlife]
+  → destination: Jaipur, days: 3, budget: budget, traveler: Solo Traveler, preferences: [heritage, street food]
+- "I want a 5 day luxury trip to Goa with beaches and nightlife for my family"
+  → destination: Goa, days: 5, budget: luxury, traveler: Family, preferences: [beaches, nightlife]
 `;
 
     try {
@@ -247,6 +248,16 @@ Examples:
       budget = 'luxury';
     }
 
+    // Extract traveler type
+    let traveler = 'Solo Traveler';
+    if (lowerInput.includes('family') || lowerInput.includes('parivar') || lowerInput.includes('bachchon')) {
+      traveler = 'Family';
+    } else if (lowerInput.includes('couple') || lowerInput.includes('partner') || lowerInput.includes('girlfriend') || lowerInput.includes('boyfriend')) {
+      traveler = 'Couple';
+    } else if (lowerInput.includes('friends') || lowerInput.includes('dost') || lowerInput.includes('group')) {
+      traveler = 'Friends';
+    }
+
     // Extract preferences
     const preferences = [];
     if (lowerInput.includes('heritage') || lowerInput.includes('itihas')) preferences.push('heritage');
@@ -258,6 +269,7 @@ Examples:
       destination: destination.charAt(0).toUpperCase() + destination.slice(1),
       days,
       budget,
+      traveler,
       preferences,
       language,
       understood: true,

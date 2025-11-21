@@ -616,6 +616,9 @@ function CreateTrip() {
                   };
                   handleInputChange('budgetAmount', budgetAmounts[parsed.budget] || 25000);
                 }
+                if (parsed.traveler) {
+                  handleInputChange('traveler', parsed.traveler);
+                }
                 if (parsed.preferences && parsed.preferences.length > 0) {
                   handleInputChange('themes', parsed.preferences);
                 }
