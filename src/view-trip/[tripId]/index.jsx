@@ -353,6 +353,38 @@ function Viewtrip() {
     { code: 'gu', name: 'ગુજરાતી', flag: '🇮🇳' }
   ];
 
+  // Simple translations for tab labels
+  const getTabLabel = (key) => {
+    const translations = {
+      en: {
+        overview: 'Overview',
+        insights: 'Local Insights',
+        realtime: 'Live Updates',
+        story: 'Story',
+        maps: 'Maps',
+        sustainability: 'Eco',
+        group: 'Group',
+        copilot: 'AI Copilot',
+        booking: 'Book',
+        share: 'Share'
+      },
+      hi: {
+        overview: 'अवलोकन',
+        insights: 'स्थानीय जानकारी',
+        realtime: 'लाइव अपडेट',
+        story: 'कहानी',
+        maps: 'नक्शे',
+        sustainability: 'पर्यावरण',
+        group: 'समूह',
+        copilot: 'AI सहायक',
+        booking: 'बुक करें',
+        share: 'साझा करें'
+      }
+    };
+    
+    return translations[selectedLanguage]?.[key] || translations.en[key];
+  };
+
   return (
     <div className='p-4 sm:p-6 md:px-10 lg:px-20 xl:px-44 2xl:px-56'>
       {/* Trip Header with Quick Actions */}
@@ -389,7 +421,7 @@ function Viewtrip() {
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-blue-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
             <MapPin className="w-4 h-4 mr-2" />
-            Overview
+            {getTabLabel('overview')}
           </TabsTrigger>
           <TabsTrigger
             value="insights"
@@ -448,13 +480,6 @@ function Viewtrip() {
             Book
           </TabsTrigger>
           <TabsTrigger
-            value="safety"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-pink-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
-          >
-            <MapPin className="w-4 h-4 mr-2" />
-            Safety
-          </TabsTrigger>
-          <TabsTrigger
             value="share"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-gray-900 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
@@ -469,6 +494,23 @@ function Viewtrip() {
             <Transport trip={trip} />
             <Flights trip={trip} />
             <PlacesToVisit trip={trip} />
+            
+            {/* Farewell Message */}
+            <div className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border-2 border-blue-200 dark:border-blue-800 text-center">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <span className="text-3xl">✈️</span>
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Happy Journey!
+                </h3>
+                <span className="text-3xl">🌟</span>
+              </div>
+              <p className="text-gray-700 dark:text-gray-300 text-lg mb-2">
+                Wishing you an amazing adventure filled with wonderful memories!
+              </p>
+              <p className="text-gray-600 dark:text-gray-400">
+                Take care and travel safe! 🧳💙
+              </p>
+            </div>
           </div>
         </TabsContent>
 

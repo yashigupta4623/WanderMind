@@ -1,13 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import { GetPlaceDetails, PHOTO_REF_URL } from '../../service/GlobalApi';
 import { Badge } from '@/components/ui/badge';
-import { Shield, ShieldCheck, Accessibility, Baby } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Shield, ShieldCheck, Accessibility, Baby, Share2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 function Infosection({ trip }) {
 
   const [photoUrl, setPhotoUrl] = useState();
   const [imageLoading, setImageLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
+
+  // Get city tagline/nickname
+  const getCityTagline = (cityName) => {
+    if (!cityName) return null;
+    
+    const taglines = {
+      'Bangalore': 'Silicon Valley of India',
+      'Bengaluru': 'Silicon Valley of India',
+      'Mumbai': 'City of Dreams',
+      'Bombay': 'City of Dreams',
+      'Delhi': 'Heart of India',
+      'New Delhi': 'Heart of India',
+      'Kolkata': 'City of Joy',
+      'Calcutta': 'City of Joy',
+      'Chennai': 'Gateway to South India',
+      'Madras': 'Gateway to South India',
+      'Hyderabad': 'City of Pearls',
+      'Pune': 'Oxford of the East',
+      'Ahmedabad': 'Manchester of India',
+      'Jaipur': 'Pink City',
+      'Lucknow': 'City of Nawabs',
+      'Varanasi': 'Spiritual Capital of India',
+      'Goa': 'Pearl of the Orient',
+      'Kochi': 'Queen of Arabian Sea',
+      'Cochin': 'Queen of Arabian Sea',
+      'Mysore': 'City of Palaces',
+      'Mysuru': 'City of Palaces',
+      'Udaipur': 'City of Lakes',
+      'Jodhpur': 'Blue City',
+      'Amritsar': 'Holy City',
+      'Agra': 'City of Taj',
+      'Shimla': 'Queen of Hills',
+      'Darjeeling': 'Queen of the Himalayas',
+      'Manali': 'Valley of Gods',
+      'Rishikesh': 'Yoga Capital of the World',
+      'Haridwar': 'Gateway to Gods'
+    };
+    
+    // Try to match city name
+    const normalizedCity = cityName.toLowerCase().trim();
+    for (const [city, tagline] of Object.entries(taglines)) {
+      if (normalizedCity.includes(city.toLowerCase()) || city.toLowerCase().includes(normalizedCity)) {
+        return tagline;
+      }
+    }
+    
+    return null;
+  };
 
   useEffect(() => {
     if (trip) {
@@ -160,11 +210,16 @@ function Infosection({ trip }) {
       <div className="my-5 flex flex-col gap-3">
         <h2 className="font-bold text-2xl">
           📍 {trip?.userSelection?.location?.label || 'Your Destination'}
+          {getCityTagline(trip?.userSelection?.location?.label) && (
+            <span className="text-lg font-bold text-gray-600 dark:text-gray-400 ml-2">
+              : {getCityTagline(trip?.userSelection?.location?.label)}
+            </span>
+          )}
         </h2>
         <div className="flex flex-wrap gap-2">
           <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">📆 {trip?.userSelection?.noofDays || '3'} Days</Badge>
           <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">💸 {formatBudgetDisplay(trip)}</Badge>
-          <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">🏕️ {trip?.userSelection?.traveler || '2 People'}</Badge>
+          <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">🏕️ {trip?.userSelection?.traveler || '2 People'}People</Badge>
         </div>
         
         {/* Safety Badges */}
