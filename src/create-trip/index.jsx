@@ -3,12 +3,15 @@ import GooglePlacesWrapper from "@/components/custom/GooglePlacesWrapper";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  AI_PROMPT,
+  AI_ITINERARY_PROMPT,
+  AI_HOTEL_PROMPT,
   SelectBudgetOptions,
   SelectTravelsList,
   TravelPersonas,
   TravelThemes,
 } from "@/constants/options";
+import LoadingModal from "@/components/custom/LoadingModal";
+import { query, collection, where, getDocs } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { chatSession } from "@/service/AIModel";
@@ -215,6 +218,7 @@ function CreateTrip() {
   const [activeTab, setActiveTab] = useState("basic");
   const [travelConstraints, setTravelConstraints] = useState(null);
   const [safetyFilters, setSafetyFilters] = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   // Function to format budget display
@@ -323,11 +327,32 @@ function CreateTrip() {
     onError: (error) => console.log(error),
   });
 
+  const checkCache = async (formData) => {
+    try {
+      const q = query(
+        collection(db, "AITrips"),
+        where("userSelection.location.label", "==", formData.location.label),
+        where("userSelection.noofDays", "==", formData.noofDays),
+        where("userSelection.budget", "==", formData.budget),
+        where("userSelection.traveler", "==", formData.traveler)
+      );
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        console.log("Cache hit! Using existing trip data.");
+        return querySnapshot.docs[0].data();
+      }
+    } catch (error) {
+      console.error("Cache check failed:", error);
+    }
+    return null;
+  };
+
   const OnGenerateTrip = async () => {
     const user = localStorage.getItem("user");
     if (!user) {
       setOpenDialog(true);
       toast("Please login to generate trip");
+      return;
     }
 
     const missingFields = [];
@@ -342,129 +367,132 @@ function CreateTrip() {
     }
 
     setLoading(true);
+    setError(null);
 
-    // Get learned preferences
-    const userEmail = JSON.parse(user)?.email;
-    const learnedPrefs = await preferenceLearning.getLearnedPreferences(userEmail);
-    const preferencePrompt = preferenceLearning.generatePreferencePrompt(learnedPrefs?.insights);
-
-    const personaKeywords = selectedPersona?.keywords || '';
-    const themeNames = selectedThemes.map(id =>
-      TravelThemes.find(t => t.id === id)?.name
-    ).filter(Boolean).join(', ');
-
-    let FINAL_PROMPT = AI_PROMPT
-      .replace("{location}", formData?.location?.label)
-      .replace("{totalDays}", formData?.noofDays)
-      .replace("{traveler}", formData?.traveler)
-      .replace("{budget}", formData?.budget)
-      .replace("{persona}", selectedPersona?.title || 'General Traveler')
-      .replace("{personaKeywords}", personaKeywords)
-      .replace("{themes}", themeNames || 'General sightseeing');
-
-    // Add learned preferences to prompt
-    if (preferencePrompt) {
-      FINAL_PROMPT += preferencePrompt;
-      console.log('✨ Applied learned preferences to trip generation');
-    }
-
-    // Add safety & accessibility requirements
-    if (safetyFilters) {
-      const safetyPrompt = safetyAccessibilityService.generateSafetyPrompt(safetyFilters);
-      if (safetyPrompt) {
-        FINAL_PROMPT += safetyPrompt;
-        console.log('🛡️ Applied safety & accessibility filters to trip generation');
-      }
-    }
-
-    console.log(FINAL_PROMPT);
-
-    let result = null;
     try {
-      result = await chatSession.sendMessage(FINAL_PROMPT);
-      const responseText = result?.response?.text();
-      console.log("Raw AI response:", responseText);
-
-      // Validate response exists
-      if (!responseText || responseText.trim().length === 0) {
-        throw new Error("Empty response from AI service");
+      // 1. Check Cache
+      const cachedTrip = await checkCache(formData);
+      if (cachedTrip) {
+        toast.success("Found a perfect match from our community trips! 🚀");
+        const docId = Date.now().toString();
+        // Reuse the trip data but save as a new trip for this user
+        await SaveAiTrip(cachedTrip.tripData, docId);
+        return;
       }
 
-      // Clean and parse JSON response
-      const tripData = parseAIResponse(responseText);
+      // 2. Prepare Prompts
+      const userEmail = JSON.parse(user)?.email;
+      const learnedPrefs = await preferenceLearning.getLearnedPreferences(userEmail);
+      const preferencePrompt = preferenceLearning.generatePreferencePrompt(learnedPrefs?.insights);
 
-      // Validate parsed data structure
-      if (!tripData || typeof tripData !== 'object') {
-        throw new Error("Invalid trip data structure received");
+      const personaKeywords = selectedPersona?.keywords || '';
+      const themeNames = selectedThemes.map(id =>
+        TravelThemes.find(t => t.id === id)?.name
+      ).filter(Boolean).join(', ');
+
+      let commonPromptData = `
+        Location: ${formData?.location?.label}
+        Duration: ${formData?.noofDays} Days
+        Traveler: ${formData?.traveler}
+        Budget: ${formData?.budget}
+        Persona: ${selectedPersona?.title || 'General Traveler'}
+        Themes: ${themeNames || 'General sightseeing'}
+      `;
+
+      if (preferencePrompt) commonPromptData += `\nUser Preferences: ${preferencePrompt}`;
+
+      if (safetyFilters) {
+        const safetyPrompt = safetyAccessibilityService.generateSafetyPrompt(safetyFilters);
+        if (safetyPrompt) commonPromptData += `\nSafety Requirements: ${safetyPrompt}`;
       }
+
+      const itineraryPrompt = AI_ITINERARY_PROMPT
+        .replace("{location}", formData?.location?.label)
+        .replace("{totalDays}", formData?.noofDays)
+        .replace("{traveler}", formData?.traveler)
+        .replace("{budget}", formData?.budget)
+        .replace("{persona}", selectedPersona?.title || 'General Traveler')
+        .replace("{themes}", themeNames || 'General sightseeing')
+        .replace("{userPreferences}", preferencePrompt || 'None');
+
+      const hotelPrompt = AI_HOTEL_PROMPT
+        .replace("{location}", formData?.location?.label)
+        .replace("{totalDays}", formData?.noofDays)
+        .replace("{traveler}", formData?.traveler)
+        .replace("{budget}", formData?.budget)
+        .replace("{persona}", selectedPersona?.title || 'General Traveler');
+
+      // 3. Parallel Execution
+      console.log("Generating trip with parallel requests...");
+      const [itineraryResult, hotelResult] = await Promise.all([
+        chatSession.sendMessage(itineraryPrompt),
+        chatSession.sendMessage(hotelPrompt)
+      ]);
+
+      const itineraryText = itineraryResult?.response?.text();
+      const hotelText = hotelResult?.response?.text();
+
+      if (!itineraryText || !hotelText) {
+        throw new Error("Incomplete response from AI service");
+      }
+
+      const itineraryJson = parseAIResponse(itineraryText);
+      const hotelJson = parseAIResponse(hotelText);
+
+      // 4. Merge Results
+      const finalTripData = {
+        tripDetails: {
+          destination: formData?.location?.label,
+          duration: `${formData?.noofDays} days`,
+          travelers: formData?.traveler,
+          budget: formData?.budget,
+          totalBudget: formData?.budgetAmount || "Flexible"
+        },
+        hotels: hotelJson.hotels || [],
+        itinerary: itineraryJson.itinerary || []
+      };
 
       const docId = Date.now().toString();
-      await SaveAiTrip(JSON.stringify(tripData), docId);
+      await SaveAiTrip(JSON.stringify(finalTripData), docId);
 
       if (isDemoMode) {
         toast.success("Demo trip generated successfully! 🎉");
       } else {
         toast.success("Your personalized trip has been created! ✨");
       }
+
     } catch (error) {
       console.error("Error generating trip:", error);
 
-      // Log the raw response for debugging
-      if (error.message.includes("Failed to parse JSON") && result) {
-        try {
-          const rawResponse = result?.response?.text();
-          if (rawResponse) {
-            console.error("Raw response that failed to parse (first 500 chars):", rawResponse?.substring(0, 500));
-            console.error("Raw response length:", rawResponse?.length);
-            console.error("Response ends with:", rawResponse?.substring(Math.max(0, rawResponse.length - 100)));
-          }
-        } catch (resultError) {
-          console.error("Could not access result for debugging:", resultError);
-        }
-      }
-
       if (error.message.includes("429") || error.message.includes("Resource exhausted")) {
-        setRateLimitHit(true);
-        toast.success(
-          "🎯 Switched to demo mode due to API limits. Your trip is being generated with sample data!"
-        );
-      } else if (error.message.includes("The model is overloaded")) {
-        toast.error(
-          "The model is currently overloaded. Please try again in a few moments."
-        );
-      } else if (error.message.includes("API key not valid")) {
-        toast.error(
-          "Google AI API key is invalid. Please check your environment configuration."
-        );
-      } else if (error.message.includes("not configured")) {
-        toast.error(
-          "AI service is not properly configured. Please contact support."
-        );
-      } else if (error.message.includes("Failed to parse JSON") || error.message.includes("Unterminated string")) {
-        // Use demo data as fallback when JSON parsing fails
-        console.log("JSON parsing failed, using demo data fallback");
-        try {
-          const demoTripData = generateDemoTripData(formData);
-          const docId = Date.now().toString();
-          await SaveAiTrip(JSON.stringify(demoTripData), docId);
-          toast.success("Trip generated with demo data due to AI response format issue! 🎯");
-          return; // Exit early since we handled it with demo data
-        } catch (demoError) {
-          console.error("Demo fallback also failed:", demoError);
-          toast.error("Unable to generate trip. Please try again.");
-        }
-      } else if (error.message.includes("Empty response")) {
-        toast.error(
-          "No response received from AI service. Please check your connection and try again."
-        );
+        toast.error("We are experiencing high traffic. Please try again in a moment.");
+      } else if (error.message.includes("API key")) {
+        toast.error("System configuration error. Please contact support.");
       } else {
-        toast.error(
-          "An error occurred while generating the trip. Please try again."
-        );
+        // Instead of toast error, set the error state for the modal
+        setError("An error occurred while generating the trip. Please try again.");
       }
     } finally {
-      setLoading(false);
+      // Only stop loading if successful or if we want to close the modal immediately
+      // But for error state, we want to keep modal open with error
+      if (!error) {
+        // If there was an error, we keep loading=true so modal stays open to show error
+        // We'll handle closing in the modal's onClose
+      } else {
+        // If success, we stop loading
+        setLoading(false);
+      }
     }
+  };
+
+  const handleRetry = () => {
+    setError(null);
+    OnGenerateTrip();
+  };
+
+  const handleCloseModal = () => {
+    setLoading(false);
+    setError(null);
   };
 
   const SaveAiTrip = async (TripData, docId) => {
@@ -1022,6 +1050,13 @@ function CreateTrip() {
         </DialogContent>
       </Dialog>
 
+      <LoadingModal
+        open={loading}
+        destination={formData?.location?.label}
+        error={error}
+        onRetry={handleRetry}
+        onClose={handleCloseModal}
+      />
       <Footer />
     </div>
   );
