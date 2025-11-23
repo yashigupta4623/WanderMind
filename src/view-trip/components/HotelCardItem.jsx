@@ -35,7 +35,7 @@ function HotelCardItem({ hotel, tripContext }) {
   }
 
   return (
-    <div className="hover:scale-105 cursor-pointer transition-all rounded-xl shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+    <div className="h-full flex flex-col hover:scale-105 cursor-pointer transition-all rounded-xl shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
       <img
         src={photoUrl ? photoUrl : "/header.png"}
         className="h-40 w-full object-cover rounded-t-xl"
@@ -44,7 +44,7 @@ function HotelCardItem({ hotel, tripContext }) {
           e.target.src = "/header.png";
         }}
       />
-      <div className="p-3">
+      <div className="p-3 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-2">
           <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100 truncate pr-2">
             {hotel.hotelName || "Premium Hotel"}
@@ -56,20 +56,14 @@ function HotelCardItem({ hotel, tripContext }) {
           </Link>
         </div>
 
-        <div className="flex items-start gap-1 mb-2">
+        <div className="flex items-start gap-1 mb-3">
           <span className="text-gray-500 dark:text-gray-400 mt-0.5">📍</span>
-          <span className="text-xs text-gray-600 dark:text-gray-400 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+          <span className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
             {hotel.hotelAddress || "Central location with easy access to attractions"}
           </span>
         </div>
 
-        {hotel.description && (
-          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 overflow-hidden" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-            {hotel.description}
-          </p>
-        )}
-
-        <div className="space-y-1 text-sm">
+        <div className="space-y-2 text-sm flex-grow">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <span>💰</span>
@@ -100,14 +94,13 @@ function HotelCardItem({ hotel, tripContext }) {
           )}
         </div>
         
-        <div className="px-3 pb-3">
+        <div className="mt-3">
           <WhyThisPlanButton 
             item={{
               name: hotel.hotelName,
               price: hotel.pricePerNight || hotel.price,
               rating: hotel.rating,
               address: hotel.hotelAddress,
-              description: hotel.description,
               amenities: hotel.amenities
             }}
             type="hotel"
