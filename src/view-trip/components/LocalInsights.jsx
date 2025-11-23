@@ -87,7 +87,7 @@ function LocalInsights({ trip }) {
       'Bangalore': {
         famousFor: 'IT Hub & Garden City',
         icon: '💻',
-        description: 'India\'s Silicon Valley, Bangalore is known for its pleasant weather, gardens, and thriving tech industry.',
+        description: '<strong>Bangalore Silicon Valley of India</strong>. Known for its pleasant weather, gardens, and thriving tech industry.',
         mustTry: ['Masala Dosa', 'Filter Coffee', 'Bisi Bele Bath', 'Ragi Mudde', 'Mysore Pak'],
         traditions: ['Karaga festival', 'Dasara celebrations', 'Pub culture', 'Startup ecosystem'],
         history: 'Founded in 1537 by Kempe Gowda, Bangalore became the IT capital of India in the 1990s.',
@@ -218,9 +218,7 @@ function LocalInsights({ trip }) {
               <h3 className="text-2xl font-bold mb-2 text-amber-900 dark:text-amber-100">
                 Famous For: {insights.famousFor}
               </h3>
-              <p className="text-gray-700 dark:text-gray-300 text-lg">
-                {insights.description}
-              </p>
+              <p className="text-gray-700 dark:text-gray-300 text-lg" dangerouslySetInnerHTML={{ __html: insights.description }} />
             </div>
           </div>
         </CardContent>
