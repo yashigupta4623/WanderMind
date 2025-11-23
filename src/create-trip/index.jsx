@@ -469,6 +469,7 @@ function CreateTrip() {
         createdAt: new Date().toISOString(),
         safetyMode: safetyFilters ? 'enabled' : 'disabled'
       });
+      // flux
     } catch (error) {
       console.error("Error saving trip:", error);
     } finally {
