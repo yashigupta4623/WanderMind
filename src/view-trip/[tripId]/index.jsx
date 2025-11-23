@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import Infosection from '../components/Infosection';
+import LocalInsights from '../components/LocalInsights';
+import RealTimeUpdates from '../components/RealTimeUpdates';
+import TripStory from '../components/TripStory';
 import Hotels from '../components/Hotels';
 import PlacesToVisit from '../components/PlacesToVisit';
 import Transport from '../components/Transport';
@@ -26,7 +29,7 @@ import MultilingualTripDisplay from '@/components/custom/MultilingualTripDisplay
 import GroupPlanningCollaboration from '@/components/custom/GroupPlanningCollaboration';
 import SmartMapsUI from '@/components/custom/SmartMapsUI';
 import SustainabilityCostControl from '@/components/custom/SustainabilityCostControl';
-import { MapPin, MessageCircle, Leaf, BookOpen, Share2, Download, Cloud, Wifi, CreditCard, Zap, Globe, Bot, Users, Map, DollarSign } from 'lucide-react';
+import { MapPin, MessageCircle, Leaf, BookOpen, Share2, Download, Cloud, Wifi, CreditCard, Zap, Globe, Bot, Users, Map, DollarSign, Sparkles } from 'lucide-react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { QRCodeSVG } from 'qrcode.react';
@@ -336,17 +339,49 @@ function Viewtrip() {
     }
   };
 
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'hi', name: 'हिंदी', flag: '🇮🇳' },
+    { code: 'bn', name: 'বাংলা', flag: '🇧🇩' },
+    { code: 'te', name: 'తెలుగు', flag: '🇮🇳' },
+    { code: 'ta', name: 'தமிழ்', flag: '🇮🇳' },
+    { code: 'kn', name: 'ಕನ್ನಡ', flag: '🇮🇳' },
+    { code: 'ml', name: 'മലയാളം', flag: '🇮🇳' },
+    { code: 'gu', name: 'ગુજરાતી', flag: '🇮🇳' }
+  ];
+
   return (
     <div className='p-4 sm:p-6 md:px-10 lg:px-20 xl:px-44 2xl:px-56'>
       {/* Trip Header with Quick Actions */}
       <div className="mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex-1"></div>
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-gray-600" />
+            <select
+              value={selectedLanguage}
+              onChange={(e) => {
+                setSelectedLanguage(e.target.value);
+                toast.success(`Language changed to ${languages.find(l => l.code === e.target.value)?.name}`);
+              }}
+              className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {languages.map(lang => (
+                <option key={lang.code} value={lang.code}>
+                  {lang.flag} {lang.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
         <Infosection trip={trip} />
-
       </div>
 
       {/* Clean Trip View with Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="inline-flex h-12 items-center justify-start rounded-lg !bg-white dark:!bg-gray-800 p-1 w-full overflow-x-auto border border-gray-200 dark:border-gray-700">
+        <TabsList className="inline-flex h-12 items-center justify-start rounded-lg !bg-white dark:!bg-gray-800 p-1 w-full border border-gray-200 dark:border-gray-700">
           <TabsTrigger
             value="overview"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-blue-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
@@ -355,11 +390,32 @@ function Viewtrip() {
             Overview
           </TabsTrigger>
           <TabsTrigger
+            value="insights"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-yellow-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            Local Insights
+          </TabsTrigger>
+          <TabsTrigger
+            value="realtime"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-orange-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <Zap className="w-4 h-4 mr-2" />
+            Live Updates
+          </TabsTrigger>
+          <TabsTrigger
             value="maps"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-green-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
             <Map className="w-4 h-4 mr-2" />
             Maps
+          </TabsTrigger>
+          <TabsTrigger
+            value="story"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-pink-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <BookOpen className="w-4 h-4 mr-2" />
+            Story
           </TabsTrigger>
           <TabsTrigger
             value="sustainability"
@@ -405,6 +461,18 @@ function Viewtrip() {
             <Flights trip={trip} />
             <PlacesToVisit trip={trip} />
           </div>
+        </TabsContent>
+
+        <TabsContent value="insights" className="mt-6">
+          <LocalInsights trip={trip} />
+        </TabsContent>
+
+        <TabsContent value="realtime" className="mt-6">
+          <RealTimeUpdates trip={trip} />
+        </TabsContent>
+
+        <TabsContent value="story" className="mt-6">
+          <TripStory trip={trip} />
         </TabsContent>
 
         <TabsContent value="booking" className="mt-6">

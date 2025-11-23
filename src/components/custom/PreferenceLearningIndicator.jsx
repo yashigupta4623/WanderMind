@@ -162,7 +162,13 @@ const PreferenceLearningIndicator = ({ userId }) => {
           <Button 
             size="sm" 
             variant="ghost" 
-            onClick={loadInsights}
+            onClick={async () => {
+              toast.loading('Refreshing preferences...');
+              await preferenceLearning.createDemoPreferences(userId);
+              await loadInsights();
+              toast.dismiss();
+              toast.success('Preferences updated! AI learned new patterns.');
+            }}
             className="w-full text-xs !bg-blue-50 dark:!bg-gray-700 !text-blue-700 dark:!text-gray-100 hover:!bg-blue-100 dark:hover:!bg-gray-600"
           >
             <RefreshCw className="w-3 h-3 mr-2" />

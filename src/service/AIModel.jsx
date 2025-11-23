@@ -50,3 +50,35 @@ export const chatSession = {
     }
   }
 };
+
+
+// Get city insights (traditions, food, history)
+export const GetCityInsights = async (cityName) => {
+  try {
+    if (isDemoMode || forceDemo) {
+      return null; // Will use curated data
+    }
+
+    const prompt = `Provide detailed local insights about ${cityName} in JSON format with the following structure:
+    {
+      "famousFor": "What the city is most famous for (brief)",
+      "icon": "A single emoji that represents the city",
+      "description": "A 2-3 sentence description of what makes this city unique",
+      "mustTry": ["5 must-try local foods/dishes"],
+      "traditions": ["4 local traditions, festivals, or cultural practices"],
+      "history": "A 2-3 sentence historical background",
+      "shopping": ["4 popular shopping items or markets"]
+    }
+    
+    Make it informative, engaging, and accurate. Focus on authentic local experiences.`;
+
+    const result = await chatSession.sendMessage(prompt);
+    const response = await result.response;
+    const text = response.text();
+    
+    return JSON.parse(text);
+  } catch (error) {
+    console.error('Error getting city insights:', error);
+    return null; // Will fallback to curated data
+  }
+};

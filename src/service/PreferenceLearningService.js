@@ -183,15 +183,45 @@ class PreferenceLearningService {
     return prompt;
   }
 
-  // Create demo preferences for testing
+  // Create demo preferences for testing - generates varied data each time
   async createDemoPreferences(userId) {
+    // Generate random preferences to simulate learning
+    const random = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    
     const demoPreferences = {
-      foodPreferences: { streetFood: 8, fancyRestaurants: 2, localCuisine: 6, cafes: 3 },
-      activityPreferences: { heritage: 7, adventure: 3, relaxation: 2, shopping: 1, nightlife: 0, nature: 5 },
-      accommodationPreferences: { budget: 5, luxury: 1, boutique: 3 },
-      transportPreferences: { public: 6, private: 2, walking: 4 },
-      timingPreferences: { morning: 8, afternoon: 4, evening: 2 },
-      crowdPreferences: { avoidCrowded: 7, dontMind: 2 },
+      foodPreferences: { 
+        streetFood: random(5, 10), 
+        fancyRestaurants: random(0, 4), 
+        localCuisine: random(4, 8), 
+        cafes: random(2, 6) 
+      },
+      activityPreferences: { 
+        heritage: random(4, 9), 
+        adventure: random(2, 7), 
+        relaxation: random(1, 5), 
+        shopping: random(0, 4), 
+        nightlife: random(0, 3), 
+        nature: random(3, 8) 
+      },
+      accommodationPreferences: { 
+        budget: random(3, 8), 
+        luxury: random(0, 4), 
+        boutique: random(1, 5) 
+      },
+      transportPreferences: { 
+        public: random(4, 8), 
+        private: random(1, 5), 
+        walking: random(2, 6) 
+      },
+      timingPreferences: { 
+        morning: random(5, 10), 
+        afternoon: random(2, 7), 
+        evening: random(1, 5) 
+      },
+      crowdPreferences: { 
+        avoidCrowded: random(4, 9), 
+        dontMind: random(1, 4) 
+      },
       learningHistory: [
         { timestamp: Date.now() - 86400000, type: 'food', item: 'Street Food Stall', action: 'selected' },
         { timestamp: Date.now() - 172800000, type: 'activity', item: 'Heritage Walk', action: 'selected' },

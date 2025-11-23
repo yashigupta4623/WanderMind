@@ -229,24 +229,25 @@ const GroupPlanningCollaboration = ({ tripData, tripId }) => {
         message: `You've been invited to collaborate on a trip to ${destination}! Click the link to view details, vote on options, and help plan the perfect trip together.`
       });
 
-      if (result.demo) {
-        toast.success(`Member added! (Demo mode - email not sent) 📧`);
-        // Open mailto as fallback
-        const mailtoLink = emailService.generateMailtoLink({
-          toEmail: newMemberEmail,
-          subject: `Trip Invitation: ${destination}`,
-          body: `Hi ${newMemberName},\n\n${organizer} has invited you to collaborate on a trip to ${destination} (${duration})!\n\nClick here to view and collaborate: ${shareLink}\n\nBest regards,\nWanderMind Team`
-        });
-        window.open(mailtoLink, '_blank');
+      if (result.success) {
+        if (result.demo) {
+          // Demo mode - copy link and show message
+          navigator.clipboard.writeText(shareLink);
+          toast.success(`✅ ${newMemberName} added to group!`);
+          toast.info(`🔗 Link copied! Share it with ${newMemberName} at ${newMemberEmail}`);
+        } else {
+          // Real email sent
+          toast.success(`📧 Invitation email sent to ${newMemberEmail}!`);
+        }
+        setShowAddMemberDialog(false);
+        setNewMemberEmail('');
+        setNewMemberName('');
       } else {
-        toast.success(`Invitation sent to ${newMemberEmail}! 📧`);
+        toast.error('Failed to add member. Please try again.');
       }
-      setShowAddMemberDialog(false);
-      setNewMemberEmail('');
-      setNewMemberName('');
     } catch (error) {
       console.error('Error sending invite:', error);
-      toast.error('Failed to send email. Member added to list.');
+      toast.error('Error adding member. Please try again.');
     } finally {
       setSendingInvite(false);
     }
@@ -359,8 +360,8 @@ const GroupPlanningCollaboration = ({ tripData, tripId }) => {
                       )}
                     </div>
                     <div className="text-xs text-gray-600 dark:text-gray-400">
-                      {member.email && <span>📧 {member.email} • </span>}
-                      Budget: {member.preferences.budget} • Interests: {member.preferences.interests.join(', ') || 'None'}
+                      {member.email && <><span>📧 {member.email}</span> • </>}
+                      <span>Budget: {member.preferences.budget}</span> • <span>Interests: {member.preferences.interests.length > 0 ? member.preferences.interests.join(', ') : 'None'}</span>
                     </div>
                   </div>
                 </div>
