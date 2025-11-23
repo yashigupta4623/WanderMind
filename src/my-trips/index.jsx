@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../service/firebaseConfig";
 import UserTripCardItem from "./components/UserTripCardItem";
-import Footer from "./Footer";
+
 
 function MyTrips() {
   const navigate = useNavigate();
@@ -44,7 +44,11 @@ function MyTrips() {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-5 mt-10">
         {userTrips.length > 0 ? (
           userTrips.map((trip, index) => (
-            <UserTripCardItem key={index} trip={trip} />
+            <UserTripCardItem
+              key={index}
+              trip={trip}
+              refreshTrips={GetUserTrips}
+            />
           ))
         ) : (
           [1, 2, 3, 4, 5, 6].map((_, index) => (
@@ -56,7 +60,7 @@ function MyTrips() {
         )}
       </div>
 
-      <Footer />
+
     </div>
   );
 }

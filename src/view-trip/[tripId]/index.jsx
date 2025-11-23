@@ -12,7 +12,7 @@ import Hotels from '../components/Hotels';
 import PlacesToVisit from '../components/PlacesToVisit';
 import Transport from '../components/Transport';
 import Flights from '../components/Flights';
-import Footer from '../components/Footer';
+
 import ConversationalPlanner from '@/components/custom/ConversationalPlanner';
 import EcoScoreIndicator from '@/components/custom/EcoScoreIndicator';
 import TripStoryGenerator from '@/components/custom/TripStoryGenerator';
@@ -44,7 +44,7 @@ function Viewtrip() {
     if (tripId) {
       GetTripData();
     }
-    
+
     // Check for tab parameter in URL
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
@@ -121,8 +121,8 @@ function Viewtrip() {
             const priceMatch = hotel.price.match(/[\d,]+/g);
             if (priceMatch) {
               const prices = priceMatch.map(p => parseInt(p.replace(/,/g, '')));
-              const avgPrice = prices.length > 1 ? 
-                (prices[0] + prices[1]) / 2 : 
+              const avgPrice = prices.length > 1 ?
+                (prices[0] + prices[1]) / 2 :
                 prices[0];
               totalBudget.hotelCost += avgPrice;
             }
@@ -139,8 +139,8 @@ function Viewtrip() {
                 const priceMatch = place.ticketPricing.match(/[\d,]+/g);
                 if (priceMatch) {
                   const prices = priceMatch.map(p => parseInt(p.replace(/,/g, '')));
-                  const avgPrice = prices.length > 1 ? 
-                    (prices[0] + prices[1]) / 2 : 
+                  const avgPrice = prices.length > 1 ?
+                    (prices[0] + prices[1]) / 2 :
                     prices[0];
                   totalBudget.activityCost += avgPrice;
                 }
@@ -169,10 +169,10 @@ function Viewtrip() {
         const days = parseInt(trip.userSelection.noofDays) || 3;
         const travelers = trip.userSelection.traveler || '2 People';
         const numTravelers = parseInt(travelers.match(/\d+/)?.[0]) || 2;
-        
+
         // Use actual budget amount if available
         let dailyBudget = 4000; // Default moderate
-        
+
         if (trip.userSelection.budgetAmount && trip.userSelection.budgetAmount > 0) {
           dailyBudget = trip.userSelection.budgetAmount / days / numTravelers;
         } else if (trip.userSelection.budget) {
@@ -185,7 +185,7 @@ function Viewtrip() {
             dailyBudget = 4500; // moderate
           }
         }
-        
+
         totalBudget.hotelCost = Math.round(dailyBudget * 0.4 * days * numTravelers);
         totalBudget.activityCost = Math.round(dailyBudget * 0.3 * days * numTravelers);
         totalBudget.total = Math.round(dailyBudget * days * numTravelers);
@@ -217,7 +217,7 @@ function Viewtrip() {
       travelers: trip?.userSelection?.traveler,
       budget: trip?.userSelection?.budget
     };
-    
+
     // In a real implementation, this would generate a PDF or image
     toast.success('Shareable trip card generated!');
     return tripSummary;
@@ -227,7 +227,7 @@ function Viewtrip() {
   const handleDownloadPDF = async () => {
     try {
       toast.loading('Generating comprehensive PDF...');
-      
+
       const element = pdfContentRef.current;
       if (!element) {
         toast.error('Unable to generate PDF');
@@ -271,7 +271,7 @@ function Viewtrip() {
 
       const fileName = `WanderMind_${trip?.userSelection?.location?.label?.replace(/[^a-z0-9]/gi, '_')}_${Date.now()}.pdf`;
       pdf.save(fileName);
-      
+
       toast.dismiss();
       toast.success('Complete trip PDF downloaded successfully!');
     } catch (error) {
@@ -316,19 +316,19 @@ function Viewtrip() {
       const data = new XMLSerializer().serializeToString(svg);
       const svgBlob = new Blob([data], { type: 'image/svg+xml;charset=utf-8' });
       const url = URL.createObjectURL(svgBlob);
-      
+
       const img = new Image();
       img.onload = () => {
         canvas.width = img.width;
         canvas.height = img.height;
         ctx.drawImage(img, 0, 0);
         const pngUrl = canvas.toDataURL('image/png');
-        
+
         const link = document.createElement('a');
         link.download = `WanderMind_Trip_QR_${Date.now()}.png`;
         link.href = pngUrl;
         link.click();
-        
+
         URL.revokeObjectURL(url);
         toast.success('QR Code downloaded!');
       };
@@ -341,56 +341,56 @@ function Viewtrip() {
       {/* Trip Header with Quick Actions */}
       <div className="mb-6">
         <Infosection trip={trip} />
-        
+
       </div>
 
       {/* Clean Trip View with Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="inline-flex h-12 items-center justify-start rounded-lg !bg-white dark:!bg-gray-800 p-1 w-full overflow-x-auto border border-gray-200 dark:border-gray-700">
-          <TabsTrigger 
-            value="overview" 
+          <TabsTrigger
+            value="overview"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-blue-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
             <MapPin className="w-4 h-4 mr-2" />
             Overview
           </TabsTrigger>
-          <TabsTrigger 
-            value="maps" 
+          <TabsTrigger
+            value="maps"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-green-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
             <Map className="w-4 h-4 mr-2" />
             Maps
           </TabsTrigger>
-          <TabsTrigger 
-            value="sustainability" 
+          <TabsTrigger
+            value="sustainability"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-emerald-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
             <Leaf className="w-4 h-4 mr-2" />
             Eco
           </TabsTrigger>
-          <TabsTrigger 
-            value="group" 
+          <TabsTrigger
+            value="group"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-purple-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
             <Users className="w-4 h-4 mr-2" />
             Group
           </TabsTrigger>
-          <TabsTrigger 
-            value="copilot" 
+          <TabsTrigger
+            value="copilot"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-indigo-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
             <Bot className="w-4 h-4 mr-2" />
             AI Copilot
           </TabsTrigger>
-          <TabsTrigger 
-            value="booking" 
+          <TabsTrigger
+            value="booking"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-orange-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
             <CreditCard className="w-4 h-4 mr-2" />
             Book
           </TabsTrigger>
-          <TabsTrigger 
-            value="share" 
+          <TabsTrigger
+            value="share"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-gray-900 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
             <Share2 className="w-4 h-4 mr-2" />
@@ -408,7 +408,7 @@ function Viewtrip() {
         </TabsContent>
 
         <TabsContent value="booking" className="mt-6">
-          <BookingSystem 
+          <BookingSystem
             tripData={trip}
             onBookingComplete={(bookingData) => {
               console.log('Booking completed:', bookingData);
@@ -418,7 +418,7 @@ function Viewtrip() {
         </TabsContent>
 
         <TabsContent value="realtime" className="mt-6">
-          <RealTimeAdaptation 
+          <RealTimeAdaptation
             tripData={trip}
             currentLocation={trip?.userSelection?.location}
             onItineraryUpdate={handleTripUpdate}
@@ -436,7 +436,7 @@ function Viewtrip() {
                 Your intelligent travel companion that monitors conditions and suggests real-time adjustments
               </p>
             </div>
-            <AICopilotAlert 
+            <AICopilotAlert
               tripData={trip}
               onReplan={(updatedTrip) => {
                 setTrip(updatedTrip);
@@ -447,21 +447,21 @@ function Viewtrip() {
         </TabsContent>
 
         <TabsContent value="chat" className="mt-6">
-          <ConversationalPlanner 
+          <ConversationalPlanner
             currentTrip={trip}
             onTripUpdate={handleTripUpdate}
           />
         </TabsContent>
 
         <TabsContent value="maps" className="mt-6">
-          <SmartMapsUI 
+          <SmartMapsUI
             tripData={trip}
             tripId={tripId}
           />
         </TabsContent>
 
         <TabsContent value="sustainability" className="mt-6">
-          <SustainabilityCostControl 
+          <SustainabilityCostControl
             tripData={trip}
             onBudgetUpdate={(updates) => {
               setTrip(prev => ({
@@ -477,14 +477,14 @@ function Viewtrip() {
         </TabsContent>
 
         <TabsContent value="group" className="mt-6">
-          <GroupPlanningCollaboration 
+          <GroupPlanningCollaboration
             tripData={trip}
             tripId={tripId}
           />
         </TabsContent>
 
         <TabsContent value="multilingual" className="mt-6">
-          <MultilingualSupport 
+          <MultilingualSupport
             currentLanguage="en"
             onLanguageChange={(lang) => {
               console.log('Language changed to:', lang);
@@ -494,7 +494,7 @@ function Viewtrip() {
         </TabsContent>
 
         <TabsContent value="weather" className="mt-6">
-          <WeatherAdaptive 
+          <WeatherAdaptive
             destination={trip?.userSelection?.location?.label}
             itinerary={trip?.tripData}
             onItineraryUpdate={handleTripUpdate}
@@ -516,7 +516,7 @@ function Viewtrip() {
                 <span className="text-2xl">✨</span>
               </div>
               <p className="text-gray-600 text-lg mb-8 max-w-2xl mx-auto">
-                Let others discover this incredible destination through your experience. 
+                Let others discover this incredible destination through your experience.
                 Create lasting memories and inspire fellow travelers!
               </p>
             </div>
@@ -525,22 +525,22 @@ function Viewtrip() {
             {(() => {
               const formatShareBudget = (trip) => {
                 const budgetAmount = trip?.userSelection?.budgetAmount;
-                
+
                 if (budgetAmount && budgetAmount > 0) {
                   return `₹${parseInt(budgetAmount).toLocaleString()}`;
                 }
-                
+
                 // Generate realistic amount based on budget type
                 const budget = trip?.userSelection?.budget;
                 const days = parseInt(trip?.userSelection?.noofDays) || 3;
                 const travelers = trip?.userSelection?.traveler || '1 Person';
-                const peopleCount = travelers.includes('2') ? 2 : 
-                                  travelers.includes('3') ? 3 : 
-                                  travelers.includes('4') ? 4 : 
-                                  travelers.includes('Group') ? 4 : 1;
-                
+                const peopleCount = travelers.includes('2') ? 2 :
+                  travelers.includes('3') ? 3 :
+                    travelers.includes('4') ? 4 :
+                      travelers.includes('Group') ? 4 : 1;
+
                 let estimatedAmount = 0;
-                switch(budget) {
+                switch (budget) {
                   case 'budget':
                     estimatedAmount = days * peopleCount * 2500;
                     break;
@@ -553,10 +553,10 @@ function Viewtrip() {
                   default:
                     estimatedAmount = days * peopleCount * 4000;
                 }
-                
+
                 return `₹${estimatedAmount.toLocaleString()}`;
               };
-              
+
               window.formatShareBudget = formatShareBudget; // Make it available
               return null;
             })()}
@@ -569,7 +569,7 @@ function Viewtrip() {
                 <div className="absolute bottom-0 right-0 w-24 h-24 bg-white rounded-full translate-x-12 translate-y-12"></div>
                 <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-white rounded-full"></div>
               </div>
-              
+
               {/* Content */}
               <div className="relative z-10 p-8">
                 {/* Header */}
@@ -602,7 +602,7 @@ function Viewtrip() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Trip Details Grid */}
                 <div className="grid grid-cols-2 gap-6 mb-6">
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
@@ -612,9 +612,9 @@ function Viewtrip() {
                     </div>
                     <p className="font-bold text-lg capitalize">
                       {trip?.userSelection?.budget === 'budget' ? 'Budget Travel' :
-                       trip?.userSelection?.budget === 'moderate' ? 'Comfortable' :
-                       trip?.userSelection?.budget === 'luxury' ? 'Luxury' :
-                       trip?.userSelection?.budget || 'Moderate'}
+                        trip?.userSelection?.budget === 'moderate' ? 'Comfortable' :
+                          trip?.userSelection?.budget === 'luxury' ? 'Luxury' :
+                            trip?.userSelection?.budget || 'Moderate'}
                     </p>
                   </div>
                   <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
@@ -651,7 +651,7 @@ function Viewtrip() {
 
             {/* Enhanced Share Options */}
             <div className="grid md:grid-cols-3 gap-6">
-              <Button 
+              <Button
                 className="h-20 flex flex-col items-center justify-center gap-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 onClick={handleDownloadPDF}
               >
@@ -661,8 +661,8 @@ function Viewtrip() {
                   <div className="text-xs opacity-90">Save offline copy</div>
                 </div>
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="h-20 flex flex-col items-center justify-center gap-3 border-2 border-purple-200 hover:border-purple-300 bg-white hover:bg-purple-50 text-purple-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 onClick={handleShareLink}
               >
@@ -672,8 +672,8 @@ function Viewtrip() {
                   <div className="text-xs opacity-75">Copy shareable URL</div>
                 </div>
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="h-20 flex flex-col items-center justify-center gap-3 border-2 border-pink-200 hover:border-pink-300 bg-white hover:bg-pink-50 text-pink-700 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 onClick={handleShowQRCode}
               >
@@ -693,7 +693,7 @@ function Viewtrip() {
                   <p className="text-sm text-gray-600">Share this QR code with friends and family</p>
                 </div>
                 <div className="bg-white p-6 rounded-2xl shadow-lg border-4 border-gray-100">
-                  <QRCodeSVG 
+                  <QRCodeSVG
                     id="trip-qr-code"
                     value={`${window.location.origin}/view-trip/${tripId}`}
                     size={200}
@@ -704,9 +704,9 @@ function Viewtrip() {
                 <p className="text-sm text-gray-600 mt-4 text-center">
                   Scan this QR code to view the trip on any device
                 </p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="mt-4"
                   onClick={handleDownloadQRCode}
                 >
@@ -719,10 +719,7 @@ function Viewtrip() {
         </TabsContent>
       </Tabs>
 
-      {/* Footer - Always at bottom */}
-      <div className='mt-16'>
-        <Footer />
-      </div>
+
 
       {/* Hidden PDF Content - Complete Trip Details */}
       <div ref={pdfContentRef} style={{ position: 'absolute', left: '-9999px', width: '800px' }}>
@@ -809,7 +806,7 @@ function Viewtrip() {
                 </div>
                 <div style={{ marginTop: '12px', padding: '12px', backgroundColor: budget.isEstimated ? '#fef3c7' : '#e0e7ff', borderRadius: '6px', border: `1px solid ${budget.isEstimated ? '#fbbf24' : '#6366f1'}` }}>
                   <div style={{ fontSize: '12px', color: budget.isEstimated ? '#92400e' : '#3730a3', lineHeight: '1.6' }}>
-                    <strong>Note:</strong> {budget.isEstimated ? 
+                    <strong>Note:</strong> {budget.isEstimated ?
                       `This is an estimated budget based on your "${trip?.userSelection?.budget}" budget preference for ${trip?.userSelection?.noofDays} days. Actual costs may vary based on hotels, activities, food choices, and transportation.` :
                       `This budget is calculated from hotel prices and activity costs in your itinerary. Consider additional expenses like transportation (${budget.currency}${Math.round(budget.total * 0.15).toLocaleString()} approx) and shopping.`
                     }
@@ -1048,9 +1045,9 @@ function Viewtrip() {
                 className="h-10"
               />
             </div>
-            <Button 
-              type="button" 
-              size="sm" 
+            <Button
+              type="button"
+              size="sm"
               className="px-3"
               onClick={copyToClipboard}
             >

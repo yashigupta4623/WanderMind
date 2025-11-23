@@ -30,7 +30,6 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import Footer from "@/components/custom/Footer";
 import TravelPersonaSelector from "@/components/custom/TravelPersonaSelector";
 import BudgetPredictor from "@/components/custom/BudgetPredictor";
 import BudgetValidator from "@/components/custom/BudgetValidator";
@@ -1057,7 +1056,6 @@ function CreateTrip() {
         onRetry={handleRetry}
         onClose={handleCloseModal}
       />
-      <Footer />
     </div>
   );
 }
