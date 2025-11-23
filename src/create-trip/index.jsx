@@ -53,50 +53,6 @@ import { Sparkles, Calculator, Camera, Users, MapPin, Calendar, Zap, Globe, Sett
 
 const apiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
 
-// Demo data fallback for when JSON parsing fails
-const generateDemoTripData = (formData) => {
-  const destination = formData?.location?.label || "Delhi";
-  const days = parseInt(formData?.noofDays) || 3;
-
-  return {
-    tripDetails: {
-      destination: destination,
-      duration: `${days} days`,
-      travelers: formData?.traveler || "1 Person",
-      budget: formData?.budget || "moderate",
-      totalBudget: formData?.budgetAmount || 25000
-    },
-    hotels: [
-      {
-        name: `Premium Hotel in ${destination}`,
-        address: `Central ${destination}`,
-        price: "₹3,500/night",
-        rating: 4.2,
-        description: "Comfortable accommodation with modern amenities"
-      }
-    ],
-    itinerary: Array.from({ length: days }, (_, i) => ({
-      day: i + 1,
-      activities: [
-        {
-          time: "9:00 AM",
-          activity: `Explore ${destination} landmarks`,
-          details: "Visit popular attractions and local sites",
-          ticketPricing: "₹500-1000",
-          timeToTravel: "30 mins"
-        },
-        {
-          time: "2:00 PM",
-          activity: "Local cuisine experience",
-          details: "Try authentic local food",
-          ticketPricing: "₹800-1200",
-          timeToTravel: "15 mins"
-        }
-      ]
-    }))
-  };
-};
-
 // Helper function to repair common JSON issues
 const repairJSON = (jsonString) => {
   let repaired = jsonString
@@ -346,6 +302,26 @@ function CreateTrip() {
     return null;
   };
 
+  // Retry helper with exponential backoff
+  const retryWithBackoff = async (fn, maxRetries = 2, baseDelay = 1000) => {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (error) {
+        if (attempt === maxRetries) throw error;
+
+        // Don't retry API key errors or validation errors
+        if (error.message.includes("API key") || error.message.includes("not configured")) {
+          throw error;
+        }
+
+        const delay = baseDelay * Math.pow(2, attempt);
+        console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  };
+
   const OnGenerateTrip = async () => {
     const user = localStorage.getItem("user");
     if (!user) {
@@ -374,7 +350,6 @@ function CreateTrip() {
       if (cachedTrip) {
         toast.success("Found a perfect match from our community trips! 🚀");
         const docId = Date.now().toString();
-        // Reuse the trip data but save as a new trip for this user
         await SaveAiTrip(cachedTrip.tripData, docId);
         return;
       }
@@ -384,26 +359,9 @@ function CreateTrip() {
       const learnedPrefs = await preferenceLearning.getLearnedPreferences(userEmail);
       const preferencePrompt = preferenceLearning.generatePreferencePrompt(learnedPrefs?.insights);
 
-      const personaKeywords = selectedPersona?.keywords || '';
       const themeNames = selectedThemes.map(id =>
         TravelThemes.find(t => t.id === id)?.name
       ).filter(Boolean).join(', ');
-
-      let commonPromptData = `
-        Location: ${formData?.location?.label}
-        Duration: ${formData?.noofDays} Days
-        Traveler: ${formData?.traveler}
-        Budget: ${formData?.budget}
-        Persona: ${selectedPersona?.title || 'General Traveler'}
-        Themes: ${themeNames || 'General sightseeing'}
-      `;
-
-      if (preferencePrompt) commonPromptData += `\nUser Preferences: ${preferencePrompt}`;
-
-      if (safetyFilters) {
-        const safetyPrompt = safetyAccessibilityService.generateSafetyPrompt(safetyFilters);
-        if (safetyPrompt) commonPromptData += `\nSafety Requirements: ${safetyPrompt}`;
-      }
 
       const itineraryPrompt = AI_ITINERARY_PROMPT
         .replace("{location}", formData?.location?.label)
@@ -421,12 +379,14 @@ function CreateTrip() {
         .replace("{budget}", formData?.budget)
         .replace("{persona}", selectedPersona?.title || 'General Traveler');
 
-      // 3. Parallel Execution
+      // 3. Parallel Execution with Retry Logic
       console.log("Generating trip with parallel requests...");
-      const [itineraryResult, hotelResult] = await Promise.all([
-        chatSession.sendMessage(itineraryPrompt),
-        chatSession.sendMessage(hotelPrompt)
-      ]);
+      const [itineraryResult, hotelResult] = await retryWithBackoff(async () => {
+        return await Promise.all([
+          chatSession.sendMessage(itineraryPrompt),
+          chatSession.sendMessage(hotelPrompt)
+        ]);
+      });
 
       const itineraryText = itineraryResult?.response?.text();
       const hotelText = hotelResult?.response?.text();
@@ -453,32 +413,26 @@ function CreateTrip() {
 
       const docId = Date.now().toString();
       await SaveAiTrip(JSON.stringify(finalTripData), docId);
-
-      if (isDemoMode) {
-        toast.success("Demo trip generated successfully! 🎉");
-      } else {
-        toast.success("Your personalized trip has been created! ✨");
-      }
+      toast.success("Your personalized trip has been created! ✨");
 
     } catch (error) {
       console.error("Error generating trip:", error);
 
-      if (error.message.includes("429") || error.message.includes("Resource exhausted")) {
-        toast.error("We are experiencing high traffic. Please try again in a moment.");
-      } else if (error.message.includes("API key")) {
-        toast.error("System configuration error. Please contact support.");
-      } else {
-        // Instead of toast error, set the error state for the modal
-        setError("An error occurred while generating the trip. Please try again.");
+      let errorMessage = "An error occurred while generating the trip. Please try again.";
+
+      if (error.message.includes("timeout")) {
+        errorMessage = "Trip generation is taking longer than expected. Please try again.";
+      } else if (error.message.includes("429") || error.message.includes("Resource exhausted")) {
+        errorMessage = "Too many requests. Please wait a moment and try again.";
+      } else if (error.message.includes("API key") || error.message.includes("not configured")) {
+        errorMessage = "System configuration error. Please contact support.";
+      } else if (!navigator.onLine) {
+        errorMessage = "No internet connection. Please check your network and try again.";
       }
+
+      setError(errorMessage);
     } finally {
-      // Only stop loading if successful or if we want to close the modal immediately
-      // But for error state, we want to keep modal open with error
       if (!error) {
-        // If there was an error, we keep loading=true so modal stays open to show error
-        // We'll handle closing in the modal's onClose
-      } else {
-        // If success, we stop loading
         setLoading(false);
       }
     }
@@ -513,8 +467,7 @@ function CreateTrip() {
     }
   };
 
-  const isDemoMode = !import.meta.env.VITE_GOOGLE_GEMINI_AI_API_KEY || import.meta.env.VITE_GOOGLE_GEMINI_AI_API_KEY === 'AIzaSyDemoKey123456789';
-  const [rateLimitHit, setRateLimitHit] = useState(false);
+
 
   return (
     <div className="container mx-auto max-w-7xl px-5 sm:px-10 md:px-12 lg:px-16 xl:px-20 mt-10 pb-16">
@@ -525,17 +478,7 @@ function CreateTrip() {
         <p className="mt-3 text-gray-700 dark:text-gray-300 text-lg">
           AI-powered travel planning with personalized recommendations
         </p>
-        {(isDemoMode || rateLimitHit) && (
-          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
-              {rateLimitHit ? (
-                <>⚡ <strong>Rate Limit Mode:</strong> API quota exceeded. Using demo mode with realistic sample data!</>
-              ) : (
-                <>🎯 <strong>Demo Mode:</strong> Experience our AI travel planner with sample data. All features are fully functional!</>
-              )}
-            </p>
-          </div>
-        )}
+
       </div>
 
       {/* Preference Learning Indicator */}
@@ -963,12 +906,12 @@ function CreateTrip() {
           {loading ? (
             <>
               <AiOutlineLoading3Quarters className="animate-spin text-xl mr-2" />
-              {isDemoMode ? 'Generating Demo Trip...' : 'Generating Your Perfect Trip...'}
+              Generating Your Perfect Trip...
             </>
           ) : (
             <>
               <Sparkles className="w-5 h-5 mr-2" />
-              {isDemoMode ? 'Generate Demo Trip' : 'Generate AI-Powered Trip'}
+              Generate AI-Powered Trip
             </>
           )}
         </Button>

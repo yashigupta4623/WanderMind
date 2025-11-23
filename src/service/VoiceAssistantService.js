@@ -37,10 +37,10 @@ class VoiceAssistantService {
 
     this.recognition.onresult = (event) => {
       let interimTranscript = '';
-      
+
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript;
-        
+
         if (event.results[i].isFinal) {
           finalTranscript += transcript + ' ';
           console.log('Final voice input:', finalTranscript);
@@ -59,7 +59,7 @@ class VoiceAssistantService {
     this.recognition.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
       this.isListening = false;
-      
+
       // Provide helpful error messages
       let errorMessage = 'Voice recognition error';
       if (event.error === 'no-speech') {
@@ -69,7 +69,7 @@ class VoiceAssistantService {
       } else if (event.error === 'not-allowed') {
         errorMessage = 'Microphone permission denied. Please allow access.';
       }
-      
+
       if (onError) {
         onError(errorMessage);
       }
@@ -121,37 +121,37 @@ class VoiceAssistantService {
         // Try to find the best voice for the language
         const voices = this.synthesis.getVoices();
         console.log('Available voices:', voices.map(v => `${v.name} (${v.lang})`));
-        
+
         // Priority order: Google > Enhanced > Natural > Default
-        let voice = voices.find(v => 
-          v.lang.startsWith(language.split('-')[0]) && 
+        let voice = voices.find(v =>
+          v.lang.startsWith(language.split('-')[0]) &&
           v.name.toLowerCase().includes('google')
         );
-        
+
         if (!voice) {
-          voice = voices.find(v => 
-            v.lang.startsWith(language.split('-')[0]) && 
+          voice = voices.find(v =>
+            v.lang.startsWith(language.split('-')[0]) &&
             (v.name.toLowerCase().includes('enhanced') || v.name.toLowerCase().includes('premium'))
           );
         }
-        
+
         if (!voice) {
-          voice = voices.find(v => 
-            v.lang.startsWith(language.split('-')[0]) && 
+          voice = voices.find(v =>
+            v.lang.startsWith(language.split('-')[0]) &&
             v.name.toLowerCase().includes('natural')
           );
         }
-        
+
         // Fallback to any voice for the language
         if (!voice) {
           voice = voices.find(v => v.lang.startsWith(language.split('-')[0]));
         }
-        
+
         // Last fallback to any voice
         if (!voice && voices.length > 0) {
           voice = voices[0];
         }
-        
+
         if (voice) {
           utterance.voice = voice;
           console.log('Using voice:', voice.name, voice.lang);
@@ -161,11 +161,11 @@ class VoiceAssistantService {
         utterance.onstart = () => {
           console.log('Speech started');
         };
-        
+
         utterance.onend = () => {
           console.log('Speech ended');
         };
-        
+
         utterance.onerror = (event) => {
           console.error('Speech error:', event);
         };
@@ -214,7 +214,7 @@ Examples:
     try {
       const result = await chatSession.sendMessage(prompt);
       const response = result?.response?.text();
-      
+
       // Try to parse JSON
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
@@ -231,7 +231,7 @@ Examples:
 
   fallbackParsing(input, language) {
     const lowerInput = input.toLowerCase();
-    
+
     // Extract destination
     const cities = ['jaipur', 'delhi', 'goa', 'mumbai', 'bangalore', 'kerala', 'agra', 'udaipur'];
     const destination = cities.find(city => lowerInput.includes(city)) || 'Delhi';
@@ -273,7 +273,7 @@ Examples:
       preferences,
       language,
       understood: true,
-      response: language === 'hi' 
+      response: language === 'hi'
         ? `Samajh gaya! ${destination} ke liye ${days} din ka ${budget} trip plan kar raha hoon.`
         : `Got it! Planning a ${days} day ${budget} trip to ${destination}.`
     };
