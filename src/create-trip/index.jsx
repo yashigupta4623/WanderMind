@@ -363,6 +363,9 @@ function CreateTrip() {
         TravelThemes.find(t => t.id === id)?.name
       ).filter(Boolean).join(', ');
 
+      // Generate safety prompt if safety filters are enabled
+      const safetyPrompt = safetyFilters ? safetyAccessibilityService.generateSafetyPrompt(safetyFilters) : '';
+
       const itineraryPrompt = AI_ITINERARY_PROMPT
         .replace("{location}", formData?.location?.label)
         .replace("{totalDays}", formData?.noofDays)
@@ -370,14 +373,16 @@ function CreateTrip() {
         .replace("{budget}", formData?.budget)
         .replace("{persona}", selectedPersona?.title || 'General Traveler')
         .replace("{themes}", themeNames || 'General sightseeing')
-        .replace("{userPreferences}", preferencePrompt || 'None');
+        .replace("{userPreferences}", preferencePrompt || 'None')
+        .concat(safetyPrompt);
 
       const hotelPrompt = AI_HOTEL_PROMPT
         .replace("{location}", formData?.location?.label)
         .replace("{totalDays}", formData?.noofDays)
         .replace("{traveler}", formData?.traveler)
         .replace("{budget}", formData?.budget)
-        .replace("{persona}", selectedPersona?.title || 'General Traveler');
+        .replace("{persona}", selectedPersona?.title || 'General Traveler')
+        .concat(safetyPrompt);
 
       // 3. Parallel Execution with Retry Logic
       console.log("Generating trip with parallel requests...");
@@ -454,10 +459,15 @@ function CreateTrip() {
       const user = JSON.parse(localStorage.getItem("user"));
       const docId = Date.now().toString();
       await setDoc(doc(db, "AITrips", docId), {
-        userSelection: formData,
+        userSelection: {
+          ...formData,
+          safetyFilters: safetyFilters // Include safety filters in user selection
+        },
         tripData: TripData,
         userEmail: user?.email,
         id: docId,
+        createdAt: new Date().toISOString(),
+        safetyMode: safetyFilters ? 'enabled' : 'disabled'
       });
     } catch (error) {
       console.error("Error saving trip:", error);

@@ -12,6 +12,7 @@ import Hotels from '../components/Hotels';
 import PlacesToVisit from '../components/PlacesToVisit';
 import Transport from '../components/Transport';
 import Flights from '../components/Flights';
+import SafetySummary from '../components/SafetySummary';
 
 import ConversationalPlanner from '@/components/custom/ConversationalPlanner';
 import EcoScoreIndicator from '@/components/custom/EcoScoreIndicator';
@@ -390,6 +391,13 @@ function Viewtrip() {
             Book
           </TabsTrigger>
           <TabsTrigger
+            value="safety"
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-pink-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            Safety
+          </TabsTrigger>
+          <TabsTrigger
             value="share"
             className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-gray-900 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
@@ -415,6 +423,10 @@ function Viewtrip() {
               toast.success(`Booking confirmed! ID: ${bookingData.bookingId}`);
             }}
           />
+        </TabsContent>
+
+        <TabsContent value="safety" className="mt-6">
+          <SafetySummary trip={trip} />
         </TabsContent>
 
         <TabsContent value="realtime" className="mt-6">
