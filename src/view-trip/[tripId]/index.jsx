@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from '@/components/ui/input';
 import Infosection from '../components/Infosection';
 import LocalInsights from '../components/LocalInsights';
+import LocalInsightsPopup from '../components/LocalInsightsPopup';
 import RealTimeUpdates from '../components/RealTimeUpdates';
 import TripStory from '../components/TripStory';
 import Hotels from '../components/Hotels';
@@ -41,6 +42,7 @@ function Viewtrip() {
   const [activeTab, setActiveTab] = useState('overview');
   const [showQRCode, setShowQRCode] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
+  const [showInsightsPopup, setShowInsightsPopup] = useState(true);
   const tripCardRef = useRef(null);
   const pdfContentRef = useRef(null);
 
@@ -161,11 +163,8 @@ function Viewtrip() {
 
       totalBudget.total = totalBudget.hotelCost + totalBudget.activityCost;
 
-      // Detect currency from prices
-      const firstHotelPrice = trip?.tripData?.hotels?.[0]?.price || '';
-      if (firstHotelPrice.includes('$')) totalBudget.currency = '$';
-      else if (firstHotelPrice.includes('€')) totalBudget.currency = '€';
-      else if (firstHotelPrice.includes('£')) totalBudget.currency = '£';
+      // Always use INR currency
+      totalBudget.currency = '₹';
 
       // If no prices found, estimate based on budget range and days
       if (totalBudget.total === 0 && trip?.userSelection) {
@@ -415,75 +414,69 @@ function Viewtrip() {
 
       {/* Clean Trip View with Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="inline-flex h-12 items-center justify-start rounded-lg !bg-white dark:!bg-gray-800 p-1 w-full overflow-x-auto border border-gray-200 dark:border-gray-700">
+        <TabsList className="flex h-12 items-center justify-between rounded-lg !bg-white dark:!bg-gray-800 p-1 w-full border border-gray-200 dark:border-gray-700 overflow-hidden">
           <TabsTrigger
             value="overview"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-blue-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+            className="flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 text-xs font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-blue-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
-            <MapPin className="w-4 h-4 mr-2" />
+            <MapPin className="w-3 h-3 mr-1" />
             {getTabLabel('overview')}
           </TabsTrigger>
-          <TabsTrigger
-            value="insights"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-yellow-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
-          >
-            <Sparkles className="w-4 h-4 mr-2" />
-            Local Insights
-          </TabsTrigger>
+
           <TabsTrigger
             value="realtime"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-orange-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+            className="flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 text-xs font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-orange-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
-            <Zap className="w-4 h-4 mr-2" />
-            Live Updates
+            <Zap className="w-3 h-3 mr-1" />
+            Live
           </TabsTrigger>
           <TabsTrigger
             value="maps"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-green-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+            className="flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 text-xs font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-green-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
-            <Map className="w-4 h-4 mr-2" />
+            <Map className="w-3 h-3 mr-1" />
             Maps
           </TabsTrigger>
           <TabsTrigger
             value="story"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-pink-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+            className="flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 text-xs font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-pink-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
-            <BookOpen className="w-4 h-4 mr-2" />
+            <BookOpen className="w-3 h-3 mr-1" />
             Story
           </TabsTrigger>
           <TabsTrigger
             value="sustainability"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-emerald-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+            className="flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 text-xs font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-emerald-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
-            <Leaf className="w-4 h-4 mr-2" />
+            <Leaf className="w-3 h-3 mr-1" />
             Eco
           </TabsTrigger>
           <TabsTrigger
             value="group"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-purple-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+            className="flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 text-xs font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-purple-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
-            <Users className="w-4 h-4 mr-2" />
+            <Users className="w-3 h-3 mr-1" />
             Group
           </TabsTrigger>
           <TabsTrigger
             value="copilot"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-indigo-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+            className="flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 text-xs font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-indigo-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
-            <Bot className="w-4 h-4 mr-2" />
-            AI Copilot
+            <Bot className="w-3 h-3 mr-1" />
+            Copilot
           </TabsTrigger>
           <TabsTrigger
             value="booking"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-orange-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+            className="flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 text-xs font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-orange-600 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
-            <CreditCard className="w-4 h-4 mr-2" />
+            <CreditCard className="w-3 h-3 mr-1" />
             Book
           </TabsTrigger>
           <TabsTrigger
             value="share"
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-gray-900 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
+            className="flex-1 inline-flex items-center justify-center whitespace-nowrap rounded-md px-2 py-1.5 text-xs font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-gray-900 data-[state=active]:!text-white data-[state=active]:shadow-sm transition-all"
           >
-            <Share2 className="w-4 h-4 mr-2" />
+            <Share2 className="w-3 h-3 mr-1" />
             Share
           </TabsTrigger>
         </TabsList>
@@ -1191,6 +1184,14 @@ function Viewtrip() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Auto-rotating Local Insights Popup */}
+      {showInsightsPopup && (
+        <LocalInsightsPopup
+          trip={trip}
+          onClose={() => setShowInsightsPopup(false)}
+        />
+      )}
     </div>
   );
 }

@@ -219,7 +219,7 @@ function Infosection({ trip }) {
         <div className="flex flex-wrap gap-2">
           <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">📆 {trip?.userSelection?.noofDays || '3'} Days</Badge>
           <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">💸 {formatBudgetDisplay(trip)}</Badge>
-          <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">🏕️ {trip?.userSelection?.traveler || '2 People'}People</Badge>
+          <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">🏕️ {trip?.userSelection?.traveler || '2 People'} People</Badge>
         </div>
         
         {/* Safety Badges */}
