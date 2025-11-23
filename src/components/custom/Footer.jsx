@@ -7,6 +7,7 @@ import {
   AiFillMail,
   AiFillTwitterCircle,
 } from "react-icons/ai";
+import AnimatedLogo from "./AnimatedLogo";
 
 function Footer() {
   const socialIcons = [
@@ -53,14 +54,12 @@ function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand & Description */}
           <div className="col-span-1 lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-tr from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                W
-              </div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                WanderMind
+            <a href="/" className="flex items-center gap-2 mb-4 hover:opacity-80 transition-opacity cursor-pointer">
+              <AnimatedLogo className="w-8 h-8" />
+              <h3 className="text-xl font-bold text-[#2196f3] dark:text-[#42a5f5]">
+                Wander<span className="text-gray-900 dark:text-white">Mind</span>
               </h3>
-            </div>
+            </a>
             <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed mb-4">
               Your AI-powered travel companion. Discover new destinations, plan your perfect trip, and create memories that last a lifetime.
             </p>
