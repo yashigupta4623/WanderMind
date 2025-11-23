@@ -109,23 +109,20 @@ export const SelectBudgetOptions = [
 ];
 
 export const AI_ITINERARY_PROMPT = `
-  Generate a detailed day-by-day itinerary for {location} for {totalDays} days.
-  Traveler: {traveler}, Budget: {budget}, Persona: {persona}, Themes: {themes}
-  Preferences: {userPreferences}
-
-  Focus on authentic experiences, local culture, and logical route optimization.
+  Generate day-by-day itinerary for {location}, {totalDays} days.
+  Traveler: {traveler} | Budget: {budget} | Style: {persona} | Interests: {themes}
+  {userPreferences}
   
-  Return JSON:
+  Return JSON only:
   {
     "itinerary": [
       {
         "day": number,
         "theme": "string",
-        "bestTimeVisit": "string",
         "plan": [
           {
             "placeName": "string",
-            "placeDetails": "string",
+            "placeDetails": "string (brief)",
             "placeImageUrl": "string",
             "geoCoordinates": {"lat": number, "lng": number},
             "ticketPricing": "string",
@@ -140,10 +137,10 @@ export const AI_ITINERARY_PROMPT = `
 `;
 
 export const AI_HOTEL_PROMPT = `
-  Suggest 5-6 best hotels in {location} for {totalDays} days.
-  Traveler: {traveler}, Budget: {budget}, Persona: {persona}
+  Suggest 5-6 hotels in {location} for {totalDays} days.
+  Traveler: {traveler} | Budget: {budget} | Style: {persona}
   
-  Return JSON:
+  Return JSON only:
   {
     "hotels": [
       {
@@ -153,7 +150,7 @@ export const AI_HOTEL_PROMPT = `
         "hotelImageUrl": "string",
         "geoCoordinates": {"lat": number, "lng": number},
         "rating": number,
-        "description": "string"
+        "description": "string (brief)"
       }
     ]
   }
