@@ -55,7 +55,7 @@ const apiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
 const generateDemoTripData = (formData) => {
   const destination = formData?.location?.label || "Delhi";
   const days = parseInt(formData?.noofDays) || 3;
-  
+
   return {
     tripDetails: {
       destination: destination,
@@ -141,25 +141,25 @@ const parseAIResponse = (responseText) => {
       let jsonEnd = -1;
       let inString = false;
       let escapeNext = false;
-      
+
       for (let i = jsonStart; i < cleanedText.length; i++) {
         const char = cleanedText[i];
-        
+
         if (escapeNext) {
           escapeNext = false;
           continue;
         }
-        
+
         if (char === '\\') {
           escapeNext = true;
           continue;
         }
-        
+
         if (char === '"' && !escapeNext) {
           inString = !inString;
           continue;
         }
-        
+
         if (!inString) {
           if (char === '{') {
             bracketCount++;
@@ -181,7 +181,7 @@ const parseAIResponse = (responseText) => {
         } catch (e) {
           console.log("JSON extraction from text failed:", e);
           console.log("Attempted to parse:", jsonString.substring(0, 200) + "...");
-          
+
           // Last resort: try to truncate at the last valid JSON structure
           try {
             const lastValidBrace = jsonString.lastIndexOf('}', jsonString.length - 50);
@@ -232,7 +232,7 @@ function CreateTrip() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
-    const validTabs = ['inspire', 'persona', 'basic', 'group', 'budget', 'realtime', 'multilingual', 'advanced'];
+    const validTabs = ['inspire', 'persona', 'basic', 'group', 'realtime', 'multilingual', 'advanced'];
     if (tab && validTabs.includes(tab)) {
       setActiveTab(tab);
     }
@@ -259,16 +259,16 @@ function CreateTrip() {
       budget: type,
       budgetAmount: amount
     }));
-    
+
     const budgetNames = {
       budget: 'Budget Travel',
       moderate: 'Comfortable',
       luxury: 'Luxury',
       custom: 'Custom Budget'
     };
-    
+
     toast.success(`✅ ${budgetNames[type] || type} selected: ₹${amount.toLocaleString()}`);
-    
+
     // Auto-navigate to next step if all required fields are filled
     if (formData?.location && formData?.noofDays && formData?.traveler) {
       setTimeout(() => {
@@ -400,7 +400,7 @@ function CreateTrip() {
 
       const docId = Date.now().toString();
       await SaveAiTrip(JSON.stringify(tripData), docId);
-      
+
       if (isDemoMode) {
         toast.success("Demo trip generated successfully! 🎉");
       } else {
@@ -408,7 +408,7 @@ function CreateTrip() {
       }
     } catch (error) {
       console.error("Error generating trip:", error);
-      
+
       // Log the raw response for debugging
       if (error.message.includes("Failed to parse JSON") && result) {
         try {
@@ -422,7 +422,7 @@ function CreateTrip() {
           console.error("Could not access result for debugging:", resultError);
         }
       }
-      
+
       if (error.message.includes("429") || error.message.includes("Resource exhausted")) {
         setRateLimitHit(true);
         toast.success(
@@ -513,7 +513,7 @@ function CreateTrip() {
 
       {/* Preference Learning Indicator */}
       <div className="mb-6">
-        <PreferenceLearningIndicator 
+        <PreferenceLearningIndicator
           userId={JSON.parse(localStorage.getItem("user") || '{}')?.email}
         />
       </div>
@@ -571,13 +571,6 @@ function CreateTrip() {
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             )}
           </TabsTrigger>
-          <TabsTrigger value="budget" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-green-600 data-[state=active]:!text-white transition-all relative">
-            <Calculator className="w-4 h-4 mr-2" />
-            Budget
-            {!formData?.budget && (
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            )}
-          </TabsTrigger>
           <TabsTrigger value="safety" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-pink-600 data-[state=active]:!text-white transition-all">
             <Shield className="w-4 h-4 mr-2" />
             Safety
@@ -595,7 +588,7 @@ function CreateTrip() {
                 Apni bhasha mein boliye, AI samajh jayega! Voice-first planning for India.
               </p>
             </div>
-            <VoiceFirstPlanner 
+            <VoiceFirstPlanner
               onPlanCreated={(parsed) => {
                 console.log('Voice plan created:', parsed);
                 // Auto-fill form with voice data
@@ -639,7 +632,7 @@ function CreateTrip() {
                 Just landed? Get an instant hyper-compressed plan in seconds!
               </p>
             </div>
-            <LastMinuteQuickPlan 
+            <LastMinuteQuickPlan
               onPlanGenerated={(plan) => {
                 console.log('Quick plan generated:', plan);
                 toast.success('Quick plan ready! Start exploring now! 🚀');
@@ -717,55 +710,50 @@ function CreateTrip() {
                 ))}
               </div>
             </div>
+
+            {/* Budget Section Moved Here */}
+            {formData?.location && formData?.noofDays && formData?.traveler && (
+              <div className="mt-10 pt-10 border-t border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl my-3 font-medium flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                  <Calculator className="w-5 h-5 text-purple-500" />
+                  What is your budget?
+                </h2>
+                <div className="space-y-6">
+                  <BudgetPredictor
+                    destination={formData.location.label}
+                    days={formData.noofDays}
+                    travelers={formData.traveler}
+                    onBudgetSelect={handleBudgetSelect}
+                  />
+
+                  {formData?.budgetAmount && (
+                    <BudgetValidator
+                      destination={formData.location.label}
+                      days={formData.noofDays}
+                      travelers={formData.traveler}
+                      budget={formData.budgetAmount}
+                      onSuggestionAccept={(suggestion) => {
+                        console.log('Accepted suggestion:', suggestion);
+                        if (suggestion.type === 'days') {
+                          handleInputChange('noofDays', suggestion.value.toString());
+                          toast.success(`Trip duration adjusted to ${suggestion.value} days`);
+                        } else if (suggestion.type === 'budget') {
+                          handleBudgetSelect('custom', suggestion.value);
+                          toast.success(`Budget increased to ₹${suggestion.value.toLocaleString()}`);
+                        } else {
+                          toast.success(`Great choice! ${suggestion.type} suggestion accepted`);
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
 
         <TabsContent value="group" className="mt-6">
           <GroupTravelMode onGroupPreferencesUpdate={handleGroupPreferences} />
-        </TabsContent>
-
-        <TabsContent value="budget" className="mt-6">
-          {formData?.location && formData?.noofDays && formData?.traveler ? (
-            <div className="space-y-6">
-              <BudgetPredictor
-                destination={formData.location.label}
-                days={formData.noofDays}
-                travelers={formData.traveler}
-                onBudgetSelect={handleBudgetSelect}
-              />
-              
-              {formData?.budgetAmount && (
-                <BudgetValidator
-                  destination={formData.location.label}
-                  days={formData.noofDays}
-                  travelers={formData.traveler}
-                  budget={formData.budgetAmount}
-                  onSuggestionAccept={(suggestion) => {
-                    console.log('Accepted suggestion:', suggestion);
-                    if (suggestion.type === 'days') {
-                      handleInputChange('noofDays', suggestion.value.toString());
-                      toast.success(`Trip duration adjusted to ${suggestion.value} days`);
-                    } else if (suggestion.type === 'budget') {
-                      handleBudgetSelect('custom', suggestion.value);
-                      toast.success(`Budget increased to ₹${suggestion.value.toLocaleString()}`);
-                    } else {
-                      toast.success(`Great choice! ${suggestion.type} suggestion accepted`);
-                    }
-                  }}
-                />
-              )}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <Calculator className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">
-                Complete Trip Details First
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Please fill in your destination, duration, and traveler details to get budget predictions
-              </p>
-            </div>
-          )}
         </TabsContent>
 
         <TabsContent value="safety" className="mt-6">
@@ -779,14 +767,14 @@ function CreateTrip() {
                 India-first filters for safe, accessible, and comfortable travel 🇮🇳
               </p>
             </div>
-            <SafetyAccessibilityFilters 
+            <SafetyAccessibilityFilters
               onFiltersUpdate={(filters) => {
                 setSafetyFilters(filters);
                 setFormData(prev => ({
                   ...prev,
                   safetyFilters: filters
                 }));
-              }} 
+              }}
             />
           </div>
         </TabsContent>
