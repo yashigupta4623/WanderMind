@@ -145,14 +145,16 @@ function Infosection({ trip }) {
 
   const getSafetyBadges = () => {
     const safetyFilters = trip?.userSelection?.safetyFilters;
-    if (!safetyFilters) return null;
+    console.log('Safety Filters:', safetyFilters); // Debug log
+    
+    if (!safetyFilters) return [];
 
     const badges = [];
     
     if (safetyFilters.safeForWomen || safetyFilters.safeForSolo) {
       badges.push({
         icon: <ShieldCheck className="w-3 h-3" />,
-        label: 'Women Solo Safe',
+        label: 'Women/Solo Safe',
         color: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300'
       });
     }
@@ -176,11 +178,12 @@ function Infosection({ trip }) {
     if (safetyFilters.preferDaytime) {
       badges.push({
         icon: <Shield className="w-3 h-3" />,
-        label: 'Daytime Only',
+        label: 'Daytime Activities',
         color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
       });
     }
 
+    console.log('Safety Badges:', badges); // Debug log
     return badges;
   };
 
@@ -223,16 +226,22 @@ function Infosection({ trip }) {
         </div>
         
         {/* Safety Badges */}
-        {getSafetyBadges() && getSafetyBadges().length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
-            {getSafetyBadges().map((badge, idx) => (
-              <Badge key={idx} className={`${badge.color} flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium`}>
-                {badge.icon}
-                {badge.label}
-              </Badge>
-            ))}
-          </div>
-        )}
+        {(() => {
+          const badges = getSafetyBadges();
+          return badges && badges.length > 0 && (
+            <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+              <div className="w-full text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
+                🛡️ Safety Features
+              </div>
+              {badges.map((badge, idx) => (
+                <Badge key={idx} className={`${badge.color} flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium`}>
+                  {badge.icon}
+                  {badge.label}
+                </Badge>
+              ))}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

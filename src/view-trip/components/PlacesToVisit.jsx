@@ -163,9 +163,9 @@ function PlacesToVisit({ trip }) {
                     ? `${item.day} Activities` 
                     : `Day ${item.day || index + 1} Activities`}
                 </h2>
-                <div className="text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
+                {/* <div className="text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
                   {finalActivities.length} activities • {tripBudget} budget
-                </div>
+                </div> */}
               </div>
               
               <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr'>

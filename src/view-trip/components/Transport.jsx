@@ -149,9 +149,9 @@ function Transport({ trip }) {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-bold text-2xl text-gray-800 dark:text-gray-100">🚗 Transportation Options</h2>
-        <div className="text-sm text-gray-600 dark:text-gray-300 bg-green-50 dark:bg-green-900/30 px-3 py-1 rounded-full">
-          {transportOptions.length} options • {budget} budget
-        </div>
+        {/* <div className="text-sm text-gray-600 dark:text-gray-300 bg-green-50 dark:bg-green-900/30 px-3 py-1 rounded-full">
+          {transportOptions.length} options • {budget.charAt(0).toUpperCase() + budget.slice(1)} Budget
+        </div> */}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

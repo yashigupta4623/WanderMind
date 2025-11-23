@@ -631,6 +631,14 @@ function CreateTrip() {
             onPersonaSelect={handlePersonaSelect}
             selectedPersona={selectedPersona}
             selectedThemes={selectedThemes}
+            onDestinationSelect={(destination) => {
+              // Auto-fill the destination
+              handleInputChange('location', { label: destination });
+              // Switch to Details tab
+              setActiveTab('basic');
+              // Show success message
+              toast.success(`${destination} selected! Fill in the remaining details to generate your trip.`);
+            }}
           />
         </TabsContent>
 

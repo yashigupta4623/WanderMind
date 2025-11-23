@@ -97,13 +97,49 @@ const GooglePlacesWrapper = ({ apiKey, selectProps, onPlaceSelect }) => {
   try {
     return (
       <div className="space-y-2">
-        <GooglePlacesAutocomplete
-          apiKey={apiKey}
-          selectProps={{
-            ...selectProps,
-            placeholder: selectProps?.placeholder || "Search for places...",
-          }}
-        />
+        <style>{`
+          .google-places-autocomplete input {
+            color: #111827 !important;
+          }
+          .google-places-autocomplete__input {
+            color: #111827 !important;
+          }
+          .css-1dimb5e-singleValue {
+            color: #111827 !important;
+          }
+          .css-qbdosj-Input {
+            color: #111827 !important;
+          }
+          [class*="singleValue"] {
+            color: #111827 !important;
+          }
+          [class*="Input"] input {
+            color: #111827 !important;
+          }
+        `}</style>
+        <div className="google-places-autocomplete">
+          <GooglePlacesAutocomplete
+            apiKey={apiKey}
+            selectProps={{
+              ...selectProps,
+              placeholder: selectProps?.placeholder || "Search for places...",
+              styles: {
+                input: (provided) => ({
+                  ...provided,
+                  color: '#111827 !important',
+                }),
+                singleValue: (provided) => ({
+                  ...provided,
+                  color: '#111827 !important',
+                }),
+                control: (provided) => ({
+                  ...provided,
+                  color: '#111827 !important',
+                }),
+              },
+            }}
+          />
+        </div>
         <Button 
           variant="outline" 
           size="sm"

@@ -237,8 +237,8 @@ function LocalInsightsPopup({ trip, onClose }) {
           <div className="flex items-center gap-3 mb-4">
             <span className="text-4xl">{insights.icon}</span>
             <div>
-              <h4 className="font-bold text-lg text-gray-900 dark:text-gray-100">{destination}</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400">{insights.famousFor}</p>
+              <h4 className="font-bold text-lg text-gray-900">{destination}</h4>
+              <p className="text-sm text-gray-700">{insights.famousFor}</p>
             </div>
           </div>
 

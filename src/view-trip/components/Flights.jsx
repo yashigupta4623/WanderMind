@@ -126,9 +126,9 @@ function Flights({ trip }) {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-bold text-2xl text-gray-800 dark:text-gray-100">✈️ Flight Options</h2>
-        <div className="text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
+        {/* <div className="text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
           {flightOptions.length} flights • {budget} budget
-        </div>
+        </div> */}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

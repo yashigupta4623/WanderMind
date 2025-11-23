@@ -112,9 +112,9 @@ function Hotels({ trip }) {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-bold text-2xl text-gray-800 dark:text-gray-100">🏨 Hotel Recommendations</h2>
-        <div className="text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
-          {finalHotels.length} options • {budget} Budget
-        </div>
+        {/* <div className="text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
+          {finalHotels.length} options • {budget.charAt(0).toUpperCase() + budget.slice(1)} Budget
+        </div> */}
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {finalHotels.map((hotel, index) => (

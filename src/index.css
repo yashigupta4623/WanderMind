@@ -264,3 +264,81 @@ h1 {
     transform: none;
   }
 }
+
+/* Force black text for Google Places Autocomplete - MAXIMUM SPECIFICITY */
+.google-places-autocomplete input,
+.google-places-autocomplete__input,
+.google-places-autocomplete [class*="Input"] input,
+.google-places-autocomplete [class*="singleValue"],
+.css-1dimb5e-singleValue,
+.css-qbdosj-Input,
+[class*="singleValue"],
+[class*="Input"] input,
+div[class*="singleValue"],
+div[class*="Input"] input {
+  color: #000000 !important;
+}
+
+/* Force black text for dropdown options - ALL POSSIBLE SELECTORS */
+.google-places-autocomplete [class*="option"],
+.google-places-autocomplete [class*="Option"],
+.google-places-autocomplete [class*="menu"] div,
+.google-places-autocomplete [class*="menu"] span,
+.google-places-autocomplete [class*="MenuList"] div,
+[class*="option"],
+[class*="Option"],
+div[class*="option"],
+div[class*="Option"],
+.css-1n7v3ny-option,
+.css-yt9ioa-option,
+.css-9gakcf-option,
+[class*="MenuList"] div,
+[class*="menu"] div[role="option"],
+div[role="option"] {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* Hover state for options */
+.google-places-autocomplete [class*="option"]:hover,
+div[class*="option"]:hover,
+div[role="option"]:hover {
+  color: #000000 !important;
+  background-color: #f3f4f6 !important;
+}
+
+.dark .google-places-autocomplete input,
+.dark .google-places-autocomplete__input,
+.dark .google-places-autocomplete [class*="Input"] input,
+.dark .google-places-autocomplete [class*="singleValue"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+/* Dark mode dropdown - keep black text on white background */
+.dark .google-places-autocomplete [class*="option"],
+.dark .google-places-autocomplete [class*="Option"],
+.dark .google-places-autocomplete [class*="menu"] div,
+.dark .google-places-autocomplete [class*="menu"] span,
+.dark .google-places-autocomplete [class*="MenuList"] div,
+.dark div[class*="option"],
+.dark div[role="option"] {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+/* Dark mode menu background - white */
+.dark .google-places-autocomplete [class*="menu"],
+.dark .google-places-autocomplete [class*="MenuList"] {
+  background-color: #ffffff !important;
+}
+
+/* Dark mode hover - light gray */
+.dark .google-places-autocomplete [class*="option"]:hover,
+.dark div[class*="option"]:hover,
+.dark div[role="option"]:hover {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  background-color: #f3f4f6 !important;
+}

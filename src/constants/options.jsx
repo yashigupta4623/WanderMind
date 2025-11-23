@@ -113,6 +113,8 @@ export const AI_ITINERARY_PROMPT = `
   Traveler: {traveler} | Budget: {budget} | Style: {persona} | Interests: {themes}
   {userPreferences}
   
+  IMPORTANT: All prices MUST be in Indian Rupees (₹) format. Use ₹ symbol, not $.
+  
   Return JSON only:
   {
     "itinerary": [
@@ -125,7 +127,7 @@ export const AI_ITINERARY_PROMPT = `
             "placeDetails": "string (brief)",
             "placeImageUrl": "string",
             "geoCoordinates": {"lat": number, "lng": number},
-            "ticketPricing": "string",
+            "ticketPricing": "string (MUST use ₹ symbol, e.g., ₹200-500 or Free)",
             "timeTravel": "string",
             "rating": number,
             "duration": "string"
@@ -140,13 +142,15 @@ export const AI_HOTEL_PROMPT = `
   Suggest 5-6 hotels in {location} for {totalDays} days.
   Traveler: {traveler} | Budget: {budget} | Style: {persona}
   
+  IMPORTANT: All prices MUST be in Indian Rupees (₹) format. Use ₹ symbol, not $.
+  
   Return JSON only:
   {
     "hotels": [
       {
         "hotelName": "string",
         "hotelAddress": "string",
-        "price": "string",
+        "price": "string (MUST use ₹ symbol, e.g., ₹3000-5000 per night)",
         "hotelImageUrl": "string",
         "geoCoordinates": {"lat": number, "lng": number},
         "rating": number,

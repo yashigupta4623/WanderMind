@@ -3,7 +3,7 @@ import { GetPlaceDetails, PHOTO_REF_URL } from "../../service/GlobalApi";
 import { useNavigate } from "react-router-dom";
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../service/firebaseConfig";
-import { Trash, Clock, MapPin, Calendar, Wallet } from "lucide-react";
+import { Trash, Clock, MapPin, Calendar, Wallet, Edit } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -152,7 +152,20 @@ function UserTripCardItem({ trip, refreshTrips }) {
             <span>Created {formatCreationDate(trip.id)}</span>
           </div>
 
-          <div onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            {/* Edit Button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate('/create-trip', { state: { editTrip: trip } });
+              }}
+              className="p-2 rounded-full hover:bg-blue-50 text-gray-400 hover:text-blue-500 transition-colors z-10 relative"
+              title="Edit Trip"
+            >
+              <Edit className="w-4 h-4" />
+            </button>
+
+            {/* Delete Button */}
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>
               <DialogTrigger asChild>
                 <button

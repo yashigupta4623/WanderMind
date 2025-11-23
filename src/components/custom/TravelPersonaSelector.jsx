@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { TravelPersonas, TravelThemes } from '@/constants/options';
 import { Sparkles, Check } from 'lucide-react';
 
-const TravelPersonaSelector = ({ onPersonaSelect, selectedPersona, selectedThemes = [] }) => {
+const TravelPersonaSelector = ({ onPersonaSelect, selectedPersona, selectedThemes = [], onDestinationSelect }) => {
   const [localSelectedPersona, setLocalSelectedPersona] = useState(selectedPersona);
   const [localSelectedThemes, setLocalSelectedThemes] = useState(selectedThemes);
 
@@ -162,8 +162,106 @@ const TravelPersonaSelector = ({ onPersonaSelect, selectedPersona, selectedTheme
           </CardContent>
         </Card>
       )}
+
+      {/* Recommended Destinations */}
+      {localSelectedPersona && (
+        <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-2 border-blue-200 dark:border-blue-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
+              <span className="text-2xl">{localSelectedPersona.icon}</span>
+              Recommended Destinations for {localSelectedPersona.title}
+            </CardTitle>
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              Based on your travel style, here are some perfect destinations to explore
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {getRecommendedDestinations(localSelectedPersona.title).map((dest, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => onDestinationSelect && onDestinationSelect(dest.name)}
+                  className="bg-white dark:bg-gray-800 p-4 rounded-lg border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 hover:shadow-lg transition-all cursor-pointer text-left"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">{dest.icon}</span>
+                    <div>
+                      <h5 className="font-semibold text-gray-900 dark:text-white">{dest.name}</h5>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{dest.reason}</p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400 mt-2 font-medium">
+                        Click to select →
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+              <p className="text-sm text-blue-900 dark:text-blue-200">
+                💡 <strong>Tip:</strong> Click on any destination to auto-fill it in the Details tab!
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
+};
+
+// Helper function to get recommended destinations based on persona
+const getRecommendedDestinations = (personaTitle) => {
+  const destinations = {
+    'Heritage Explorer': [
+      { name: 'Jaipur', icon: '🏰', reason: 'Rich Rajput heritage & palaces' },
+      { name: 'Agra', icon: '🕌', reason: 'Mughal architecture & Taj Mahal' },
+      { name: 'Varanasi', icon: '🕉️', reason: 'Ancient spiritual capital' },
+      { name: 'Hampi', icon: '⛰️', reason: 'UNESCO World Heritage ruins' },
+      { name: 'Delhi', icon: '🏛️', reason: 'Historical monuments & museums' },
+      { name: 'Khajuraho', icon: '🛕', reason: 'Ancient temple architecture' }
+    ],
+    'Adventure Seeker': [
+      { name: 'Manali', icon: '🏔️', reason: 'Trekking & mountain sports' },
+      { name: 'Rishikesh', icon: '🌊', reason: 'River rafting & bungee jumping' },
+      { name: 'Leh-Ladakh', icon: '🏍️', reason: 'High-altitude biking adventures' },
+      { name: 'Goa', icon: '🏄', reason: 'Water sports & beach activities' },
+      { name: 'Coorg', icon: '🌲', reason: 'Jungle trekking & camping' },
+      { name: 'Andaman', icon: '🤿', reason: 'Scuba diving & snorkeling' }
+    ],
+    'Luxury Nomad': [
+      { name: 'Udaipur', icon: '👑', reason: 'Royal palaces & luxury resorts' },
+      { name: 'Goa', icon: '🏖️', reason: 'Premium beach resorts' },
+      { name: 'Mumbai', icon: '🌆', reason: 'Luxury hotels & fine dining' },
+      { name: 'Jaipur', icon: '🏰', reason: 'Heritage hotels & royal experiences' },
+      { name: 'Kerala', icon: '🛥️', reason: 'Luxury houseboats & spas' },
+      { name: 'Shimla', icon: '⛰️', reason: 'Colonial luxury & hill stations' }
+    ],
+    'Nightlife Enthusiast': [
+      { name: 'Mumbai', icon: '🌃', reason: 'Vibrant clubs & bars' },
+      { name: 'Bangalore', icon: '🍺', reason: 'Pub capital of India' },
+      { name: 'Goa', icon: '🎉', reason: 'Beach parties & nightlife' },
+      { name: 'Delhi', icon: '🎭', reason: 'Diverse entertainment scene' },
+      { name: 'Pune', icon: '🎵', reason: 'Live music & nightclubs' },
+      { name: 'Kolkata', icon: '🎪', reason: 'Cultural nightlife & events' }
+    ],
+    'Nature Lover': [
+      { name: 'Munnar', icon: '🌿', reason: 'Tea gardens & hill stations' },
+      { name: 'Ooty', icon: '🌺', reason: 'Botanical gardens & nature' },
+      { name: 'Jim Corbett', icon: '🐅', reason: 'Wildlife safari & forests' },
+      { name: 'Darjeeling', icon: '🏔️', reason: 'Himalayan views & tea estates' },
+      { name: 'Wayanad', icon: '🦋', reason: 'Wildlife & waterfalls' },
+      { name: 'Kaziranga', icon: '🦏', reason: 'Rhino sanctuary & nature' }
+    ],
+    'Food Explorer': [
+      { name: 'Delhi', icon: '🍛', reason: 'Street food paradise' },
+      { name: 'Mumbai', icon: '🥘', reason: 'Diverse culinary scene' },
+      { name: 'Kolkata', icon: '🍰', reason: 'Bengali sweets & cuisine' },
+      { name: 'Lucknow', icon: '🍖', reason: 'Awadhi & Mughlai cuisine' },
+      { name: 'Hyderabad', icon: '🍚', reason: 'Biryani & Nizami food' },
+      { name: 'Amritsar', icon: '🫓', reason: 'Punjabi cuisine & langar' }
+    ]
+  };
+
+  return destinations[personaTitle] || destinations['Heritage Explorer'];
 };
 
 export default TravelPersonaSelector;
