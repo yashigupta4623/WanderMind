@@ -31,8 +31,8 @@ function TransportCardItem({ transport }) {
   };
 
   return (
-    <div className="hover:scale-105 cursor-pointer transition-all rounded-xl shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-      <div className="p-3">
+    <div className="h-full flex flex-col hover:scale-105 cursor-pointer transition-all rounded-xl shadow-md bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+      <div className="p-3 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-3">
           <div className="flex items-center gap-3">
             <div className="text-2xl">{getTransportIcon(transport.transportType)}</div>
@@ -52,11 +52,11 @@ function TransportCardItem({ transport }) {
           </Link>
         </div>
 
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 overflow-hidden" style={{display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical'}}>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
           {transport.description}
         </p>
 
-        <div className="space-y-2 text-sm mb-3">
+        <div className="space-y-2 text-sm mb-3 flex-grow">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <span>💰</span>
@@ -81,7 +81,7 @@ function TransportCardItem({ transport }) {
         </div>
 
         {transport.features && transport.features.length > 0 && (
-          <div className="mt-3">
+          <div className="mt-auto">
             <div className="flex flex-wrap gap-1">
               {transport.features.slice(0, 3).map((feature, index) => (
                 <span key={index} className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded-full">

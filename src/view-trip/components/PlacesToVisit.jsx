@@ -159,24 +159,26 @@ function PlacesToVisit({ trip }) {
             <div key={index} className="mb-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className='font-medium text-xl text-blue-600 dark:text-blue-400'>
-                  Day {item.day || index + 1} Activities
+                  {typeof item.day === 'string' && item.day.toLowerCase().includes('day') 
+                    ? `${item.day} Activities` 
+                    : `Day ${item.day || index + 1} Activities`}
                 </h2>
                 <div className="text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
                   {finalActivities.length} activities • {tripBudget} budget
                 </div>
               </div>
               
-              <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
+              <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr'>
                 {finalActivities.map((place, placeIndex) => (
-                  <div key={placeIndex} className="relative">
+                  <div key={placeIndex} className="relative flex">
                     <PlaceCardItem place={place} />
                     {placeIndex === 0 && (
-                      <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+                      <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full z-10">
                         Must Visit
                       </div>
                     )}
                     {place.activityType && (
-                      <div className="absolute -top-2 -left-2 bg-purple-500 text-white text-xs px-2 py-1 rounded-full">
+                      <div className="absolute -top-2 -left-2 bg-purple-500 text-white text-xs px-2 py-1 rounded-full z-10">
                         {place.activityType.split(' ')[0]}
                       </div>
                     )}
@@ -186,7 +188,9 @@ function PlacesToVisit({ trip }) {
               
               <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  💡 <strong>Day {item.day || index + 1} Tip:</strong> Start early to make the most of your day. Consider travel time between activities.
+                  💡 <strong>{typeof item.day === 'string' && item.day.toLowerCase().includes('day') 
+                    ? `${item.day} Tip:` 
+                    : `Day ${item.day || index + 1} Tip:`}</strong> Start early to make the most of your day. Consider travel time between activities.
                 </p>
               </div>
             </div>

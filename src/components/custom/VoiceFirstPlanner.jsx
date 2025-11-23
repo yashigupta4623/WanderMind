@@ -53,14 +53,14 @@ const VoiceFirstPlanner = ({ onPlanCreated }) => {
     setIsListening(true);
 
     voiceAssistant.setLanguage(selectedLanguage);
-    
+
     voiceAssistant.startListening(
       (text) => {
         console.log('✅ Final transcript received:', text);
         setTranscript(text);
         setInterimTranscript('');
         setIsListening(false);
-        
+
         // Only process if we have meaningful text
         if (text && text.trim().length > 3) {
           processVoiceInput(text);
@@ -96,16 +96,16 @@ const VoiceFirstPlanner = ({ onPlanCreated }) => {
     try {
       const lang = selectedLanguage.split('-')[0];
       const parsed = await voiceAssistant.processVoiceCommand(text, lang);
-      
+
       setResult(parsed);
       toast.dismiss();
-      
+
       if (parsed.understood) {
         toast.success('Samajh gaya! ✨');
-        
+
         // Speak the response
         voiceAssistant.speak(parsed.response, selectedLanguage);
-        
+
         if (onPlanCreated) {
           onPlanCreated(parsed);
         }
@@ -172,11 +172,10 @@ const VoiceFirstPlanner = ({ onPlanCreated }) => {
             <Button
               onClick={isListening ? handleStopListening : handleStartListening}
               disabled={processing}
-              className={`w-32 h-32 rounded-full shadow-2xl ${
-                isListening 
-                  ? 'bg-red-500 hover:bg-red-600 animate-pulse shadow-red-500/50' 
+              className={`w-32 h-32 rounded-full shadow-2xl ${isListening
+                  ? 'bg-red-500 hover:bg-red-600 animate-pulse shadow-red-500/50'
                   : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-purple-500/50'
-              }`}
+                }`}
               size="lg"
             >
               {isListening ? (
@@ -253,7 +252,7 @@ const VoiceFirstPlanner = ({ onPlanCreated }) => {
                   <CheckCircle className="w-5 h-5" />
                   <span className="font-semibold">Samajh gaya! ✨</span>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-white dark:bg-gray-800 p-3 rounded-lg">
                     <div className="text-xs text-gray-600 dark:text-gray-400">Destination</div>

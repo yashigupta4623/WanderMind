@@ -3,12 +3,15 @@ import GooglePlacesWrapper from "@/components/custom/GooglePlacesWrapper";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  AI_PROMPT,
+  AI_ITINERARY_PROMPT,
+  AI_HOTEL_PROMPT,
   SelectBudgetOptions,
   SelectTravelsList,
   TravelPersonas,
   TravelThemes,
 } from "@/constants/options";
+import LoadingModal from "@/components/custom/LoadingModal";
+import { query, collection, where, getDocs } from "firebase/firestore";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { chatSession } from "@/service/AIModel";
@@ -27,7 +30,6 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/service/firebaseConfig";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import Footer from "@/components/custom/Footer";
 import TravelPersonaSelector from "@/components/custom/TravelPersonaSelector";
 import BudgetPredictor from "@/components/custom/BudgetPredictor";
 import BudgetValidator from "@/components/custom/BudgetValidator";
@@ -50,50 +52,6 @@ import { safetyAccessibilityService } from "@/service/SafetyAccessibilityService
 import { Sparkles, Calculator, Camera, Users, MapPin, Calendar, Zap, Globe, Settings, Cloud, Wifi, BookOpen, Leaf, CreditCard, Shield } from "lucide-react";
 
 const apiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
-
-// Demo data fallback for when JSON parsing fails
-const generateDemoTripData = (formData) => {
-  const destination = formData?.location?.label || "Delhi";
-  const days = parseInt(formData?.noofDays) || 3;
-  
-  return {
-    tripDetails: {
-      destination: destination,
-      duration: `${days} days`,
-      travelers: formData?.traveler || "1 Person",
-      budget: formData?.budget || "moderate",
-      totalBudget: formData?.budgetAmount || 25000
-    },
-    hotels: [
-      {
-        name: `Premium Hotel in ${destination}`,
-        address: `Central ${destination}`,
-        price: "₹3,500/night",
-        rating: 4.2,
-        description: "Comfortable accommodation with modern amenities"
-      }
-    ],
-    itinerary: Array.from({ length: days }, (_, i) => ({
-      day: i + 1,
-      activities: [
-        {
-          time: "9:00 AM",
-          activity: `Explore ${destination} landmarks`,
-          details: "Visit popular attractions and local sites",
-          ticketPricing: "₹500-1000",
-          timeToTravel: "30 mins"
-        },
-        {
-          time: "2:00 PM",
-          activity: "Local cuisine experience",
-          details: "Try authentic local food",
-          ticketPricing: "₹800-1200",
-          timeToTravel: "15 mins"
-        }
-      ]
-    }))
-  };
-};
 
 // Helper function to repair common JSON issues
 const repairJSON = (jsonString) => {
@@ -141,25 +99,25 @@ const parseAIResponse = (responseText) => {
       let jsonEnd = -1;
       let inString = false;
       let escapeNext = false;
-      
+
       for (let i = jsonStart; i < cleanedText.length; i++) {
         const char = cleanedText[i];
-        
+
         if (escapeNext) {
           escapeNext = false;
           continue;
         }
-        
+
         if (char === '\\') {
           escapeNext = true;
           continue;
         }
-        
+
         if (char === '"' && !escapeNext) {
           inString = !inString;
           continue;
         }
-        
+
         if (!inString) {
           if (char === '{') {
             bracketCount++;
@@ -181,7 +139,7 @@ const parseAIResponse = (responseText) => {
         } catch (e) {
           console.log("JSON extraction from text failed:", e);
           console.log("Attempted to parse:", jsonString.substring(0, 200) + "...");
-          
+
           // Last resort: try to truncate at the last valid JSON structure
           try {
             const lastValidBrace = jsonString.lastIndexOf('}', jsonString.length - 50);
@@ -215,6 +173,7 @@ function CreateTrip() {
   const [activeTab, setActiveTab] = useState("basic");
   const [travelConstraints, setTravelConstraints] = useState(null);
   const [safetyFilters, setSafetyFilters] = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   // Function to format budget display
@@ -232,7 +191,7 @@ function CreateTrip() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const tab = urlParams.get('tab');
-    const validTabs = ['inspire', 'persona', 'basic', 'group', 'budget', 'realtime', 'multilingual', 'advanced'];
+    const validTabs = ['inspire', 'persona', 'basic', 'group', 'realtime', 'multilingual', 'advanced'];
     if (tab && validTabs.includes(tab)) {
       setActiveTab(tab);
     }
@@ -259,16 +218,16 @@ function CreateTrip() {
       budget: type,
       budgetAmount: amount
     }));
-    
+
     const budgetNames = {
       budget: 'Budget Travel',
       moderate: 'Comfortable',
       luxury: 'Luxury',
       custom: 'Custom Budget'
     };
-    
+
     toast.success(`✅ ${budgetNames[type] || type} selected: ₹${amount.toLocaleString()}`);
-    
+
     // Auto-navigate to next step if all required fields are filled
     if (formData?.location && formData?.noofDays && formData?.traveler) {
       setTimeout(() => {
@@ -323,11 +282,52 @@ function CreateTrip() {
     onError: (error) => console.log(error),
   });
 
+  const checkCache = async (formData) => {
+    try {
+      const q = query(
+        collection(db, "AITrips"),
+        where("userSelection.location.label", "==", formData.location.label),
+        where("userSelection.noofDays", "==", formData.noofDays),
+        where("userSelection.budget", "==", formData.budget),
+        where("userSelection.traveler", "==", formData.traveler)
+      );
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        console.log("Cache hit! Using existing trip data.");
+        return querySnapshot.docs[0].data();
+      }
+    } catch (error) {
+      console.error("Cache check failed:", error);
+    }
+    return null;
+  };
+
+  // Retry helper with exponential backoff
+  const retryWithBackoff = async (fn, maxRetries = 2, baseDelay = 1000) => {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (error) {
+        if (attempt === maxRetries) throw error;
+
+        // Don't retry API key errors or validation errors
+        if (error.message.includes("API key") || error.message.includes("not configured")) {
+          throw error;
+        }
+
+        const delay = baseDelay * Math.pow(2, attempt);
+        console.log(`Retry attempt ${attempt + 1}/${maxRetries} after ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  };
+
   const OnGenerateTrip = async () => {
     const user = localStorage.getItem("user");
     if (!user) {
       setOpenDialog(true);
       toast("Please login to generate trip");
+      return;
     }
 
     const missingFields = [];
@@ -342,129 +342,115 @@ function CreateTrip() {
     }
 
     setLoading(true);
+    setError(null);
 
-    // Get learned preferences
-    const userEmail = JSON.parse(user)?.email;
-    const learnedPrefs = await preferenceLearning.getLearnedPreferences(userEmail);
-    const preferencePrompt = preferenceLearning.generatePreferencePrompt(learnedPrefs?.insights);
-
-    const personaKeywords = selectedPersona?.keywords || '';
-    const themeNames = selectedThemes.map(id =>
-      TravelThemes.find(t => t.id === id)?.name
-    ).filter(Boolean).join(', ');
-
-    let FINAL_PROMPT = AI_PROMPT
-      .replace("{location}", formData?.location?.label)
-      .replace("{totalDays}", formData?.noofDays)
-      .replace("{traveler}", formData?.traveler)
-      .replace("{budget}", formData?.budget)
-      .replace("{persona}", selectedPersona?.title || 'General Traveler')
-      .replace("{personaKeywords}", personaKeywords)
-      .replace("{themes}", themeNames || 'General sightseeing');
-
-    // Add learned preferences to prompt
-    if (preferencePrompt) {
-      FINAL_PROMPT += preferencePrompt;
-      console.log('✨ Applied learned preferences to trip generation');
-    }
-
-    // Add safety & accessibility requirements
-    if (safetyFilters) {
-      const safetyPrompt = safetyAccessibilityService.generateSafetyPrompt(safetyFilters);
-      if (safetyPrompt) {
-        FINAL_PROMPT += safetyPrompt;
-        console.log('🛡️ Applied safety & accessibility filters to trip generation');
-      }
-    }
-
-    console.log(FINAL_PROMPT);
-
-    let result = null;
     try {
-      result = await chatSession.sendMessage(FINAL_PROMPT);
-      const responseText = result?.response?.text();
-      console.log("Raw AI response:", responseText);
-
-      // Validate response exists
-      if (!responseText || responseText.trim().length === 0) {
-        throw new Error("Empty response from AI service");
+      // 1. Check Cache
+      const cachedTrip = await checkCache(formData);
+      if (cachedTrip) {
+        toast.success("Found a perfect match from our community trips! 🚀");
+        const docId = Date.now().toString();
+        await SaveAiTrip(cachedTrip.tripData, docId);
+        return;
       }
 
-      // Clean and parse JSON response
-      const tripData = parseAIResponse(responseText);
+      // 2. Prepare Prompts
+      const userEmail = JSON.parse(user)?.email;
+      const learnedPrefs = await preferenceLearning.getLearnedPreferences(userEmail);
+      const preferencePrompt = preferenceLearning.generatePreferencePrompt(learnedPrefs?.insights);
 
-      // Validate parsed data structure
-      if (!tripData || typeof tripData !== 'object') {
-        throw new Error("Invalid trip data structure received");
+      const themeNames = selectedThemes.map(id =>
+        TravelThemes.find(t => t.id === id)?.name
+      ).filter(Boolean).join(', ');
+
+      // Generate safety prompt if safety filters are enabled
+      const safetyPrompt = safetyFilters ? safetyAccessibilityService.generateSafetyPrompt(safetyFilters) : '';
+
+      const itineraryPrompt = AI_ITINERARY_PROMPT
+        .replace("{location}", formData?.location?.label)
+        .replace("{totalDays}", formData?.noofDays)
+        .replace("{traveler}", formData?.traveler)
+        .replace("{budget}", formData?.budget)
+        .replace("{persona}", selectedPersona?.title || 'General Traveler')
+        .replace("{themes}", themeNames || 'General sightseeing')
+        .replace("{userPreferences}", preferencePrompt || 'None')
+        .concat(safetyPrompt);
+
+      const hotelPrompt = AI_HOTEL_PROMPT
+        .replace("{location}", formData?.location?.label)
+        .replace("{totalDays}", formData?.noofDays)
+        .replace("{traveler}", formData?.traveler)
+        .replace("{budget}", formData?.budget)
+        .replace("{persona}", selectedPersona?.title || 'General Traveler')
+        .concat(safetyPrompt);
+
+      // 3. Parallel Execution with Retry Logic
+      console.log("Generating trip with parallel requests...");
+      const [itineraryResult, hotelResult] = await retryWithBackoff(async () => {
+        return await Promise.all([
+          chatSession.sendMessage(itineraryPrompt),
+          chatSession.sendMessage(hotelPrompt)
+        ]);
+      });
+
+      const itineraryText = itineraryResult?.response?.text();
+      const hotelText = hotelResult?.response?.text();
+
+      if (!itineraryText || !hotelText) {
+        throw new Error("Incomplete response from AI service");
       }
+
+      const itineraryJson = parseAIResponse(itineraryText);
+      const hotelJson = parseAIResponse(hotelText);
+
+      // 4. Merge Results
+      const finalTripData = {
+        tripDetails: {
+          destination: formData?.location?.label,
+          duration: `${formData?.noofDays} days`,
+          travelers: formData?.traveler,
+          budget: formData?.budget,
+          totalBudget: formData?.budgetAmount || "Flexible"
+        },
+        hotels: hotelJson.hotels || [],
+        itinerary: itineraryJson.itinerary || []
+      };
 
       const docId = Date.now().toString();
-      await SaveAiTrip(JSON.stringify(tripData), docId);
-      
-      if (isDemoMode) {
-        toast.success("Demo trip generated successfully! 🎉");
-      } else {
-        toast.success("Your personalized trip has been created! ✨");
-      }
+      await SaveAiTrip(JSON.stringify(finalTripData), docId);
+      toast.success("Your personalized trip has been created! ✨");
+
     } catch (error) {
       console.error("Error generating trip:", error);
-      
-      // Log the raw response for debugging
-      if (error.message.includes("Failed to parse JSON") && result) {
-        try {
-          const rawResponse = result?.response?.text();
-          if (rawResponse) {
-            console.error("Raw response that failed to parse (first 500 chars):", rawResponse?.substring(0, 500));
-            console.error("Raw response length:", rawResponse?.length);
-            console.error("Response ends with:", rawResponse?.substring(Math.max(0, rawResponse.length - 100)));
-          }
-        } catch (resultError) {
-          console.error("Could not access result for debugging:", resultError);
-        }
+
+      let errorMessage = "An error occurred while generating the trip. Please try again.";
+
+      if (error.message.includes("timeout")) {
+        errorMessage = "Trip generation is taking longer than expected. Please try again.";
+      } else if (error.message.includes("429") || error.message.includes("Resource exhausted")) {
+        errorMessage = "Too many requests. Please wait a moment and try again.";
+      } else if (error.message.includes("API key") || error.message.includes("not configured")) {
+        errorMessage = "System configuration error. Please contact support.";
+      } else if (!navigator.onLine) {
+        errorMessage = "No internet connection. Please check your network and try again.";
       }
-      
-      if (error.message.includes("429") || error.message.includes("Resource exhausted")) {
-        setRateLimitHit(true);
-        toast.success(
-          "🎯 Switched to demo mode due to API limits. Your trip is being generated with sample data!"
-        );
-      } else if (error.message.includes("The model is overloaded")) {
-        toast.error(
-          "The model is currently overloaded. Please try again in a few moments."
-        );
-      } else if (error.message.includes("API key not valid")) {
-        toast.error(
-          "Google AI API key is invalid. Please check your environment configuration."
-        );
-      } else if (error.message.includes("not configured")) {
-        toast.error(
-          "AI service is not properly configured. Please contact support."
-        );
-      } else if (error.message.includes("Failed to parse JSON") || error.message.includes("Unterminated string")) {
-        // Use demo data as fallback when JSON parsing fails
-        console.log("JSON parsing failed, using demo data fallback");
-        try {
-          const demoTripData = generateDemoTripData(formData);
-          const docId = Date.now().toString();
-          await SaveAiTrip(JSON.stringify(demoTripData), docId);
-          toast.success("Trip generated with demo data due to AI response format issue! 🎯");
-          return; // Exit early since we handled it with demo data
-        } catch (demoError) {
-          console.error("Demo fallback also failed:", demoError);
-          toast.error("Unable to generate trip. Please try again.");
-        }
-      } else if (error.message.includes("Empty response")) {
-        toast.error(
-          "No response received from AI service. Please check your connection and try again."
-        );
-      } else {
-        toast.error(
-          "An error occurred while generating the trip. Please try again."
-        );
-      }
+
+      setError(errorMessage);
     } finally {
-      setLoading(false);
+      if (!error) {
+        setLoading(false);
+      }
     }
+  };
+
+  const handleRetry = () => {
+    setError(null);
+    OnGenerateTrip();
+  };
+
+  const handleCloseModal = () => {
+    setLoading(false);
+    setError(null);
   };
 
   const SaveAiTrip = async (TripData, docId) => {
@@ -473,10 +459,15 @@ function CreateTrip() {
       const user = JSON.parse(localStorage.getItem("user"));
       const docId = Date.now().toString();
       await setDoc(doc(db, "AITrips", docId), {
-        userSelection: formData,
+        userSelection: {
+          ...formData,
+          safetyFilters: safetyFilters // Include safety filters in user selection
+        },
         tripData: TripData,
         userEmail: user?.email,
         id: docId,
+        createdAt: new Date().toISOString(),
+        safetyMode: safetyFilters ? 'enabled' : 'disabled'
       });
     } catch (error) {
       console.error("Error saving trip:", error);
@@ -486,8 +477,7 @@ function CreateTrip() {
     }
   };
 
-  const isDemoMode = !import.meta.env.VITE_GOOGLE_GEMINI_AI_API_KEY || import.meta.env.VITE_GOOGLE_GEMINI_AI_API_KEY === 'AIzaSyDemoKey123456789';
-  const [rateLimitHit, setRateLimitHit] = useState(false);
+
 
   return (
     <div className="container mx-auto max-w-7xl px-5 sm:px-10 md:px-12 lg:px-16 xl:px-20 mt-10 pb-16">
@@ -498,22 +488,12 @@ function CreateTrip() {
         <p className="mt-3 text-gray-700 dark:text-gray-300 text-lg">
           AI-powered travel planning with personalized recommendations
         </p>
-        {(isDemoMode || rateLimitHit) && (
-          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <p className="text-sm text-blue-800 dark:text-blue-200">
-              {rateLimitHit ? (
-                <>⚡ <strong>Rate Limit Mode:</strong> API quota exceeded. Using demo mode with realistic sample data!</>
-              ) : (
-                <>🎯 <strong>Demo Mode:</strong> Experience our AI travel planner with sample data. All features are fully functional!</>
-              )}
-            </p>
-          </div>
-        )}
+
       </div>
 
       {/* Preference Learning Indicator */}
       <div className="mb-6">
-        <PreferenceLearningIndicator 
+        <PreferenceLearningIndicator
           userId={JSON.parse(localStorage.getItem("user") || '{}')?.email}
         />
       </div>
@@ -571,13 +551,6 @@ function CreateTrip() {
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             )}
           </TabsTrigger>
-          <TabsTrigger value="budget" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-green-600 data-[state=active]:!text-white transition-all relative">
-            <Calculator className="w-4 h-4 mr-2" />
-            Budget
-            {!formData?.budget && (
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            )}
-          </TabsTrigger>
           <TabsTrigger value="safety" className="inline-flex items-center justify-center whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium !text-gray-900 dark:!text-gray-100 !bg-transparent hover:!bg-gray-100 dark:hover:!bg-gray-700 data-[state=active]:!bg-pink-600 data-[state=active]:!text-white transition-all">
             <Shield className="w-4 h-4 mr-2" />
             Safety
@@ -595,7 +568,7 @@ function CreateTrip() {
                 Apni bhasha mein boliye, AI samajh jayega! Voice-first planning for India.
               </p>
             </div>
-            <VoiceFirstPlanner 
+            <VoiceFirstPlanner
               onPlanCreated={(parsed) => {
                 console.log('Voice plan created:', parsed);
                 // Auto-fill form with voice data
@@ -639,7 +612,7 @@ function CreateTrip() {
                 Just landed? Get an instant hyper-compressed plan in seconds!
               </p>
             </div>
-            <LastMinuteQuickPlan 
+            <LastMinuteQuickPlan
               onPlanGenerated={(plan) => {
                 console.log('Quick plan generated:', plan);
                 toast.success('Quick plan ready! Start exploring now! 🚀');
@@ -717,55 +690,50 @@ function CreateTrip() {
                 ))}
               </div>
             </div>
+
+            {/* Budget Section Moved Here */}
+            {formData?.location && formData?.noofDays && formData?.traveler && (
+              <div className="mt-10 pt-10 border-t border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl my-3 font-medium flex items-center gap-2 text-gray-900 dark:text-gray-100">
+                  <Calculator className="w-5 h-5 text-purple-500" />
+                  What is your budget?
+                </h2>
+                <div className="space-y-6">
+                  <BudgetPredictor
+                    destination={formData.location.label}
+                    days={formData.noofDays}
+                    travelers={formData.traveler}
+                    onBudgetSelect={handleBudgetSelect}
+                  />
+
+                  {formData?.budgetAmount && (
+                    <BudgetValidator
+                      destination={formData.location.label}
+                      days={formData.noofDays}
+                      travelers={formData.traveler}
+                      budget={formData.budgetAmount}
+                      onSuggestionAccept={(suggestion) => {
+                        console.log('Accepted suggestion:', suggestion);
+                        if (suggestion.type === 'days') {
+                          handleInputChange('noofDays', suggestion.value.toString());
+                          toast.success(`Trip duration adjusted to ${suggestion.value} days`);
+                        } else if (suggestion.type === 'budget') {
+                          handleBudgetSelect('custom', suggestion.value);
+                          toast.success(`Budget increased to ₹${suggestion.value.toLocaleString()}`);
+                        } else {
+                          toast.success(`Great choice! ${suggestion.type} suggestion accepted`);
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
 
         <TabsContent value="group" className="mt-6">
           <GroupTravelMode onGroupPreferencesUpdate={handleGroupPreferences} />
-        </TabsContent>
-
-        <TabsContent value="budget" className="mt-6">
-          {formData?.location && formData?.noofDays && formData?.traveler ? (
-            <div className="space-y-6">
-              <BudgetPredictor
-                destination={formData.location.label}
-                days={formData.noofDays}
-                travelers={formData.traveler}
-                onBudgetSelect={handleBudgetSelect}
-              />
-              
-              {formData?.budgetAmount && (
-                <BudgetValidator
-                  destination={formData.location.label}
-                  days={formData.noofDays}
-                  travelers={formData.traveler}
-                  budget={formData.budgetAmount}
-                  onSuggestionAccept={(suggestion) => {
-                    console.log('Accepted suggestion:', suggestion);
-                    if (suggestion.type === 'days') {
-                      handleInputChange('noofDays', suggestion.value.toString());
-                      toast.success(`Trip duration adjusted to ${suggestion.value} days`);
-                    } else if (suggestion.type === 'budget') {
-                      handleBudgetSelect('custom', suggestion.value);
-                      toast.success(`Budget increased to ₹${suggestion.value.toLocaleString()}`);
-                    } else {
-                      toast.success(`Great choice! ${suggestion.type} suggestion accepted`);
-                    }
-                  }}
-                />
-              )}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <Calculator className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">
-                Complete Trip Details First
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Please fill in your destination, duration, and traveler details to get budget predictions
-              </p>
-            </div>
-          )}
         </TabsContent>
 
         <TabsContent value="safety" className="mt-6">
@@ -779,14 +747,14 @@ function CreateTrip() {
                 India-first filters for safe, accessible, and comfortable travel 🇮🇳
               </p>
             </div>
-            <SafetyAccessibilityFilters 
+            <SafetyAccessibilityFilters
               onFiltersUpdate={(filters) => {
                 setSafetyFilters(filters);
                 setFormData(prev => ({
                   ...prev,
                   safetyFilters: filters
                 }));
-              }} 
+              }}
             />
           </div>
         </TabsContent>
@@ -948,12 +916,12 @@ function CreateTrip() {
           {loading ? (
             <>
               <AiOutlineLoading3Quarters className="animate-spin text-xl mr-2" />
-              {isDemoMode ? 'Generating Demo Trip...' : 'Generating Your Perfect Trip...'}
+              Generating Your Perfect Trip...
             </>
           ) : (
             <>
               <Sparkles className="w-5 h-5 mr-2" />
-              {isDemoMode ? 'Generate Demo Trip' : 'Generate AI-Powered Trip'}
+              Generate AI-Powered Trip
             </>
           )}
         </Button>
@@ -1034,7 +1002,13 @@ function CreateTrip() {
         </DialogContent>
       </Dialog>
 
-      <Footer />
+      <LoadingModal
+        open={loading}
+        destination={formData?.location?.label}
+        error={error}
+        onRetry={handleRetry}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }

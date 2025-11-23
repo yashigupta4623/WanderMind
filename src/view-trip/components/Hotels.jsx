@@ -42,7 +42,7 @@ function Hotels({ trip }) {
       }
     }
     
-    const targetCount = 4; // Show 4 hotel options
+    const targetCount = 3; // Show 3 hotel options
     const allHotels = [...existingHotels];
     
     // Generate additional hotels to reach target count
@@ -52,7 +52,7 @@ function Hotels({ trip }) {
       const hotelType = range.types[i % range.types.length];
       
       // Add some price variation for different options
-      const priceVariation = i === 0 ? 0.8 : i === 1 ? 1.0 : i === 2 ? 1.2 : 1.4;
+      const priceVariation = i === 0 ? 0.8 : i === 1 ? 1.0 : 1.2;
       const finalPrice = Math.floor(basePrice * priceVariation);
       
       allHotels.push({
@@ -62,8 +62,7 @@ function Hotels({ trip }) {
         pricePerNight: `₹${finalPrice.toLocaleString()}`,
         rating: rating,
         hotelImageUrl: null,
-        amenities: getHotelAmenities(budget, i),
-        description: getHotelDescription(hotelType, destination, i)
+        amenities: getHotelAmenities(budget, i)
       });
     }
     
@@ -88,16 +87,7 @@ function Hotels({ trip }) {
     return baseAmenities.slice(0, 3 + index); // Vary amenities by hotel
   };
 
-  // Helper function to get hotel descriptions
-  const getHotelDescription = (hotelType, destination, index) => {
-    const descriptions = [
-      `Comfortable ${hotelType.toLowerCase()} in the heart of ${destination || 'the city'} with modern amenities`,
-      `Well-located ${hotelType.toLowerCase()} offering great value and convenient access to attractions`,
-      `Premium ${hotelType.toLowerCase()} featuring excellent service and top-notch facilities`,
-      `Luxury ${hotelType.toLowerCase()} providing exceptional comfort and world-class hospitality`
-    ];
-    return descriptions[index % descriptions.length];
-  };
+
 
   // Get hotels and generate budget-appropriate options
   let hotels = tripData?.hotels || tripData?.accommodationOptions || [];
@@ -113,8 +103,7 @@ function Hotels({ trip }) {
     pricePerNight: hotel.pricePerNight || hotel.price,
     rating: hotel.rating,
     hotelImageUrl: hotel.hotelImageUrl || hotel.imageUrl,
-    amenities: hotel.amenities || [],
-    description: hotel.description
+    amenities: hotel.amenities || []
   }));
 
   const finalHotels = generateBudgetAppropriateHotels(adaptedHotels, destination, budget, userBudgetAmount);
@@ -124,10 +113,10 @@ function Hotels({ trip }) {
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-bold text-2xl text-gray-800 dark:text-gray-100">🏨 Hotel Recommendations</h2>
         <div className="text-sm text-gray-600 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full">
-          {finalHotels.length} options • {budget} budget
+          {finalHotels.length} options • {budget} Budget
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {finalHotels.map((hotel, index) => (
           <div key={index} className="relative">
             <HotelCardItem 
@@ -143,9 +132,14 @@ function Hotels({ trip }) {
                 Best Value
               </div>
             )}
-            {index === 1 && budget === 'moderate' && (
+            {index === 1 && (
               <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
                 Recommended
+              </div>
+            )}
+            {index === 2 && budget === 'luxury' && (
+              <div className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-1 rounded-full">
+                Premium
               </div>
             )}
           </div>

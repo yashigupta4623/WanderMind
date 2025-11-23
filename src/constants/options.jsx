@@ -108,167 +108,51 @@ export const SelectBudgetOptions = [
   },
 ];
 
-export const AI_PROMPT = `
-  Generate a comprehensive, personalized travel plan for destination: {location} for {totalDays} days.
-  Traveler profile: {traveler}, Budget: {budget}, Travel persona: {persona}, Themes: {themes}
-  User preferences: {userPreferences}
+export const AI_ITINERARY_PROMPT = `
+  Generate day-by-day itinerary for {location}, {totalDays} days.
+  Traveler: {traveler} | Budget: {budget} | Style: {persona} | Interests: {themes}
+  {userPreferences}
   
-  Create an AI-powered, end-to-end itinerary with:
-  - Dynamic route optimization for minimal travel time and maximum experience
-  - Smart budget allocation across accommodation, transport, food, activities
-  - Real-time adaptable recommendations for weather/delays
-  - Hidden gems and authentic local experiences
-  - Cultural heritage insights and multilingual support
-  - Seamless booking integration readiness
-  
-  CRITICAL: Focus on India destinations with authentic experiences, local culture, and budget optimization.
-  
-  Return comprehensive JSON with booking-ready information:
+  Return JSON only:
   {
-    "tripMetadata": {
-      "tripId": "string",
-      "destination": "string",
-      "duration": "{totalDays} days",
-      "totalBudget": "₹{amount}",
-      "budgetCategory": "{budget}",
-      "travelPersona": "{persona}",
-      "themes": ["{themes}"],
-      "generatedAt": "timestamp",
-      "adaptiveScore": number,
-      "bookingReadiness": boolean
-    },
-    "smartBudgetBreakdown": {
-      "accommodation": {"amount": "₹string", "percentage": number, "bookingOptions": ["string"]},
-      "transport": {"amount": "₹string", "percentage": number, "modes": ["string"]},
-      "food": {"amount": "₹string", "percentage": number, "categories": ["string"]},
-      "activities": {"amount": "₹string", "percentage": number, "experiences": ["string"]},
-      "shopping": {"amount": "₹string", "percentage": number},
-      "emergency": {"amount": "₹string", "percentage": number},
-      "optimizationTips": ["string"]
-    },
-    "accommodationOptions": [
-      {
-        "hotelId": "string",
-        "name": "string",
-        "category": "budget|moderate|luxury",
-        "address": "string",
-        "pricePerNight": "₹string",
-        "totalCost": "₹string",
-        "rating": number,
-        "amenities": ["string"],
-        "geoCoordinates": {"lat": number, "lng": number},
-        "imageUrl": "string",
-        "bookingUrl": "string",
-        "cancellationPolicy": "string",
-        "nearbyAttractions": ["string"],
-        "localTransport": ["string"]
-      }
-    ],
-    "dynamicItinerary": [
+    "itinerary": [
       {
         "day": number,
-        "date": "string",
         "theme": "string",
-        "weatherConsideration": "string",
-        "timeline": [
+        "plan": [
           {
-            "time": "string",
-            "activity": "string",
-            "location": "string",
-            "description": "string",
-            "duration": "string",
-            "cost": "₹string",
-            "category": "heritage|adventure|culture|food|shopping|nature",
+            "placeName": "string",
+            "placeDetails": "string (brief)",
+            "placeImageUrl": "string",
             "geoCoordinates": {"lat": number, "lng": number},
-            "imageUrl": "string",
+            "ticketPricing": "string",
+            "timeTravel": "string",
             "rating": number,
-            "isHiddenGem": boolean,
-            "bookingRequired": boolean,
-            "bookingUrl": "string",
-            "weatherDependent": boolean,
-            "alternatives": ["string"],
-            "localTips": ["string"],
-            "culturalSignificance": "string"
+            "duration": "string"
           }
-        ],
-        "transportPlan": {
-          "mode": "string",
-          "cost": "₹string",
-          "duration": "string",
-          "bookingDetails": "string"
-        },
-        "mealRecommendations": [
-          {
-            "meal": "breakfast|lunch|dinner|snacks",
-            "restaurant": "string",
-            "cuisine": "string",
-            "cost": "₹string",
-            "location": "string",
-            "speciality": "string"
-          }
-        ],
-        "dayBudget": "₹string",
-        "emergencyContacts": ["string"]
+        ]
       }
-    ],
-    "hiddenGems": [
+    ]
+  }
+`;
+
+export const AI_HOTEL_PROMPT = `
+  Suggest 5-6 hotels in {location} for {totalDays} days.
+  Traveler: {traveler} | Budget: {budget} | Style: {persona}
+  
+  Return JSON only:
+  {
+    "hotels": [
       {
-        "name": "string",
-        "type": "string",
-        "description": "string",
-        "location": "string",
-        "bestTime": "string",
-        "cost": "₹string",
-        "localSecret": "string",
-        "geoCoordinates": {"lat": number, "lng": number}
+        "hotelName": "string",
+        "hotelAddress": "string",
+        "price": "string",
+        "hotelImageUrl": "string",
+        "geoCoordinates": {"lat": number, "lng": number},
+        "rating": number,
+        "description": "string (brief)"
       }
-    ],
-    "culturalInsights": [
-      {
-        "aspect": "string",
-        "description": "string",
-        "dosDonts": ["string"],
-        "localCustoms": ["string"],
-        "languageTips": ["string"],
-        "festivalInfo": "string"
-      }
-    ],
-    "realTimeAdaptations": {
-      "weatherAlternatives": [
-        {
-          "condition": "string",
-          "alternatives": ["string"],
-          "indoorOptions": ["string"]
-        }
-      ],
-      "trafficOptimizations": ["string"],
-      "lastMinuteDeals": ["string"],
-      "emergencyPlans": ["string"]
-    },
-    "bookingSummary": {
-      "totalCost": "₹string",
-      "bookableItems": [
-        {
-          "type": "accommodation|transport|activity",
-          "name": "string",
-          "cost": "₹string",
-          "bookingUrl": "string",
-          "priority": "high|medium|low"
-        }
-      ],
-      "paymentBreakdown": {
-        "immediate": "₹string",
-        "onArrival": "₹string",
-        "flexible": "₹string"
-      }
-    },
-    "shareableContent": {
-      "title": "string",
-      "summary": "string",
-      "highlights": ["string"],
-      "hashtags": ["string"],
-      "qrCode": "string"
-    }
+    ]
   }
 `;
 

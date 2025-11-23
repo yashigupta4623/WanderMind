@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import FeatureModal from "./FeatureModal";
 import AnimatedHeroImage from "./AnimatedHeroImage";
 import FeedbackWidget from "./FeedbackWidget";
-import Footer from "./Footer.jsx";
 import ChatBot from "./ChatBot.jsx";
 
 
@@ -617,9 +616,6 @@ function Hero() {
           </div>
         </div>
       </div>
-
-      {/* Footer Section */}
-      <Footer />
 
       {/* Feature Modal */}
       <FeatureModal

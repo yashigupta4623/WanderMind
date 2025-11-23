@@ -33,79 +33,79 @@ function PlaceCardItem({ place }) {
   }
 
   return (
-    <div>
+    <div className="h-full w-full">
+      <div className="h-full border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow flex flex-col">
+        
+        {/* Upper Half - Image + Name & Description */}
+        <div className="p-3 pb-2 flex gap-3 items-start">
+          {/* Left - Image */}
+          <img
+            src={photoUrl ? photoUrl : "/header.png"}
+            className="w-[120px] h-[120px] rounded-xl object-cover flex-shrink-0"
+            alt={place.placeName}
+            onError={(e) => {
+              e.target.src = "/header.png";
+            }}
+          />
 
+          {/* Right - Name, Description & Map Button */}
+          <div className="flex-1 flex flex-col justify-between min-h-[120px]">
+            <div className="flex justify-between items-start gap-2 mb-1.5">
+              <h2 className="font-bold text-lg text-gray-800 dark:text-gray-100 line-clamp-2 flex-1 leading-tight">{place.placeName}</h2>
+              <Link
+                to={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  place.placeName
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button size="sm" className="text-white shadow-md bg-blue-600 hover:bg-blue-700 flex-shrink-0">
+                  <FaMapMarkedAlt />
+                </Button>
+              </Link>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-3 leading-snug">{place.placeDetails}</p>
+          </div>
+        </div>
 
-
-      <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-3 mt-2 flex gap-4 items-start bg-white dark:bg-gray-800">
-        {/* Left - Image */}
-        <img
-          src={photoUrl ? photoUrl : "/header.png"}
-          className="w-[120px] h-[120px] rounded-xl object-cover flex-shrink-0"
-          alt={place.placeName}
-          onError={(e) => {
-            e.target.src = "/header.png";
-          }}
-        />
-
-        {/* Middle - Text Content (Expands Fully) */}
-        <div className="flex-1">
-          <h2 className="font-bold text-lg mb-2 text-gray-800 dark:text-gray-100">{place.placeName}</h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 w-full mb-3 overflow-hidden" style={{display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical'}}>{place.placeDetails}</p>
-          
-          <div className="space-y-1 text-sm">
+        {/* Lower Half - Details */}
+        <div className="px-4 pb-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
             {place.bestTimetoVisit && (
-              <div className="flex items-center gap-2">
-                <span className="text-orange-600 dark:text-orange-400 font-medium">🕒</span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-base flex-shrink-0">🕒</span>
                 <span className="text-orange-600 dark:text-orange-400 font-medium text-xs">{place.bestTimetoVisit}</span>
               </div>
             )}
             
-            <div className="grid grid-cols-2 gap-2">
-              {place.travelTime && (
-                <div className="flex items-center gap-1">
-                  <span>🚗</span>
-                  <span className="text-xs text-gray-600 dark:text-gray-300">{place.travelTime}</span>
-                </div>
-              )}
-              
-              {place.ticketPricing && (
-                <div className="flex items-center gap-1">
-                  <span>🎫</span>
-                  <span className="text-xs font-semibold text-green-600 dark:text-green-400">{place.ticketPricing}</span>
-                </div>
-              )}
-              
-              {place.rating && (
-                <div className="flex items-center gap-1">
-                  <span>⭐</span>
-                  <span className="text-xs text-gray-600 dark:text-gray-300">{place.rating}</span>
-                </div>
-              )}
-              
-              {place.duration && (
-                <div className="flex items-center gap-1">
-                  <span>⏱️</span>
-                  <span className="text-xs text-gray-600 dark:text-gray-300">{place.duration}</span>
-                </div>
-              )}
-            </div>
+            {place.travelTime && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-base flex-shrink-0">🚗</span>
+                <span className="text-xs text-gray-600 dark:text-gray-300">{place.travelTime}</span>
+              </div>
+            )}
+            
+            {place.ticketPricing && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-base flex-shrink-0">🎫</span>
+                <span className="text-xs font-semibold text-green-600 dark:text-green-400">{place.ticketPricing}</span>
+              </div>
+            )}
+            
+            {place.rating && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-base flex-shrink-0">⭐</span>
+                <span className="text-xs text-gray-600 dark:text-gray-300">{place.rating}</span>
+              </div>
+            )}
+            
+            {place.duration && (
+              <div className="flex items-center gap-1.5">
+                <span className="text-base flex-shrink-0">⏱️</span>
+                <span className="text-xs text-gray-600 dark:text-gray-300">{place.duration}</span>
+              </div>
+            )}
           </div>
-        </div>
-
-        {/* Right - Button (Fixed Position) */}
-        <div className="self-start flex-shrink-0">
-          <Link
-            to={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-              place.placeName
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button size="sm" className="text-white shadow-lg bg-blue-600 hover:bg-blue-700">
-              <FaMapMarkedAlt />
-            </Button>
-          </Link>
         </div>
       </div>
     </div>

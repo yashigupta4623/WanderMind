@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GetPlaceDetails, PHOTO_REF_URL } from '../../service/GlobalApi';
+import { Badge } from '@/components/ui/badge';
+import { Shield, ShieldCheck, Accessibility, Baby } from 'lucide-react';
 
 function Infosection({ trip }) {
 
@@ -91,6 +93,47 @@ function Infosection({ trip }) {
     }
   }
 
+  const getSafetyBadges = () => {
+    const safetyFilters = trip?.userSelection?.safetyFilters;
+    if (!safetyFilters) return null;
+
+    const badges = [];
+    
+    if (safetyFilters.safeForWomen || safetyFilters.safeForSolo) {
+      badges.push({
+        icon: <ShieldCheck className="w-3 h-3" />,
+        label: 'Women Solo Safe',
+        color: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300'
+      });
+    }
+    
+    if (safetyFilters.wheelchairFriendly) {
+      badges.push({
+        icon: <Accessibility className="w-3 h-3" />,
+        label: 'Wheelchair Friendly',
+        color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+      });
+    }
+    
+    if (safetyFilters.familyWithKids) {
+      badges.push({
+        icon: <Baby className="w-3 h-3" />,
+        label: 'Family Friendly',
+        color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+      });
+    }
+
+    if (safetyFilters.preferDaytime) {
+      badges.push({
+        icon: <Shield className="w-3 h-3" />,
+        label: 'Daytime Only',
+        color: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
+      });
+    }
+
+    return badges;
+  };
+
   return (
     <div>
       <div className="relative">
@@ -114,15 +157,27 @@ function Infosection({ trip }) {
           </div>
         )}
       </div>
-      <div className="my-5 flex flex-col gap-2">
+      <div className="my-5 flex flex-col gap-3">
         <h2 className="font-bold text-2xl">
           📍 {trip?.userSelection?.location?.label || 'Your Destination'}
         </h2>
-        <div className="flex gap-5">
-          <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">📆 {trip?.userSelection?.noofDays || '3'} Days</h2>
-          <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">💸 {formatBudgetDisplay(trip)}</h2>
-          <h2 className="p-1 px-3 rounded-full bg-secondary text-secondary-foreground border border-border">🏕️ No. of Traveler : {trip?.userSelection?.traveler || '2 People'} </h2>
+        <div className="flex flex-wrap gap-2">
+          <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">📆 {trip?.userSelection?.noofDays || '3'} Days</Badge>
+          <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">💸 {formatBudgetDisplay(trip)}</Badge>
+          <Badge className="p-1 px-3 bg-secondary text-secondary-foreground border border-border">🏕️ {trip?.userSelection?.traveler || '2 People'}</Badge>
         </div>
+        
+        {/* Safety Badges */}
+        {getSafetyBadges() && getSafetyBadges().length > 0 && (
+          <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+            {getSafetyBadges().map((badge, idx) => (
+              <Badge key={idx} className={`${badge.color} flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium`}>
+                {badge.icon}
+                {badge.label}
+              </Badge>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
