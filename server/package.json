@@ -1,0 +1,15 @@
+{
+  "name": "wandermind-email-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node emailServer.js",
+    "dev": "node emailServer.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "nodemailer": "^6.9.7",
+    "dotenv": "^16.3.1"
+  }
+}
