@@ -12,6 +12,18 @@ import MyTrips from './my-trips';
 import Footer from './components/custom/Footer.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { ThemeProvider } from './components/providers/ThemeProvider.jsx';
+import About from './pages/About.jsx';
+import Careers from './pages/Careers.jsx';
+import Contact from './pages/Contact.jsx';
+import Privacy from './pages/Privacy.jsx';
+import Terms from './pages/Terms.jsx';
+import Blog from './pages/Blog.jsx';
+import FAQs from './pages/FAQs.jsx';
+import Press from './pages/Press.jsx';
+import Airlines from './pages/Airlines.jsx';
+import Tips from './pages/Tips.jsx';
+import AirlineFees from './pages/AirlineFees.jsx';
+import BadgesCertificates from './pages/BadgesCertificates.jsx';
 
 function Layout() {
   return (
@@ -42,6 +54,54 @@ const router = createBrowserRouter([
       {
         path: '/my-trips',
         element: <MyTrips />
+      },
+      {
+        path: '/about',
+        element: <About />
+      },
+      {
+        path: '/careers',
+        element: <Careers />
+      },
+      {
+        path: '/contact',
+        element: <Contact />
+      },
+      {
+        path: '/privacy',
+        element: <Privacy />
+      },
+      {
+        path: '/terms',
+        element: <Terms />
+      },
+      {
+        path: '/blog',
+        element: <Blog />
+      },
+      {
+        path: '/faqs',
+        element: <FAQs />
+      },
+      {
+        path: '/press',
+        element: <Press />
+      },
+      {
+        path: '/airlines',
+        element: <Airlines />
+      },
+      {
+        path: '/tips',
+        element: <Tips />
+      },
+      {
+        path: '/airline-fees',
+        element: <AirlineFees />
+      },
+      {
+        path: '/badges',
+        element: <BadgesCertificates />
       },
     ]
   }
