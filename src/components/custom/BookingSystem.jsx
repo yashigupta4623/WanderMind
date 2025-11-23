@@ -53,6 +53,7 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
   ];
 
   const mockBookingItems = [
+    // Hotels - 3 options
     {
       id: 'hotel_1',
       category: 'accommodation',
@@ -68,19 +69,77 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
       priority: 'high'
     },
     {
+      id: 'hotel_2',
+      category: 'accommodation',
+      name: 'Royal Palace Resort',
+      description: '3 nights stay in Premium Suite',
+      price: 18000,
+      originalPrice: 22000,
+      savings: 4000,
+      rating: 4.8,
+      amenities: ['Free WiFi', 'Breakfast', 'Pool', 'Spa', 'Gym', 'Butler Service'],
+      cancellation: 'Free cancellation till 48 hours',
+      bookingUrl: 'https://easemytrip.com/hotels/booking/12346',
+      priority: 'medium'
+    },
+    {
+      id: 'hotel_3',
+      category: 'accommodation',
+      name: 'Budget Inn Express',
+      description: '3 nights stay in Standard Room',
+      price: 6000,
+      originalPrice: 7500,
+      savings: 1500,
+      rating: 4.0,
+      amenities: ['Free WiFi', 'Breakfast', 'AC'],
+      cancellation: 'Free cancellation till 12 hours',
+      bookingUrl: 'https://easemytrip.com/hotels/booking/12347',
+      priority: 'low'
+    },
+    // Transport - 3 options
+    {
       id: 'transport_1',
       category: 'transport',
-      name: 'Airport Transfer + Local Sightseeing',
-      description: 'AC Cab for 3 days with driver',
+      name: 'Premium Airport Transfer + Sightseeing',
+      description: 'Luxury AC Sedan for 3 days with driver',
       price: 8500,
       originalPrice: 10000,
       savings: 1500,
       rating: 4.3,
-      features: ['AC Vehicle', 'English Speaking Driver', 'Fuel Included'],
+      features: ['AC Vehicle', 'English Speaking Driver', 'Fuel Included', 'Water Bottles'],
       cancellation: 'Free cancellation till 2 hours',
       bookingUrl: 'https://easemytrip.com/cabs/booking/67890',
       priority: 'high'
     },
+    {
+      id: 'transport_2',
+      category: 'transport',
+      name: 'SUV with Driver - Full Day',
+      description: 'Spacious SUV for 3 days, perfect for groups',
+      price: 12000,
+      originalPrice: 14000,
+      savings: 2000,
+      rating: 4.5,
+      features: ['AC SUV', 'Professional Driver', 'Fuel Included', 'Luggage Space'],
+      cancellation: 'Free cancellation till 4 hours',
+      bookingUrl: 'https://easemytrip.com/cabs/booking/67891',
+      priority: 'medium'
+    },
+    {
+      id: 'transport_3',
+      category: 'transport',
+      name: 'Budget Cab Service',
+      description: 'Economy AC Hatchback for 3 days',
+      price: 5500,
+      originalPrice: 6500,
+      savings: 1000,
+      rating: 4.0,
+      features: ['AC Vehicle', 'Driver', 'Fuel Included'],
+      cancellation: 'Free cancellation till 1 hour',
+      bookingUrl: 'https://easemytrip.com/cabs/booking/67892',
+      priority: 'low'
+    },
+    // Activities - 3 options
     {
       id: 'activity_1',
       category: 'activities',
@@ -93,7 +152,78 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
       features: ['Expert Guide', 'All Materials', 'Certificate', 'Lunch'],
       cancellation: 'Free cancellation till 6 hours',
       bookingUrl: 'https://easemytrip.com/activities/booking/11111',
+      priority: 'high'
+    },
+    {
+      id: 'activity_2',
+      category: 'activities',
+      name: 'Adventure Sports Package',
+      description: 'Paragliding, zip-lining, and rock climbing',
+      price: 5500,
+      originalPrice: 6500,
+      savings: 1000,
+      rating: 4.6,
+      features: ['Safety Equipment', 'Trained Instructors', 'Photos & Videos', 'Snacks'],
+      cancellation: 'Free cancellation till 12 hours',
+      bookingUrl: 'https://easemytrip.com/activities/booking/11112',
       priority: 'medium'
+    },
+    {
+      id: 'activity_3',
+      category: 'activities',
+      name: 'Cultural Evening Show',
+      description: 'Traditional dance and music performance with dinner',
+      price: 2500,
+      originalPrice: 3000,
+      savings: 500,
+      rating: 4.4,
+      features: ['Live Performance', 'Buffet Dinner', 'Cultural Experience', 'Souvenir'],
+      cancellation: 'Free cancellation till 4 hours',
+      bookingUrl: 'https://easemytrip.com/activities/booking/11113',
+      priority: 'low'
+    },
+    // Flights - 3 options
+    {
+      id: 'flight_1',
+      category: 'flights',
+      name: 'IndiGo - Direct Flight',
+      description: 'Non-stop flight, 2h 30m',
+      price: 4500,
+      originalPrice: 6000,
+      savings: 1500,
+      rating: 4.2,
+      features: ['Cabin Baggage', 'Web Check-in', 'Seat Selection', 'Meals Available'],
+      cancellation: 'Cancellation charges apply',
+      bookingUrl: 'https://easemytrip.com/flights/booking/22221',
+      priority: 'high'
+    },
+    {
+      id: 'flight_2',
+      category: 'flights',
+      name: 'Air India - Premium Economy',
+      description: 'Direct flight with extra legroom, 2h 15m',
+      price: 7500,
+      originalPrice: 9000,
+      savings: 1500,
+      rating: 4.5,
+      features: ['Check-in Baggage', 'Priority Boarding', 'Complimentary Meals', 'Extra Legroom'],
+      cancellation: 'Partial refund available',
+      bookingUrl: 'https://easemytrip.com/flights/booking/22222',
+      priority: 'medium'
+    },
+    {
+      id: 'flight_3',
+      category: 'flights',
+      name: 'SpiceJet - Budget Option',
+      description: '1 stop, 4h 45m',
+      price: 3200,
+      originalPrice: 4000,
+      savings: 800,
+      rating: 3.9,
+      features: ['Cabin Baggage', 'Web Check-in', 'Affordable'],
+      cancellation: 'Non-refundable',
+      bookingUrl: 'https://easemytrip.com/flights/booking/22223',
+      priority: 'low'
     }
   ];
 
@@ -117,23 +247,32 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
       .reduce((total, item) => total + item.savings, 0);
   };
 
-  const handleOneClickBooking = async () => {
+  const handleProceedToPayment = () => {
     if (selectedItems.length === 0) {
       toast.error('Please select at least one item to book');
       return;
     }
+    setBookingStep('payment');
+  };
+
+  const handleConfirmPayment = async () => {
+    if (!paymentMethod) {
+      toast.error('Please select a payment method');
+      return;
+    }
 
     setIsProcessing(true);
-    setBookingStep('payment');
+    toast.loading('Processing payment...');
 
     try {
-      // Simulate booking process
+      // Simulate payment processing
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Simulate payment processing
+      // Simulate booking confirmation
       setBookingStep('confirmation');
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
 
+      toast.dismiss();
       toast.success('Booking confirmed! Check your email for details.');
       
       if (onBookingComplete) {
@@ -141,13 +280,15 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
           bookingId: `EMT${Date.now()}`,
           items: selectedItems,
           total: getSelectedTotal(),
-          savings: getTotalSavings()
+          savings: getTotalSavings(),
+          paymentMethod: paymentMethod
         });
       }
 
     } catch (error) {
-      toast.error('Booking failed. Please try again.');
-      setBookingStep('review');
+      toast.dismiss();
+      toast.error('Payment failed. Please try again.');
+      setBookingStep('payment');
     } finally {
       setIsProcessing(false);
     }
@@ -211,6 +352,108 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
     </Card>
   );
 
+  if (bookingStep === 'payment') {
+    return (
+      <div className="space-y-6 max-w-2xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-blue-500" />
+              Payment Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Booking Summary */}
+            <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+              <h3 className="font-semibold mb-3">Booking Summary</h3>
+              <div className="space-y-2 text-sm">
+                {mockBookingItems
+                  .filter(item => selectedItems.includes(item.id))
+                  .map(item => (
+                    <div key={item.id} className="flex justify-between">
+                      <span>{item.name}</span>
+                      <span className="font-medium">₹{item.price.toLocaleString()}</span>
+                    </div>
+                  ))}
+                <div className="border-t pt-2 mt-2 flex justify-between font-bold text-lg">
+                  <span>Total Amount</span>
+                  <span className="text-green-600">₹{getSelectedTotal().toLocaleString()}</span>
+                </div>
+                {getTotalSavings() > 0 && (
+                  <div className="text-green-600 text-sm">
+                    You save ₹{getTotalSavings().toLocaleString()}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Payment Method Selection */}
+            <div>
+              <h3 className="font-semibold mb-3">Select Payment Method</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { id: 'card', name: 'Credit/Debit Card', icon: '💳' },
+                  { id: 'upi', name: 'UPI', icon: '📱' },
+                  { id: 'netbanking', name: 'Net Banking', icon: '🏦' },
+                  { id: 'wallet', name: 'Digital Wallet', icon: '💰' }
+                ].map(method => (
+                  <div
+                    key={method.id}
+                    onClick={() => setPaymentMethod(method.id)}
+                    className={`p-4 border-2 rounded-lg cursor-pointer text-center transition-all ${
+                      paymentMethod === method.id 
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-200' 
+                        : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
+                    }`}
+                  >
+                    <div className="text-3xl mb-2">{method.icon}</div>
+                    <div className="text-sm font-medium">{method.name}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                onClick={() => setBookingStep('review')}
+                className="flex-1"
+              >
+                Back to Review
+              </Button>
+              <Button 
+                onClick={handleConfirmPayment}
+                disabled={isProcessing || !paymentMethod}
+                className="flex-1"
+              >
+                {isProcessing ? (
+                  <>
+                    <Clock className="w-4 h-4 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Shield className="w-4 h-4 mr-2" />
+                    Pay ₹{getSelectedTotal().toLocaleString()}
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Security Notice */}
+            <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg flex items-center gap-2 text-sm">
+              <Shield className="w-5 h-5 text-green-600 flex-shrink-0" />
+              <span className="text-green-800 dark:text-green-200">
+                Your payment is secured with 256-bit SSL encryption
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (bookingStep === 'confirmation') {
     return (
       <Card className="max-w-2xl mx-auto">
@@ -242,7 +485,10 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
             </div>
           </div>
 
-          <Button onClick={() => setBookingStep('review')} className="w-full">
+          <Button onClick={() => {
+            setBookingStep('review');
+            setSelectedItems([]);
+          }} className="w-full">
             Book More Items
           </Button>
         </CardContent>
@@ -274,9 +520,16 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
         </TabsList>
 
         <TabsContent value="all" className="space-y-4">
-          {mockBookingItems.map(item => (
-            <BookingItem key={item.id} item={item} />
-          ))}
+          {/* Show only 2 items from each category */}
+          {bookingCategories.map(category => {
+            const categoryItems = mockBookingItems
+              .filter(item => item.category === category.id)
+              .slice(0, 2); // Only show first 2 items
+            
+            return categoryItems.map(item => (
+              <BookingItem key={item.id} item={item} />
+            ));
+          })}
         </TabsContent>
 
         {bookingCategories.map(category => (
@@ -314,57 +567,18 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
               </div>
 
               <Button 
-                onClick={handleOneClickBooking}
+                onClick={handleProceedToPayment}
                 disabled={isProcessing}
                 size="lg"
                 className="ml-4"
               >
-                {isProcessing ? (
-                  <>
-                    <Clock className="w-4 h-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="w-4 h-4 mr-2" />
-                    Book Now
-                  </>
-                )}
+                <CreditCard className="w-4 h-4 mr-2" />
+                Proceed to Payment
               </Button>
             </div>
           </CardContent>
         </Card>
       )}
-
-      {/* Payment Methods */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Payment Options</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { id: 'card', name: 'Credit/Debit Card', icon: '💳' },
-              { id: 'upi', name: 'UPI', icon: '📱' },
-              { id: 'netbanking', name: 'Net Banking', icon: '🏦' },
-              { id: 'wallet', name: 'Digital Wallet', icon: '💰' }
-            ].map(method => (
-              <div
-                key={method.id}
-                onClick={() => setPaymentMethod(method.id)}
-                className={`p-3 border rounded-lg cursor-pointer text-center transition-all ${
-                  paymentMethod === method.id 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-100' 
-                    : 'hover:border-gray-300 dark:hover:border-gray-600 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100'
-                }`}
-              >
-                <div className="text-2xl mb-1">{method.icon}</div>
-                <div className="text-sm font-medium">{method.name}</div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Security & Guarantees */}
       <Card className="bg-green-50 dark:bg-green-900/20">
