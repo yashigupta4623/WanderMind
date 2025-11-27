@@ -1,9 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { vertexAI } from "./VertexAIModel";
 
 const apiKey = import.meta.env.VITE_GOOGLE_GEMINI_AI_API_KEY;
+const useVertexAI = import.meta.env.VITE_USE_VERTEX_AI === 'true';
 
 // Debug: Log API key status (without exposing the actual key)
-console.log("API Key status:", apiKey ? "Configured" : "Missing");
+console.log("Gemini API Key status:", apiKey ? "Configured" : "Missing");
+console.log("Vertex AI status:", vertexAI.getStatus());
 
 let genAI, model;
 
@@ -36,9 +39,31 @@ const withTimeout = (promise, timeoutMs = 30000) => {
   ]);
 };
 
-// Enhanced chat session with timeout handling
+// Enhanced chat session with Vertex AI fallback
 export const chatSession = {
   sendMessage: async (prompt) => {
+    // Try Vertex AI first if enabled
+    if (useVertexAI && vertexAI.isAvailable()) {
+      try {
+        console.log('Using Vertex AI for generation...');
+        const result = await withTimeout(vertexAI.generateContent(prompt, {
+          temperature: generationConfig.temperature,
+          topP: generationConfig.topP,
+          topK: generationConfig.topK,
+          maxOutputTokens: generationConfig.maxOutputTokens,
+          responseMimeType: generationConfig.responseMimeType
+        }), 30000);
+        
+        if (result) {
+          console.log('✓ Vertex AI generation successful');
+          return { response: result };
+        }
+      } catch (error) {
+        console.warn('Vertex AI failed, falling back to Gemini:', error.message);
+      }
+    }
+
+    // Fallback to Gemini AI
     try {
       if (!apiKey) {
         throw new Error("API key not configured. Please configure a valid Google Gemini API key.");
@@ -48,13 +73,16 @@ export const chatSession = {
         throw new Error("AI model not initialized. Please check your API configuration.");
       }
 
+      console.log('Using Gemini AI for generation...');
       const session = model.startChat({
         generationConfig,
         history: [],
       });
 
       // Wrap with 30-second timeout
-      return await withTimeout(session.sendMessage(prompt), 30000);
+      const result = await withTimeout(session.sendMessage(prompt), 30000);
+      console.log('✓ Gemini AI generation successful');
+      return result;
     } catch (error) {
       console.error('API Error:', error);
       throw error;
