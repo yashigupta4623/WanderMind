@@ -3,13 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  CreditCard, 
-  Calendar, 
-  MapPin, 
-  Users, 
-  Clock, 
-  Shield, 
+import {
+  CreditCard,
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+  Shield,
   CheckCircle,
   AlertCircle,
   Plane,
@@ -18,6 +18,7 @@ import {
   Ticket
 } from 'lucide-react';
 import { toast } from 'sonner';
+import paymentService from '@/services/PaymentService';
 
 const BookingSystem = ({ tripData, onBookingComplete }) => {
   const [selectedItems, setSelectedItems] = useState([]);
@@ -228,8 +229,8 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
   ];
 
   const handleItemToggle = (itemId) => {
-    setSelectedItems(prev => 
-      prev.includes(itemId) 
+    setSelectedItems(prev =>
+      prev.includes(itemId)
         ? prev.filter(id => id !== itemId)
         : [...prev, itemId]
     );
@@ -265,16 +266,37 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
     toast.loading('Processing payment...');
 
     try {
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simulate booking confirmation
-      setBookingStep('confirmation');
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Use PaymentService for Razorpay
+      if (paymentMethod === 'card' || paymentMethod === 'upi' || paymentMethod === 'netbanking' || paymentMethod === 'wallet') {
+        // For demo purposes, we map all these to Razorpay since it supports all of them
+        // In a real app, you might have specific flows
 
+        const totalAmount = getSelectedTotal();
+
+        // Prepare order data
+        const orderData = {
+          amount: totalAmount,
+          currency: 'INR',
+          description: `Booking for ${selectedItems.length} items`,
+          bookingId: `EMT${Date.now()}`,
+          customerInfo: {
+            name: 'WanderMind User', // You might want to get this from user context
+            email: 'user@wandermind.com',
+            phone: '9999999999'
+          }
+        };
+
+        await paymentService.processPayment(orderData, 'razorpay');
+      } else {
+        // Fallback for other methods if implemented
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+
+      // Payment successful
+      setBookingStep('confirmation');
       toast.dismiss();
       toast.success('Booking confirmed! Check your email for details.');
-      
+
       if (onBookingComplete) {
         onBookingComplete({
           bookingId: `EMT${Date.now()}`,
@@ -286,18 +308,18 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
       }
 
     } catch (error) {
+      console.error('Payment Error:', error);
       toast.dismiss();
-      toast.error('Payment failed. Please try again.');
-      setBookingStep('payment');
+      toast.error(error.message || 'Payment failed. Please try again.');
+      // Stay on payment step
     } finally {
       setIsProcessing(false);
     }
   };
 
   const BookingItem = ({ item }) => (
-    <Card className={`cursor-pointer transition-all hover:shadow-lg ${
-      selectedItems.includes(item.id) ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''
-    }`} onClick={() => handleItemToggle(item.id)}>
+    <Card className={`cursor-pointer transition-all hover:shadow-lg ${selectedItems.includes(item.id) ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''
+      }`} onClick={() => handleItemToggle(item.id)}>
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
@@ -310,9 +332,9 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
                 ⭐ {item.rating}
               </Badge>
             </div>
-            
+
             <p className="text-sm text-gray-600 mb-2">{item.description}</p>
-            
+
             <div className="flex flex-wrap gap-1 mb-3">
               {(item.amenities || item.features || []).slice(0, 3).map((feature, index) => (
                 <Badge key={index} variant="outline" className="text-xs">
@@ -340,7 +362,7 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
                 <span className="text-green-600 ml-1">Save ₹{item.savings.toLocaleString()}</span>
               </div>
             )}
-            <Badge 
+            <Badge
               variant={item.priority === 'high' ? 'default' : 'secondary'}
               className="text-xs mt-1"
             >
@@ -400,11 +422,10 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
                   <div
                     key={method.id}
                     onClick={() => setPaymentMethod(method.id)}
-                    className={`p-4 border-2 rounded-lg cursor-pointer text-center transition-all ${
-                      paymentMethod === method.id 
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-200' 
-                        : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
-                    }`}
+                    className={`p-4 border-2 rounded-lg cursor-pointer text-center transition-all ${paymentMethod === method.id
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-2 ring-blue-200'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
+                      }`}
                   >
                     <div className="text-3xl mb-2">{method.icon}</div>
                     <div className="text-sm font-medium">{method.name}</div>
@@ -415,14 +436,14 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
 
             {/* Action Buttons */}
             <div className="flex gap-3">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setBookingStep('review')}
                 className="flex-1"
               >
                 Back to Review
               </Button>
-              <Button 
+              <Button
                 onClick={handleConfirmPayment}
                 disabled={isProcessing || !paymentMethod}
                 className="flex-1"
@@ -463,7 +484,7 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
           <p className="text-gray-600 mb-4">
             Your trip has been successfully booked. Confirmation details have been sent to your email.
           </p>
-          
+
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg mb-6">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
@@ -525,7 +546,7 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
             const categoryItems = mockBookingItems
               .filter(item => item.category === category.id)
               .slice(0, 2); // Only show first 2 items
-            
+
             return categoryItems.map(item => (
               <BookingItem key={item.id} item={item} />
             ));
@@ -554,7 +575,7 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
                   {selectedItems.length} items selected
                 </p>
               </div>
-              
+
               <div className="text-right">
                 <div className="text-2xl font-bold text-green-600">
                   ₹{getSelectedTotal().toLocaleString()}
@@ -566,7 +587,7 @@ const BookingSystem = ({ tripData, onBookingComplete }) => {
                 )}
               </div>
 
-              <Button 
+              <Button
                 onClick={handleProceedToPayment}
                 disabled={isProcessing}
                 size="lg"
