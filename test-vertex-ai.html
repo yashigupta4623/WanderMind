@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex AI Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #357ae8;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Vertex AI Test</h1>
+        <p>Test your Vertex AI configuration and connectivity</p>
+        
+        <div>
+            <button onclick="checkConfig()">1. Check Configuration</button>
+            <button onclick="testConnection()">2. Test Connection</button>
+            <button onclick="testGeneration()">3. Test Generation</button>
+        </div>
+        
+        <div id="result"></div>
+    </div>
+
+    <script type="module">
+        // Import environment variables (you'll need to replace these)
+        const config = {
+            projectId: 'wandermind-48c0b',
+            location: 'us-central1',
+            model: 'gemini-1.5-flash',
+            apiKey: 'AIzaSyDblvDs31VT3NeGZG58sm_aGpEvUTGNlvk'
+        };
+
+        window.checkConfig = function() {
+            const result = document.getElementById('result');
+            const checks = {
+                'Project ID': config.projectId !== 'YOUR_PROJECT_ID_HERE',
+                'API Key': config.apiKey && config.apiKey.length > 20,
+                'Location': !!config.location,
+                'Model': !!config.model
+            };
+
+            let html = '<div class="status info"><h3>Configuration Check</h3>';
+            for (const [key, value] of Object.entries(checks)) {
+                html += `<div>${value ? '✅' : '❌'} ${key}: ${value ? 'OK' : 'Missing'}</div>`;
+            }
+            html += '</div>';
+
+            if (Object.values(checks).every(v => v)) {
+                html += '<div class="status success">✅ All configuration values are set!</div>';
+            } else {
+                html += '<div class="status error">❌ Please update YOUR_PROJECT_ID_HERE in the script</div>';
+            }
+
+            result.innerHTML = html;
+        };
+
+        window.testConnection = async function() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<div class="status info">Testing connection to Vertex AI...</div>';
+
+            try {
+                const endpoint = `https://${config.location}-aiplatform.googleapis.com/v1/projects/${config.projectId}/locations/${config.location}/publishers/google/models/${config.model}:generateContent`;
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-goog-api-key': config.apiKey
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            role: 'user',
+                            parts: [{ text: 'Say "Hello from Vertex AI!"' }]
+                        }],
+                        generationConfig: {
+                            temperature: 1,
+                            maxOutputTokens: 100
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(JSON.stringify(error, null, 2));
+                }
+
+                const data = await response.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                result.innerHTML = `
+                    <div class="status success">
+                        <h3>✅ Connection Successful!</h3>
+                        <p><strong>Response:</strong> ${text}</p>
+                    </div>
+                    <details>
+                        <summary>Full Response</summary>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </details>
+                `;
+
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="status error">
+                        <h3>❌ Connection Failed</h3>
+                        <p><strong>Error:</strong></p>
+                        <pre>${error.message}</pre>
+                    </div>
+                `;
+            }
+        };
+
+        window.testGeneration = async function() {
+            const result = document.getElementById('result');
+            result.innerHTML = '<div class="status info">Testing trip generation with Vertex AI...</div>';
+
+            try {
+                const endpoint = `https://${config.location}-aiplatform.googleapis.com/v1/projects/${config.projectId}/locations/${config.location}/publishers/google/models/${config.model}:generateContent`;
+
+                const prompt = `Generate a simple 1-day trip plan for Paris in JSON format:
+                {
+                    "destination": "Paris",
+                    "days": 1,
+                    "activities": ["activity1", "activity2"]
+                }`;
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-goog-api-key': config.apiKey
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            role: 'user',
+                            parts: [{ text: prompt }]
+                        }],
+                        generationConfig: {
+                            temperature: 1,
+                            maxOutputTokens: 2048,
+                            responseMimeType: 'application/json'
+                        }
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(JSON.stringify(error, null, 2));
+                }
+
+                const data = await response.json();
+                const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                result.innerHTML = `
+                    <div class="status success">
+                        <h3>✅ Generation Successful!</h3>
+                        <p><strong>Generated Trip Plan:</strong></p>
+                        <pre>${text}</pre>
+                    </div>
+                `;
+
+            } catch (error) {
+                result.innerHTML = `
+                    <div class="status error">
+                        <h3>❌ Generation Failed</h3>
+                        <p><strong>Error:</strong></p>
+                        <pre>${error.message}</pre>
+                    </div>
+                `;
+            }
+        };
+    </script>
+</body>
+</html>

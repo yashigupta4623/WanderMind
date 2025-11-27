@@ -25,6 +25,7 @@ import Tips from './pages/Tips.jsx';
 import AirlineFees from './pages/AirlineFees.jsx';
 import BadgesCertificates from './pages/BadgesCertificates.jsx';
 import TestMapsPage from './test-maps.jsx';
+import TestAIPage from './test-ai/index.jsx';
 
 function Layout() {
   return (
@@ -107,6 +108,10 @@ const router = createBrowserRouter([
       {
         path: '/test-maps',
         element: <TestMapsPage />
+      },
+      {
+        path: '/test-ai',
+        element: <TestAIPage />
       },
     ]
   }

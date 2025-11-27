@@ -1,14 +1,9 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/[^.]+",
+      "dest": "/",
+      "status": 200
     }
-  ],
-  "functions": {
-    "api/**/*.js": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  }
+  ]
 }
