@@ -24,6 +24,7 @@ import Airlines from './pages/Airlines.jsx';
 import Tips from './pages/Tips.jsx';
 import AirlineFees from './pages/AirlineFees.jsx';
 import BadgesCertificates from './pages/BadgesCertificates.jsx';
+import TestMapsPage from './test-maps.jsx';
 
 function Layout() {
   return (
@@ -102,6 +103,10 @@ const router = createBrowserRouter([
       {
         path: '/badges',
         element: <BadgesCertificates />
+      },
+      {
+        path: '/test-maps',
+        element: <TestMapsPage />
       },
     ]
   }
